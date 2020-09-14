@@ -18,7 +18,7 @@ Make sure you have installed:
 ### Installation
 
 ```bash
-git clone git@github.com:bamlab/project-name.git
+git clone git@github.com:solinehayes/HCI-909.git
 cd project-name
 nvm use
 bundle install
