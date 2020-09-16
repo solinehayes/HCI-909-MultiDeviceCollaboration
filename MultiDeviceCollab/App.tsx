@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const App: FunctionComponent = () => {
   return (
     <SafeAreaView>
-      <Icon name={'rocket'} />
+      <Icon name={'rocket'} size={30} />
     </SafeAreaView>
   );
 };
