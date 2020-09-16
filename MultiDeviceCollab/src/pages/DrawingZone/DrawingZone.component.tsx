@@ -1,6 +1,7 @@
 import React, {FunctionComponent} from 'react';
 import {Text, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
+import {theme} from '../../../theme';
 
 interface Styles {
   container: ViewStyle;
@@ -9,7 +10,7 @@ interface Styles {
 const styles = StyleSheet.create<Styles>({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.white,
   },
 });
 
