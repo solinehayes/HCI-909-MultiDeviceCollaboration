@@ -1,13 +1,8 @@
 import React, {FunctionComponent} from 'react';
-import {SafeAreaView, Text} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {DrawingZone} from './pages/DrawingZone/DrawingZone.component';
 
 const App: FunctionComponent = () => {
-  return (
-    <SafeAreaView>
-      <Icon name={'rocket'} size={30} />
-    </SafeAreaView>
-  );
+  return <DrawingZone />;
 };
 
 export default App;
