@@ -1,10 +1,11 @@
 import React, {FunctionComponent} from 'react';
 import {SafeAreaView, Text} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const App: FunctionComponent = () => {
   return (
     <SafeAreaView>
-      <Text>Init</Text>
+      <Icon name={'rocket'} />
     </SafeAreaView>
   );
 };
