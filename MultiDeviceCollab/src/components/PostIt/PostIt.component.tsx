@@ -16,8 +16,9 @@ const styles = StyleSheet.create<Styles>({
     width: 100,
     height: 100,
     justifyContent: 'center',
-    alignItems: 'center'
-  },
+    alignItems: 'center',
+    position: 'absolute',
+    },
   text : {
     fontWeight: 'bold'
   }
@@ -46,7 +47,6 @@ export const PostIt: FunctionComponent<Props> = ({text, id}) => {
     })
   )[0]
 
-  console.log(pan.getLayout())
 
   return (
     <Animated.View

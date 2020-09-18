@@ -20,12 +20,16 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-
 export const DrawingZone: FunctionComponent = () => {
 
+  // List of post it to render
+  const [postIts, setPostIts] = React.useState([{id:1, text:"post-it 1"}])
+
+  // Function to add a post it
   const addPostIt = () => {
     console.log("Add post it")
-
+    const newId = postIts.length+1
+    setPostIts(postIts.concat({id: newId, text:"post-it "+newId}))
   }
 
   return (
@@ -37,7 +41,11 @@ export const DrawingZone: FunctionComponent = () => {
         <FloatingButton iconName="pencil" />
       </View>
 
-      <PostIt text="post it" id={1}/>
+      <View >
+        {postIts.map((postit) => (
+          <PostIt id={postit.id} text={postit.text} key={postit.id}/>
+        ))}
+      </View>
 
       <View style={styles.bottomButtonContainer}>
         <FloatingButton iconName="bluetooth-b" />
