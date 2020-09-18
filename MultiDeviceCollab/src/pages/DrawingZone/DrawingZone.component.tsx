@@ -1,6 +1,7 @@
 import React, {FunctionComponent} from 'react';
 import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
+import {PostIt} from '../../components/PostIt/PostIt.component'
 import {theme} from '../../../theme';
 
 interface Styles {
@@ -29,7 +30,9 @@ export const DrawingZone: FunctionComponent = () => {
       </View>
       <View style={styles.bottomButtonContainer}>
         <FloatingButton iconName="bluetooth-b" />
+        <FloatingButton iconName="plus-circle" />
       </View>
+      <PostIt />
     </SafeAreaView>
   );
 };
