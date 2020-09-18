@@ -29,6 +29,7 @@ export const DrawingZone: FunctionComponent = () => {
       </View>
       <View style={styles.bottomButtonContainer}>
         <FloatingButton iconName="bluetooth-b" />
+        <FloatingButton iconName="plus-circle" />
       </View>
     </SafeAreaView>
   );
