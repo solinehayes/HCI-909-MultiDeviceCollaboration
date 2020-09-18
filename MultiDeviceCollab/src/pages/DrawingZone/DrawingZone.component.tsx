@@ -20,20 +20,30 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
+
 export const DrawingZone: FunctionComponent = () => {
+
+  const addPostIt = () => {
+    console.log("Add post it")
+
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <FloatingButton iconName="file-o" onPress = {() => {
-          console.log('test')}}/>
+        <FloatingButton iconName="file-o"
+          onPress = {addPostIt}/>
         <FloatingButton iconName="undo" />
         <FloatingButton iconName="pencil" />
       </View>
+
+      <PostIt text="post it" id={1}/>
+
       <View style={styles.bottomButtonContainer}>
         <FloatingButton iconName="bluetooth-b" />
         <FloatingButton iconName="plus-circle" />
       </View>
-      <PostIt />
+
     </SafeAreaView>
   );
 };
