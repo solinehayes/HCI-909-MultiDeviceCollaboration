@@ -24,7 +24,8 @@ export const DrawingZone: FunctionComponent = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <FloatingButton iconName="file-o" />
+        <FloatingButton iconName="file-o" onPress = {() => {
+          console.log('test')}}/>
         <FloatingButton iconName="undo" />
         <FloatingButton iconName="pencil" />
       </View>
