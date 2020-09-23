@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, TouchableOpacity, ViewStyle, StyleSheet, PanResponder, Dimensions, Animated} from 'react-native';
+import {View, Text, TouchableOpacity, ViewStyle, StyleSheet, PanResponder, Dimensions, Animated} from 'react-native';
 import {theme} from '../../../theme';
 
 interface Props {
-  //iconName: string;
+  text : string
+  id : int
 }
 interface Styles {
   container: ViewStyle;
@@ -13,12 +14,18 @@ const styles = StyleSheet.create<Styles>({
   container: {
     backgroundColor: theme.colors.blue,
     width: 100,
-    height: 100
-  },
+    height: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    },
+  text : {
+    fontWeight: 'bold'
+  }
 });
 
 
-export const PostIt: FunctionComponent<Props> = ({}) => {
+export const PostIt: FunctionComponent<Props> = ({text, id}) => {
 
   const pan = React.useState(new Animated.ValueXY())[0]
 
@@ -40,12 +47,15 @@ export const PostIt: FunctionComponent<Props> = ({}) => {
     })
   )[0]
 
-  console.log(pan.getLayout())
 
   return (
     <Animated.View
+      id={id}
       style={[styles.container, pan.getLayout()]}
-      {...panResponder.panHandlers}
-    />
+      {...panResponder.panHandlers}>
+
+      <Text style={styles.text}> {text} </Text>
+
+    </Animated.View>
   );
 };
