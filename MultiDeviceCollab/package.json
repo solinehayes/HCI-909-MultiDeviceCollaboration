@@ -18,6 +18,7 @@
     "cz-emoji": "^1.2.2",
     "react": "16.13.1",
     "react-native": "0.63.2",
+    "react-native-ble-manager": "^7.3.1",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-reanimated": "^1.13.0",
     "react-native-safe-area-context": "^3.1.8",
