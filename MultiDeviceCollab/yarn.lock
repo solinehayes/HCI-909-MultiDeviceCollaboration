@@ -5960,6 +5960,11 @@ react-native-ble-plx@^2.0.1:
   resolved "https://registry.yarnpkg.com/react-native-ble-plx/-/react-native-ble-plx-2.0.1.tgz#0131a8c0b92be3f0bca51012715ac7814e08e022"
   integrity sha512-dd4IubwGu6CZoDMrZoSUb0zGmb/bSOXkB+5sYxKhaHANjem/9yPx6mifaLM13M+DJ6P+PNoLn0bPKItTYzsZiA==
 
+react-native-safe-area-context@^3.1.8:
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-3.1.8.tgz#7a9883aa0f38f9c77d4bef2b89e4e285bc1024a3"
+  integrity sha512-9gUlsDZ96QwT9AKzA6aVWM/NX5rlJgauZ9HgCDVzKbe29UQYT1740QJnnaI2GExmkFGp6o7ZLNhCXZW95eYVFA==
+
 react-native-vector-icons@^7.1.0:
   version "7.1.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-7.1.0.tgz#145487d617b2a81d395d2cf64e6e065fcab3a454"
