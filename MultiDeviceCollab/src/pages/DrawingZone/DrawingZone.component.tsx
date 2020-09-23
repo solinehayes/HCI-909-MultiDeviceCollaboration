@@ -3,6 +3,11 @@ import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component'
 import {theme} from '../../../theme';
+import { NavigationContainer } from '@react-navigation/native';
+
+interface Props {
+  navigation;
+}
 
 interface Styles {
   container: ViewStyle;
@@ -20,7 +25,7 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-export const DrawingZone: FunctionComponent = () => {
+export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
 
   // List of post it to render
   const [postIts, setPostIts] = React.useState([{id:1, text:"post-it 1"}])
@@ -48,7 +53,10 @@ export const DrawingZone: FunctionComponent = () => {
       </View>
 
       <View style={styles.bottomButtonContainer}>
-        <FloatingButton iconName="bluetooth-b" />
+        <FloatingButton iconName="bluetooth-b"
+          onPress = {() => {
+            navigation.navigate('SwipeConfiguration')
+          }}/>
         <FloatingButton iconName="plus-circle" />
       </View>
 
