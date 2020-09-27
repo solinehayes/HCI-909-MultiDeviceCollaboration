@@ -1,10 +1,11 @@
-import React, {FunctionComponent} from 'react';
+import React, {FunctionComponent, useEffect} from 'react';
 import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
 import {NavigationContainer} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {useBluetooth} from './useBluetooth.hook';
 
 interface Props {
   navigation;
@@ -48,6 +49,16 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   };
   const inset = useSafeAreaInsets();
 
+  const {
+    isBluetoothEnabled,
+    listOfdevices,
+    startBleManager,
+    scanDevices,
+  } = useBluetooth();
+
+  useEffect(() => {
+    startBleManager();
+  });
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topButtonContainer}>
@@ -66,7 +77,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
         <FloatingButton
           iconName="bluetooth-b"
           onPress={() => {
-            navigation.navigate('SwipeConfiguration');
+            scanDevices();
           }}
         />
         <FloatingButton iconName="plus-circle" onPress={() => {}} />
