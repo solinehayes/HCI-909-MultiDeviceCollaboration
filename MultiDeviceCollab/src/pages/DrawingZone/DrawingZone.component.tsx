@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useEffect} from 'react';
+import React, {FunctionComponent, useEffect, useState} from 'react';
 import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
@@ -9,6 +9,7 @@ import {Device} from 'react-native-ble-plx';
 import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.component';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
+import {BluetoothModal} from '../../components/BluetoothModal/BluetoothModal.component';
 
 type DrawingComponentNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -87,7 +88,10 @@ const bluetoothColors = [
 
 export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   // List of post it to render
-  const [postIts, setPostIts] = React.useState([{id: 1, text: 'post-it 1'}]);
+  const [postIts, setPostIts] = useState([{id: 1, text: 'post-it 1'}]);
+  const [isBluetoothModalDisplayed, setIsBluetoothModalDisplayed] = useState<
+    boolean
+  >(false);
 
   // Function to add a post it
   const addPostIt = () => {
@@ -103,6 +107,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
     connectedDevices,
     checkBluetoothState,
   } = useBluetooth();
+
   useEffect(() => {
     createBleManager();
   });
@@ -143,16 +148,21 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
         })}
         <FloatingButton
           iconName="bluetooth-b"
-          onPress={async () => {
-            let permissionGranted = await checkBluetoothState();
-            if (permissionGranted) {
-              console.log('permission granted');
-              scanDevices();
-            }
+          onPress={() => {
+            setIsBluetoothModalDisplayed(true);
+            // let permissionGranted = await checkBluetoothState();
+            // if (permissionGranted) {
+            //   console.log('permission granted');
+            //   scanDevices();
+            //}
           }}
         />
-        <FloatingButton iconName="plus-circle" onPress={() => {}} />
       </View>
+      <BluetoothModal
+        isModalVisible={isBluetoothModalDisplayed}
+        setIsModalVisible={setIsBluetoothModalDisplayed}
+        connectedDevices={mockDevices}
+      />
     </SafeAreaView>
   );
 };
