@@ -10,7 +10,7 @@ import {Device} from 'react-native-ble-plx';
 import {theme} from '../../../theme';
 
 interface Props {
-  device: Device;
+  device: Partial<Device>;
   color: string;
 }
 interface Styles {
@@ -37,7 +37,7 @@ const styles = StyleSheet.create<Styles>({
 });
 const linkDevice = () => {};
 
-export const FloatingButton: FunctionComponent<Props> = ({device, color}) => {
+export const ConnectedDevice: FunctionComponent<Props> = ({device, color}) => {
   return (
     <TouchableOpacity
       style={[styles.container, {backgroundColor: color}]}

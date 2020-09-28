@@ -3,9 +3,11 @@ import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
-import {NavigationContainer} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useBluetooth} from './useBluetooth.hook';
+import {Device} from 'react-native-ble-plx';
+import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.component';
+import {ThemeProvider} from '@react-navigation/native';
 
 interface Props {
   navigation;
@@ -36,6 +38,47 @@ const styles = StyleSheet.create<Styles>({
     zIndex: 1,
   },
 });
+const mockDevices: Partial<Device>[] = [
+  {
+    id: 'EC:81:93:2A:25:57',
+    isConnectable: null,
+    localName: '',
+    manufacturerData: 'AwABGE4AAAyUe+eykVbsgZMqJVci',
+    mtu: 23,
+    name: 'MEGABOOM 3 RAPH',
+    overflowServiceUUIDs: null,
+    rssi: -65,
+    serviceData: null,
+    serviceUUIDs: ['0000fe61-0000-1000-8000-00805f9b34fb'],
+    solicitedServiceUUIDs: null,
+    txPowerLevel: null,
+  },
+  {
+    id: 'EC:81:93:2A:25:58',
+    isConnectable: null,
+    localName: '',
+    manufacturerData: 'AwABGE4AAAyUe+eykVbsgZMqJVci',
+    mtu: 23,
+    name: 'EB',
+    overflowServiceUUIDs: null,
+    rssi: -65,
+    serviceData: null,
+    serviceUUIDs: ['0000fe61-0000-1000-8000-00805f9b34fb'],
+    solicitedServiceUUIDs: null,
+    txPowerLevel: null,
+  },
+];
+const bluetoothColors = [
+  '#FFB484',
+  '#FFF484',
+  '#BAFF84',
+  '#84FFD8',
+  '#84E1FF',
+  '#849CFF',
+  '#C384FF',
+  '#FF84F9',
+  '#FF8484',
+];
 
 export const DrawingZone: FunctionComponent<Props> = () => {
   // List of post it to render
@@ -77,6 +120,19 @@ export const DrawingZone: FunctionComponent<Props> = () => {
       </View>
 
       <View style={[styles.bottomButtonContainer, {bottom: inset.bottom}]}>
+        {mockDevices.map((device: Partial<Device>) => {
+          return (
+            <ConnectedDevice
+              device={device}
+              color={
+                bluetoothColors[
+                  Math.floor(Math.random() * (bluetoothColors.length - 1))
+                ]
+              }
+              key={device.id}
+            />
+          );
+        })}
         <FloatingButton
           iconName="bluetooth-b"
           onPress={async () => {
