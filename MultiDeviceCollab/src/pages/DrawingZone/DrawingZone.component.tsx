@@ -37,7 +37,7 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
+export const DrawingZone: FunctionComponent<Props> = () => {
   // List of post it to render
   const [postIts, setPostIts] = React.useState([{id: 1, text: 'post-it 1'}]);
 
@@ -50,15 +50,18 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   const inset = useSafeAreaInsets();
 
   const {
-    isBluetoothEnabled,
-    listOfdevices,
-    startBleManager,
+    createBleManager,
     scanDevices,
+    connectedDevices,
+    checkBluetoothState,
   } = useBluetooth();
-
   useEffect(() => {
-    startBleManager();
+    createBleManager();
   });
+  useEffect(() => {
+    console.log('CONNECTED DEVICES');
+    console.log(connectedDevices);
+  }, [connectedDevices]);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topButtonContainer}>
@@ -76,8 +79,12 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
       <View style={[styles.bottomButtonContainer, {bottom: inset.bottom}]}>
         <FloatingButton
           iconName="bluetooth-b"
-          onPress={() => {
-            scanDevices();
+          onPress={async () => {
+            let permissionGranted = await checkBluetoothState();
+            if (permissionGranted) {
+              console.log('permission granted');
+              scanDevices();
+            }
           }}
         />
         <FloatingButton iconName="plus-circle" onPress={() => {}} />
