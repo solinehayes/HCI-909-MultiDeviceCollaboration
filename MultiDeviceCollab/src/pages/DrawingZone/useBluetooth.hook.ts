@@ -1,19 +1,56 @@
 import {useState} from 'react';
-import BleManager from 'react-native-ble-manager';
+import {PermissionsAndroid} from 'react-native';
+import {BleManager, Device} from 'react-native-ble-plx';
 
 export const useBluetooth = () => {
-  const [isBluetoothEnabled, setIsBluetoothEnabled] = useState(false);
-  const [connectedDevices, setConnectedDevices] = useState([]);
+  const [manager, setManager] = useState<BleManager>();
+  const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
 
-  const startBleManager = async () => {
-    await BleManager.start({showAlert: false});
-    console.log('started');
+  const createBleManager = async () => {
+    console.log('manager: ', manager);
+    if (!manager) {
+      setManager(new BleManager());
+    }
+  };
+  const checkBluetoothState = async () => {
+    await createBleManager();
+    console.log('Scanning: Checking permissions...');
+    const enabled = await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+    );
+    if (!enabled) {
+      console.log('Scanning: Permissions disabled, showing...');
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      );
+      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Scanning: Permissions not granted, aborting...');
+        // TODO: Show error message?
+        return false;
+      }
+      return granted;
+    }
+    return enabled;
   };
   const scanDevices = async () => {
-    await BleManager.scan([], 10, true);
-    BleManager.getDiscoveredPeripherals().then((peripheralsArray) => {
-      setConnectedDevices(peripheralsArray);
-    });
+    checkBluetoothState();
+    console.log('manager before function: ', manager);
+    await manager.startDeviceScan(
+      null,
+      {allowDuplicates: false},
+      (error, scannedDevice) => {
+        if (error) {
+          console.warn(error);
+          return;
+        }
+        if (scannedDevice != null && scannedDevice.localName === 'SensorTag') {
+          console.warn(error);
+          return;
+        }
+        var joined = connectedDevices.concat(scannedDevice);
+        setConnectedDevices(joined);
+      },
+    );
   };
-  return {startBleManager, scanDevices, isBluetoothEnabled, connectedDevices};
+  return {createBleManager, scanDevices, connectedDevices, checkBluetoothState};
 };
