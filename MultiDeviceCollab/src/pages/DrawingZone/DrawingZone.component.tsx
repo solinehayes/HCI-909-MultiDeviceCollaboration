@@ -7,10 +7,15 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useBluetooth} from './useBluetooth.hook';
 import {Device} from 'react-native-ble-plx';
 import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.component';
-import {ThemeProvider} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
 
+type DrawingComponentNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  RootNavigatorRouteNames.DrawingZone
+>;
 interface Props {
-  navigation;
+  navigation: DrawingComponentNavigationProp;
 }
 
 interface Styles {
@@ -80,7 +85,7 @@ const bluetoothColors = [
   '#FF8484',
 ];
 
-export const DrawingZone: FunctionComponent<Props> = () => {
+export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   // List of post it to render
   const [postIts, setPostIts] = React.useState([{id: 1, text: 'post-it 1'}]);
 
@@ -130,6 +135,9 @@ export const DrawingZone: FunctionComponent<Props> = () => {
                 ]
               }
               key={device.id}
+              onPress={() => {
+                navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration);
+              }}
             />
           );
         })}

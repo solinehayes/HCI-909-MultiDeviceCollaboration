@@ -12,6 +12,7 @@ import {theme} from '../../../theme';
 interface Props {
   device: Partial<Device>;
   color: string;
+  onPress: () => void;
 }
 interface Styles {
   container: ViewStyle;
@@ -35,13 +36,16 @@ const styles = StyleSheet.create<Styles>({
     fontSize: 10,
   },
 });
-const linkDevice = () => {};
 
-export const ConnectedDevice: FunctionComponent<Props> = ({device, color}) => {
+export const ConnectedDevice: FunctionComponent<Props> = ({
+  device,
+  color,
+  onPress,
+}) => {
   return (
     <TouchableOpacity
       style={[styles.container, {backgroundColor: color}]}
-      onPress={linkDevice}>
+      onPress={onPress}>
       <Text>{device.name}</Text>
     </TouchableOpacity>
   );
