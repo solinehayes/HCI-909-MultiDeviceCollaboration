@@ -25,11 +25,12 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-export const FloatingButton: FunctionComponent<Props> = ({iconName, onPress}) => {
+export const FloatingButton: FunctionComponent<Props> = ({
+  iconName,
+  onPress,
+}) => {
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={onPress}>
+    <TouchableOpacity style={styles.container} onPress={onPress}>
       <Icon name={iconName} size={20} />
     </TouchableOpacity>
   );
