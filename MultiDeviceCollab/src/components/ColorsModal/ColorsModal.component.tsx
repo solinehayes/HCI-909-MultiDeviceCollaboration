@@ -2,6 +2,7 @@ import React, {FunctionComponent} from 'react';
 import {View, ViewStyle, TouchableOpacity, StyleSheet} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {theme} from '../../../theme/index';
 
 interface Props {
@@ -46,12 +47,17 @@ export const ColorsModal: FunctionComponent<Props> = ({
       />
     );
   };
+  const inset = useSafeAreaInsets();
   return (
     <Modal
       isVisible={isModalVisible}
       hasBackdrop={true}
       onBackdropPress={() => {
         setIsModalVisible(false);
+      }}
+      style={{
+        justifyContent: 'flex-start',
+        marginTop: inset.top + 4 * theme.gridUnit,
       }}>
       <View style={styles.modal}>
         <FlatList
