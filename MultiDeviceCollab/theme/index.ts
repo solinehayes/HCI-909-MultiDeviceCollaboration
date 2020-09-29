@@ -13,11 +13,22 @@ const colors = {
   grey: '#AAAAAA',
   darkGrey: '#858585',
   white: '#FFFFFF',
-  blue: '#ADD8E6'
+  blue: '#ADD8E6',
 };
 const dimensions = {
   button: 40,
 };
+const postItColors = [
+  '#FFB484',
+  '#FFF484',
+  '#BAFF84',
+  '#84FFD8',
+  '#84E1FF',
+  '#849CFF',
+  '#C384FF',
+  '#FF84F9',
+  '#FF8484',
+];
 export const shadow = Platform.select({
   ios: {
     shadowColor: colors.darkGrey,
@@ -35,4 +46,5 @@ export const theme = {
   dimensions,
   shadow,
   gridUnit: 4,
+  postItColors,
 };

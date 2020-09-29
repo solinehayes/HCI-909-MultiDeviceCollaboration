@@ -74,17 +74,6 @@ const mockDevices: Partial<Device>[] = [
     txPowerLevel: null,
   },
 ];
-const bluetoothColors = [
-  '#FFB484',
-  '#FFF484',
-  '#BAFF84',
-  '#84FFD8',
-  '#84E1FF',
-  '#849CFF',
-  '#C384FF',
-  '#FF84F9',
-  '#FF8484',
-];
 
 export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   // List of post it to render
@@ -135,8 +124,8 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
             <ConnectedDevice
               device={device}
               color={
-                bluetoothColors[
-                  Math.floor(Math.random() * (bluetoothColors.length - 1))
+                theme.postItColors[
+                  Math.floor(Math.random() * (theme.postItColors.length - 1))
                 ]
               }
               key={device.id}
