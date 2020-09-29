@@ -1,9 +1,9 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, ViewStyle, StyleSheet, PanResponder, Dimensions, Animated} from 'react-native';
+import {View, Text, TextInput, TouchableOpacity, ViewStyle, StyleSheet, PanResponder, Dimensions, Animated} from 'react-native';
 import {theme} from '../../../theme';
 
 interface Props {
-  text : string
+  textInit : string
   id : int
 }
 interface Styles {
@@ -25,9 +25,10 @@ const styles = StyleSheet.create<Styles>({
 });
 
 
-export const PostIt: FunctionComponent<Props> = ({text, id}) => {
+export const PostIt: FunctionComponent<Props> = ({textInit, id}) => {
 
   const pan = React.useState(new Animated.ValueXY())[0]
+  const [textValue, onChangeText] = React.useState(textInit);
 
   const panResponder = React.useState(
     PanResponder.create({
@@ -58,7 +59,7 @@ export const PostIt: FunctionComponent<Props> = ({text, id}) => {
       {...panResponder.panHandlers}>
 
       <TouchableOpacity style={styles.container} onPress={()=>console.log("Pressed")}>
-        <Text style={styles.text}>{text}</Text>
+        <TextInput style={styles.text} onChangeText={text=>onChangeText(text)}>{textInit}</TextInput>
       </TouchableOpacity>
 
     </Animated.View>

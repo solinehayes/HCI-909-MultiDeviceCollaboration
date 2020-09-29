@@ -125,7 +125,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
 
       <View>
         {postIts.map((postit) => (
-          <PostIt id={postit.id} text={postit.text} key={postit.id} />
+          <PostIt id={postit.id} textInit={postit.text} key={postit.id} />
         ))}
       </View>
 
