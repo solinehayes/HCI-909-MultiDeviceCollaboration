@@ -3,7 +3,7 @@ import {View, ViewStyle, TouchableOpacity, StyleSheet} from 'react-native';
 import {FlatList} from 'react-native-gesture-handler';
 import Modal from 'react-native-modal';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {theme} from '../../../theme/index';
+import {shadow, theme} from '../../../theme/index';
 
 interface Props {
   isModalVisible: boolean;
@@ -17,6 +17,7 @@ interface Styles {
 
 const styles = StyleSheet.create<Styles>({
   modal: {
+    ...theme.shadow,
     backgroundColor: theme.colors.white,
     marginVertical: 5 * theme.gridUnit,
     borderRadius: 4 * theme.gridUnit,
@@ -55,6 +56,7 @@ export const ColorsModal: FunctionComponent<Props> = ({
       onBackdropPress={() => {
         setIsModalVisible(false);
       }}
+      backdropColor={theme.colors.white}
       style={{
         justifyContent: 'flex-start',
         marginTop: inset.top + 4 * theme.gridUnit,
