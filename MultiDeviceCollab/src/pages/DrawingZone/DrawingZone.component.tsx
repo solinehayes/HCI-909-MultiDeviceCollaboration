@@ -10,6 +10,7 @@ import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
 import {BluetoothModal} from '../../components/BluetoothModal/BluetoothModal.component';
+import {ColorsModal} from '../../components/ColorsModal/ColorsModal.component';
 
 type DrawingComponentNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -81,12 +82,16 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   const [isBluetoothModalDisplayed, setIsBluetoothModalDisplayed] = useState<
     boolean
   >(false);
+  const [isColorsModalDisplayed, setIsColorsModalDisplayed] = useState<boolean>(
+    false,
+  );
 
   // Function to add a post it
   const addPostIt = () => {
-    console.log('Add post it');
-    const newId = postIts.length + 1;
-    setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId}));
+    setIsColorsModalDisplayed(true);
+    // console.log('Add post it');
+    // const newId = postIts.length + 1;
+    // setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId}));
   };
   const inset = useSafeAreaInsets();
 
@@ -151,6 +156,10 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
         isModalVisible={isBluetoothModalDisplayed}
         setIsModalVisible={setIsBluetoothModalDisplayed}
         connectedDevices={connectedDevices}
+      />
+      <ColorsModal
+        isModalVisible={isColorsModalDisplayed}
+        setIsModalVisible={setIsColorsModalDisplayed}
       />
     </SafeAreaView>
   );
