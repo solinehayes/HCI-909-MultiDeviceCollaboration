@@ -7,6 +7,7 @@ import {theme} from '../../../theme/index';
 interface Props {
   isModalVisible: boolean;
   setIsModalVisible: (visibility: boolean) => void;
+  createPostIt: (color: string) => void;
 }
 interface Styles {
   modal: ViewStyle;
@@ -28,19 +29,23 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-const renderColors = ({item, index}: {item: string; index: any}) => {
-  return (
-    <TouchableOpacity
-      style={[styles.colorPin, {backgroundColor: item}]}
-      key={index}
-    />
-  );
-};
-
 export const ColorsModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
+  createPostIt,
 }) => {
+  const renderColors = ({item, index}: {item: string; index: any}) => {
+    return (
+      <TouchableOpacity
+        style={[styles.colorPin, {backgroundColor: item}]}
+        onPress={() => {
+          createPostIt(item);
+          setIsModalVisible(false);
+        }}
+        key={index}
+      />
+    );
+  };
   return (
     <Modal
       isVisible={isModalVisible}

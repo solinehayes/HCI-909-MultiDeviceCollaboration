@@ -78,20 +78,22 @@ const mockDevices: Partial<Device>[] = [
 
 export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   // List of post it to render
-  const [postIts, setPostIts] = useState([{id: 1, text: 'post-it 1'}]);
+  const [postIts, setPostIts] = useState([
+    {id: 1, text: 'post-it 1', color: theme.postItColors[0]},
+  ]);
   const [isBluetoothModalDisplayed, setIsBluetoothModalDisplayed] = useState<
     boolean
   >(false);
   const [isColorsModalDisplayed, setIsColorsModalDisplayed] = useState<boolean>(
     false,
   );
-
-  // Function to add a post it
-  const addPostIt = () => {
+  const openColorChooser = () => {
     setIsColorsModalDisplayed(true);
-    // console.log('Add post it');
-    // const newId = postIts.length + 1;
-    // setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId}));
+  };
+  // Function to add a post it
+  const addPostIt = (color: string) => {
+    const newId = postIts.length + 1;
+    setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId, color}));
   };
   const inset = useSafeAreaInsets();
 
@@ -112,14 +114,19 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topButtonContainer}>
-        <FloatingButton iconName="file-o" onPress={addPostIt} />
+        <FloatingButton iconName="file-o" onPress={openColorChooser} />
         <FloatingButton iconName="undo" onPress={() => {}} />
         <FloatingButton iconName="pencil" onPress={() => {}} />
       </View>
 
       <View>
         {postIts.map((postit) => (
-          <PostIt id={postit.id} textInit={postit.text} key={postit.id} />
+          <PostIt
+            id={postit.id}
+            textInit={postit.text}
+            key={postit.id}
+            color={postit.color}
+          />
         ))}
       </View>
 
@@ -145,9 +152,9 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
           onPress={() => {
             setIsBluetoothModalDisplayed(true);
             //let permissionGranted = checkBluetoothState();
-             //if (permissionGranted) {
-               //console.log('permission granted');
-               scanDevices();
+            //if (permissionGranted) {
+            //console.log('permission granted');
+            scanDevices();
             //}
           }}
         />
@@ -160,6 +167,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
       <ColorsModal
         isModalVisible={isColorsModalDisplayed}
         setIsModalVisible={setIsColorsModalDisplayed}
+        createPostIt={addPostIt}
       />
     </SafeAreaView>
   );
