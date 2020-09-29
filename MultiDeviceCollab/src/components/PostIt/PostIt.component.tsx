@@ -1,5 +1,6 @@
-import React from 'react';
-import {View, Text, TextInput, TouchableOpacity, ViewStyle, StyleSheet, PanResponder, Dimensions, Animated} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, LabelView, Text, TextInput, TouchableOpacity, ViewStyle, StyleSheet, PanResponder, Dimensions, Animated} from 'react-native';
+import {createResponder} from 'react-native-gesture-responder';
 import {theme} from '../../../theme';
 
 interface Props {
@@ -13,55 +14,66 @@ interface Styles {
 const styles = StyleSheet.create<Styles>({
   container: {
     backgroundColor: theme.colors.blue,
-    width: 100,
-    height: 100,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
+    position: 'absolute'
     },
   text : {
     fontWeight: 'bold'
   }
 });
 
+const {width, height} = Dimensions.get('window');
 
 export const PostIt: FunctionComponent<Props> = ({textInit, id}) => {
 
-  const pan = React.useState(new Animated.ValueXY())[0]
-  const [textValue, onChangeText] = React.useState(textInit);
+  const [textValue, onChangeText] = useState(textInit);
+  const [size, setSize] = useState(100);
+  const [left, setLeft] = useState(100);
+  const [top, setTop] = useState(100);
+  const [gesture, setGesture] = useState({});
 
-  const panResponder = React.useState(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () =>{
-        console.log("Pan responder")
-        pan.setOffset({
-          x: pan.x._value,
-          y: pan.y._value
-        })
-      },
-      onPanResponderMove: Animated.event([null, {
-        dx: pan.x, dy: pan.y}], {useNativeDriver:false}),
-        onPanResponderRelease: () => {
-          pan.flattenOffset()
-        },
+  const gestureResponder =
+    createResponder({
+      onStartShouldSetResponder: (evt, gestureState) => true,
       onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
-        return Math.abs(gestureState.dx) > 5;
+          return gestureState.dx != 0 && gestureState.dy != 0;
       },
-    })
-  )[0]
+      onMoveShouldSetResponder: (evt, gestureState) => true,
+      onMoveShouldSetResponderCapture: (evt, gestureState) => true,
 
+      onResponderGrant: (evt, gestureState) => {
+      },
+      onResponderMove: (evt, gestureState) => {
+        if (gestureState.pinch && gestureState.previousPinch) {
+          setSize(size * (gestureState.pinch / gestureState.previousPinch));
+        }
+        setLeft(left + (gestureState.moveX - gestureState.previousMoveX));
+        setTop (top + (gestureState.moveY - gestureState.previousMoveY));
+
+        setGesture({...gestureState});
+      },
+      onResponderTerminationRequest: (evt, gestureState) => true,
+      onResponderRelease: (evt, gestureState) => {
+        setGesture({...gestureState});
+      },
+      onResponderTerminate: (evt, gestureState) => {
+      },
+      onResponderSingleTapConfirmed: (evt, gestureState) => { },
+      debug: false
+    })
 
   return (
-    <Animated.View
+    <View
       id={id}
-      style={pan.getLayout()}
-      {...panResponder.panHandlers}>
+      {...gestureResponder}>
 
-      <TouchableOpacity style={styles.container} onPress={()=>console.log("Pressed")}>
-        <TextInput style={styles.text} onChangeText={text=>onChangeText(text)}>{textInit}</TextInput>
+      <TouchableOpacity style={[{width: size, height: size, left: left-size/2, top: top-size/2}, styles.container]}>
+        <TextInput style={styles.text}
+          onChangeText={text=>onChangeText(text)}
+          multiline={true}> {textInit} </TextInput>
       </TouchableOpacity>
 
-    </Animated.View>
+    </View>
   );
 };
