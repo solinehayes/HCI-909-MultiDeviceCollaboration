@@ -150,10 +150,10 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
           iconName="bluetooth-b"
           onPress={() => {
             setIsBluetoothModalDisplayed(true);
-            // let permissionGranted = await checkBluetoothState();
-            // if (permissionGranted) {
-            //   console.log('permission granted');
-            //   scanDevices();
+            //let permissionGranted = checkBluetoothState();
+             //if (permissionGranted) {
+               //console.log('permission granted');
+               scanDevices();
             //}
           }}
         />
@@ -161,7 +161,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
       <BluetoothModal
         isModalVisible={isBluetoothModalDisplayed}
         setIsModalVisible={setIsBluetoothModalDisplayed}
-        connectedDevices={mockDevices}
+        connectedDevices={connectedDevices}
       />
     </SafeAreaView>
   );

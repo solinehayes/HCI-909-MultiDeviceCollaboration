@@ -43,7 +43,10 @@ export const PostIt: FunctionComponent<Props> = ({text, id}) => {
         dx: pan.x, dy: pan.y}], {useNativeDriver:false}),
         onPanResponderRelease: () => {
           pan.flattenOffset()
-        }
+        },
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
+        return Math.abs(gestureState.dx) > 5;
+      },
     })
   )[0]
 
@@ -51,10 +54,12 @@ export const PostIt: FunctionComponent<Props> = ({text, id}) => {
   return (
     <Animated.View
       id={id}
-      style={[styles.container, pan.getLayout()]}
+      style={pan.getLayout()}
       {...panResponder.panHandlers}>
 
-      <Text style={styles.text}> {text} </Text>
+      <TouchableOpacity style={styles.container} onPress={()=>console.log("Pressed")}>
+        <Text style={styles.text}>{text}</Text>
+      </TouchableOpacity>
 
     </Animated.View>
   );

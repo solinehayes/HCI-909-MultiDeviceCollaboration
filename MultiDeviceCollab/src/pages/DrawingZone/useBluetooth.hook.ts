@@ -7,7 +7,7 @@ export const useBluetooth = () => {
   const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
 
   const createBleManager = async () => {
-    console.log('manager: ', manager);
+    //console.log('manager: ', manager);
     if (!manager) {
       setManager(new BleManager());
     }
