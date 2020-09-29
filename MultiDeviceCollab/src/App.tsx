@@ -1,9 +1,10 @@
-import React, {FunctionComponent} from 'react';
+import React, {FunctionComponent, useEffect} from 'react';
 import {DrawingZone} from './pages/DrawingZone/DrawingZone.component';
 import {SwipeConfiguration} from './pages/SwipeConfiguration/SwipeConfiguration.component';
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import SplashScreen from 'react-native-splash-screen';
 
 export type RootStackParamList = {
   DrawingZone: undefined;
@@ -16,6 +17,9 @@ export enum RootNavigatorRouteNames {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App: FunctionComponent = () => {
+  useEffect(() => {
+    SplashScreen.hide();
+  });
   return (
     <NavigationContainer>
       <Stack.Navigator>
