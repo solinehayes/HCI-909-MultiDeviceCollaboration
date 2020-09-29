@@ -38,12 +38,12 @@ export const ColorsModal: FunctionComponent<Props> = ({
   const renderColors = ({item, index}: {item: string; index: any}) => {
     return (
       <TouchableOpacity
+        key={index}
         style={[styles.colorPin, {backgroundColor: item}]}
         onPress={() => {
           createPostIt(item);
           setIsModalVisible(false);
         }}
-        key={index}
       />
     );
   };
@@ -64,6 +64,7 @@ export const ColorsModal: FunctionComponent<Props> = ({
           data={theme.postItColors}
           horizontal
           renderItem={renderColors}
+          keyExtractor={(color: string): string => color}
         />
       </View>
     </Modal>
