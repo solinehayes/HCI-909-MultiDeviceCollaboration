@@ -1,14 +1,22 @@
 import React, {FunctionComponent} from 'react';
-import {TouchableOpacity, StyleSheet, ViewStyle} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  ViewStyle,
+  Text,
+  TextStyle,
+} from 'react-native';
+import {Device} from 'react-native-ble-plx';
 import {theme} from '../../../theme';
 
 interface Props {
-  iconName: string;
-  onPress;
+  device: Partial<Device>;
+  color: string;
+  onPress: () => void;
 }
 interface Styles {
   container: ViewStyle;
+  deviceName: TextStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
@@ -16,22 +24,29 @@ const styles = StyleSheet.create<Styles>({
     ...theme.shadow,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.grey,
     padding: 2 * theme.gridUnit,
     margin: 2 * theme.gridUnit,
     borderRadius: theme.dimensions.button / 2,
     width: theme.dimensions.button,
     height: theme.dimensions.button,
   },
+  deviceName: {
+    flex: 1,
+    color: theme.colors.black,
+    fontSize: 10,
+  },
 });
 
-export const FloatingButton: FunctionComponent<Props> = ({
-  iconName,
+export const ConnectedDevice: FunctionComponent<Props> = ({
+  device,
+  color,
   onPress,
 }) => {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
-      <Icon name={iconName} size={20} />
+    <TouchableOpacity
+      style={[styles.container, {backgroundColor: color}]}
+      onPress={onPress}>
+      <Text>{device.name}</Text>
     </TouchableOpacity>
   );
 };
