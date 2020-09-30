@@ -95,6 +95,11 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
     const newId = postIts.length + 1;
     setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId, color}));
   };
+  const removeLastPostIt = () => {
+    if (postIts.length !== 0) {
+      setPostIts(postIts.slice(0, postIts.length - 1));
+    }
+  };
   const inset = useSafeAreaInsets();
 
   const {
@@ -115,7 +120,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.topButtonContainer}>
         <FloatingButton iconName="file-o" onPress={openColorChooser} />
-        <FloatingButton iconName="undo" onPress={() => {}} />
+        <FloatingButton iconName="undo" onPress={removeLastPostIt} />
         <FloatingButton iconName="pencil" onPress={() => {}} />
       </View>
 
