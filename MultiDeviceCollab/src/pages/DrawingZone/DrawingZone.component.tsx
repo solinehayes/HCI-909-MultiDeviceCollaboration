@@ -10,6 +10,7 @@ import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
 import {BluetoothModal} from '../../components/BluetoothModal/BluetoothModal.component';
+import {ColorsModal} from '../../components/ColorsModal/ColorsModal.component';
 
 type DrawingComponentNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -74,30 +75,25 @@ const mockDevices: Partial<Device>[] = [
     txPowerLevel: null,
   },
 ];
-const bluetoothColors = [
-  '#FFB484',
-  '#FFF484',
-  '#BAFF84',
-  '#84FFD8',
-  '#84E1FF',
-  '#849CFF',
-  '#C384FF',
-  '#FF84F9',
-  '#FF8484',
-];
 
 export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   // List of post it to render
-  const [postIts, setPostIts] = useState([{id: 1, text: 'post-it 1'}]);
+  const [postIts, setPostIts] = useState([
+    {id: 1, text: 'post-it 1', color: theme.postItColors[0]},
+  ]);
   const [isBluetoothModalDisplayed, setIsBluetoothModalDisplayed] = useState<
     boolean
   >(false);
-
+  const [isColorsModalDisplayed, setIsColorsModalDisplayed] = useState<boolean>(
+    false,
+  );
+  const openColorChooser = () => {
+    setIsColorsModalDisplayed(true);
+  };
   // Function to add a post it
-  const addPostIt = () => {
-    console.log('Add post it');
+  const addPostIt = (color: string) => {
     const newId = postIts.length + 1;
-    setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId}));
+    setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId, color}));
   };
   const inset = useSafeAreaInsets();
 
@@ -118,14 +114,19 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topButtonContainer}>
-        <FloatingButton iconName="file-o" onPress={addPostIt} />
+        <FloatingButton iconName="file-o" onPress={openColorChooser} />
         <FloatingButton iconName="undo" onPress={() => {}} />
         <FloatingButton iconName="pencil" onPress={() => {}} />
       </View>
 
       <View>
         {postIts.map((postit) => (
-          <PostIt id={postit.id} textInit={postit.text} key={postit.id} />
+          <PostIt
+            id={postit.id}
+            textInit={postit.text}
+            key={postit.id}
+            color={postit.color}
+          />
         ))}
       </View>
 
@@ -135,8 +136,8 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
             <ConnectedDevice
               device={device}
               color={
-                bluetoothColors[
-                  Math.floor(Math.random() * (bluetoothColors.length - 1))
+                theme.postItColors[
+                  Math.floor(Math.random() * (theme.postItColors.length - 1))
                 ]
               }
               key={device.id}
@@ -151,9 +152,9 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
           onPress={() => {
             setIsBluetoothModalDisplayed(true);
             //let permissionGranted = checkBluetoothState();
-             //if (permissionGranted) {
-               //console.log('permission granted');
-               scanDevices();
+            //if (permissionGranted) {
+            //console.log('permission granted');
+            scanDevices();
             //}
           }}
         />
@@ -162,6 +163,11 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
         isModalVisible={isBluetoothModalDisplayed}
         setIsModalVisible={setIsBluetoothModalDisplayed}
         connectedDevices={connectedDevices}
+      />
+      <ColorsModal
+        isModalVisible={isColorsModalDisplayed}
+        setIsModalVisible={setIsColorsModalDisplayed}
+        createPostIt={addPostIt}
       />
     </SafeAreaView>
   );
