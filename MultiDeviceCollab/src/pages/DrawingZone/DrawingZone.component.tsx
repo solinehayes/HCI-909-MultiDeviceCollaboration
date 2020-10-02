@@ -102,15 +102,10 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   };
   const inset = useSafeAreaInsets();
 
-  const {
-    createBleManager,
-    scanDevices,
-    connectedDevices,
-    checkBluetoothState,
-  } = useBluetooth();
+  const {init, scanDevices, connectedDevices} = useBluetooth();
 
   useEffect(() => {
-    createBleManager();
+    init();
   });
   useEffect(() => {
     console.log('CONNECTED DEVICES');

@@ -9,16 +9,16 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import {Device} from 'react-native-ble-plx';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {theme} from '../../../theme/index';
+import {Device} from '../../pages/DrawingZone/useBluetooth.hook';
 
 interface Props {
   isModalVisible: boolean;
   setIsModalVisible: (visibility: boolean) => void;
   style?: StyleProp<ViewStyle>;
-  connectedDevices: Partial<Device>[];
+  connectedDevices: Device[];
 }
 interface Styles {
   modal: ViewStyle;
@@ -33,10 +33,10 @@ const renderDevices = ({item, index}: {item: Device; index: any}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log('connect to ', item.id);
+        console.log('connect to ', item);
       }}
       style={styles.deviceItem}>
-      <Text>{item.name}</Text>
+      <Text>{item.deviceName}</Text>
       <Icon name="wifi" color={theme.colors.blue} size={20} />
     </TouchableOpacity>
   );
@@ -99,7 +99,7 @@ export const BluetoothModal: FunctionComponent<Props> = ({
           <FlatList
             data={connectedDevices}
             renderItem={renderDevices}
-            keyExtractor={(device: Device): string => device.id}
+            keyExtractor={(device: Device): string => device.deviceAddress}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
         </View>
