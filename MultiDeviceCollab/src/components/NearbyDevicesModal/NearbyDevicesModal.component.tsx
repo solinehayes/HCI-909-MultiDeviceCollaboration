@@ -75,7 +75,7 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-export const BluetoothModal: FunctionComponent<Props> = ({
+export const NearbyDevicesModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
   nearbyDevices,

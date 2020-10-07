@@ -9,7 +9,7 @@ import {Device} from 'react-native-ble-plx';
 import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.component';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
-import {BluetoothModal} from '../../components/BluetoothModal/BluetoothModal.component';
+import {NearbyDevicesModal} from '../../components/NearbyDevicesModal/NearbyDevicesModal.component';
 import {ColorsModal} from '../../components/ColorsModal/ColorsModal.component';
 
 type DrawingComponentNavigationProp = StackNavigationProp<
@@ -152,10 +152,10 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
           }}
         />
       </View>
-      <BluetoothModal
+      <NearbyDevicesModal
         isModalVisible={isBluetoothModalDisplayed}
         setIsModalVisible={setIsBluetoothModalDisplayed}
-        connectedDevices={nearbyDevices}
+        nearbyDevices={nearbyDevices}
         scanDevices={scanDevices}
         isScanLoading={isScanLoading}
       />
