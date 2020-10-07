@@ -19,7 +19,7 @@ interface Props {
   isModalVisible: boolean;
   setIsModalVisible: (visibility: boolean) => void;
   style?: StyleProp<ViewStyle>;
-  connectedDevices: Device[];
+  nearbyDevices: Device[];
   scanDevices: () => void;
   isScanLoading: boolean;
 }
@@ -78,7 +78,7 @@ const styles = StyleSheet.create<Styles>({
 export const BluetoothModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
-  connectedDevices,
+  nearbyDevices,
   scanDevices,
   isScanLoading,
 }) => {
@@ -111,7 +111,7 @@ export const BluetoothModal: FunctionComponent<Props> = ({
             <ActivityIndicator color={theme.colors.blue} />
           ) : (
             <FlatList
-              data={connectedDevices}
+              data={nearbyDevices}
               renderItem={renderDevices}
               keyExtractor={(device: Device): string => device.deviceAddress}
               ItemSeparatorComponent={() => <View style={styles.separator} />}

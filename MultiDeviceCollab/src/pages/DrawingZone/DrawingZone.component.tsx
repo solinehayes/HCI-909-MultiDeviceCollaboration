@@ -102,15 +102,12 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   };
   const inset = useSafeAreaInsets();
 
-  const {init, scanDevices, connectedDevices, isScanLoading} = useBluetooth();
+  const {init, scanDevices, nearbyDevices, isScanLoading} = useBluetooth();
 
   useEffect(() => {
     init();
   });
-  useEffect(() => {
-    console.log('CONNECTED DEVICES');
-    console.log(connectedDevices);
-  }, [connectedDevices]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topButtonContainer}>
@@ -151,18 +148,14 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
           iconName="bluetooth-b"
           onPress={() => {
             setIsBluetoothModalDisplayed(true);
-            //let permissionGranted = checkBluetoothState();
-            //if (permissionGranted) {
-            //console.log('permission granted');
             scanDevices();
-            //}
           }}
         />
       </View>
       <BluetoothModal
         isModalVisible={isBluetoothModalDisplayed}
         setIsModalVisible={setIsBluetoothModalDisplayed}
-        connectedDevices={connectedDevices}
+        connectedDevices={nearbyDevices}
         scanDevices={scanDevices}
         isScanLoading={isScanLoading}
       />

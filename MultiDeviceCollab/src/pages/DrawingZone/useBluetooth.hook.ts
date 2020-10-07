@@ -17,7 +17,7 @@ export interface Device {
 
 export const useBluetooth = () => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
+  const [nearbyDevices, setNearbyDevices] = useState<Device[]>([]);
   const [isScanLoading, setIsScanLoading] = useState<boolean>(false);
 
   const init = async () => {
@@ -44,7 +44,7 @@ export const useBluetooth = () => {
       .then(
         getAvailablePeers().then(({devices}) => {
           console.log('devices', devices);
-          setConnectedDevices(devices);
+          setNearbyDevices(devices);
           setIsScanLoading(false);
         }),
       )
@@ -54,5 +54,5 @@ export const useBluetooth = () => {
         ),
       );
   };
-  return {init, scanDevices, connectedDevices, isScanLoading};
+  return {init, scanDevices, nearbyDevices, isScanLoading};
 };
