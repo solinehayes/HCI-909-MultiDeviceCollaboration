@@ -4,7 +4,6 @@ import {
   initialize,
   startDiscoveringPeers,
   getAvailablePeers,
-  stopDiscoveringPeers,
 } from 'react-native-wifi-p2p';
 
 export interface Device {
@@ -19,6 +18,7 @@ export interface Device {
 export const useBluetooth = () => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
+  const [isScanLoading, setIsScanLoading] = useState<boolean>(false);
 
   const init = async () => {
     if (!isInitialized) {
@@ -35,6 +35,7 @@ export const useBluetooth = () => {
     }
   };
   const scanDevices = async () => {
+    setIsScanLoading(true);
     if (!isInitialized) {
       init();
     }
@@ -44,6 +45,7 @@ export const useBluetooth = () => {
         getAvailablePeers().then(({devices}) => {
           console.log('devices', devices);
           setConnectedDevices(devices);
+          setIsScanLoading(false);
         }),
       )
       .catch((err) =>
@@ -52,5 +54,5 @@ export const useBluetooth = () => {
         ),
       );
   };
-  return {init, scanDevices, connectedDevices};
+  return {init, scanDevices, connectedDevices, isScanLoading};
 };

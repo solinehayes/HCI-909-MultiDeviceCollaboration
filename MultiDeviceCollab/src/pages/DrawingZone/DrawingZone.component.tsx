@@ -102,7 +102,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   };
   const inset = useSafeAreaInsets();
 
-  const {init, scanDevices, connectedDevices} = useBluetooth();
+  const {init, scanDevices, connectedDevices, isScanLoading} = useBluetooth();
 
   useEffect(() => {
     init();
@@ -163,6 +163,8 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
         isModalVisible={isBluetoothModalDisplayed}
         setIsModalVisible={setIsBluetoothModalDisplayed}
         connectedDevices={connectedDevices}
+        scanDevices={scanDevices}
+        isScanLoading={isScanLoading}
       />
       <ColorsModal
         isModalVisible={isColorsModalDisplayed}

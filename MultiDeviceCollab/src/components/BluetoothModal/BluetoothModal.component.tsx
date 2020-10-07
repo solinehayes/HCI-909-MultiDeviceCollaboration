@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -19,6 +20,8 @@ interface Props {
   setIsModalVisible: (visibility: boolean) => void;
   style?: StyleProp<ViewStyle>;
   connectedDevices: Device[];
+  scanDevices: () => void;
+  isScanLoading: boolean;
 }
 interface Styles {
   modal: ViewStyle;
@@ -76,6 +79,8 @@ export const BluetoothModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
   connectedDevices,
+  scanDevices,
+  isScanLoading,
 }) => {
   return (
     <Modal
@@ -86,8 +91,14 @@ export const BluetoothModal: FunctionComponent<Props> = ({
       }}>
       <SafeAreaView style={styles.modal}>
         <View style={styles.header}>
-          <Icon name="undo" color={theme.colors.blue} size={30} />
-          <Text style={styles.title}>Connected devices</Text>
+          <TouchableOpacity onPress={scanDevices}>
+            {isScanLoading ? (
+              <ActivityIndicator color={theme.colors.blue} />
+            ) : (
+              <Icon name="undo" color={theme.colors.blue} size={30} />
+            )}
+          </TouchableOpacity>
+          <Text style={styles.title}>Nearby devices</Text>
           <TouchableOpacity
             onPress={() => {
               setIsModalVisible(false);
@@ -96,12 +107,16 @@ export const BluetoothModal: FunctionComponent<Props> = ({
           </TouchableOpacity>
         </View>
         <View style={styles.body}>
-          <FlatList
-            data={connectedDevices}
-            renderItem={renderDevices}
-            keyExtractor={(device: Device): string => device.deviceAddress}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
+          {isScanLoading ? (
+            <ActivityIndicator color={theme.colors.blue} />
+          ) : (
+            <FlatList
+              data={connectedDevices}
+              renderItem={renderDevices}
+              keyExtractor={(device: Device): string => device.deviceAddress}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+            />
+          )}
         </View>
       </SafeAreaView>
     </Modal>
