@@ -13,7 +13,7 @@ import {
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {theme} from '../../../theme/index';
-import {Device} from '../../pages/DrawingZone/useBluetooth.hook';
+import {Device} from '../../pages/DrawingZone/useWifiDirect';
 
 interface Props {
   isModalVisible: boolean;
@@ -22,6 +22,7 @@ interface Props {
   nearbyDevices: Device[];
   scanDevices: () => void;
   isScanLoading: boolean;
+  connectToDevice: (device: Device) => void;
 }
 interface Styles {
   modal: ViewStyle;
@@ -32,11 +33,19 @@ interface Styles {
   separator: ViewStyle;
 }
 
-const renderDevices = ({item, index}: {item: Device; index: any}) => {
+const renderDevices = ({
+  item,
+  index,
+  connectToDevice,
+}: {
+  item: Device;
+  index: any;
+  connectToDevice: (device: Device) => void;
+}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log('connect to ', item);
+        connectToDevice(item);
       }}
       style={styles.deviceItem}>
       <Text>{item.deviceName}</Text>
@@ -81,6 +90,7 @@ export const NearbyDevicesModal: FunctionComponent<Props> = ({
   nearbyDevices,
   scanDevices,
   isScanLoading,
+  connectToDevice,
 }) => {
   return (
     <Modal
@@ -112,7 +122,9 @@ export const NearbyDevicesModal: FunctionComponent<Props> = ({
           ) : (
             <FlatList
               data={nearbyDevices}
-              renderItem={renderDevices}
+              renderItem={({index, item}: {item: Device; index: any}) => {
+                return renderDevices({index, item, connectToDevice});
+              }}
               keyExtractor={(device: Device): string => device.deviceAddress}
               ItemSeparatorComponent={() => <View style={styles.separator} />}
             />

@@ -1,10 +1,16 @@
+import {useNavigation} from '@react-navigation/native';
 import {useState} from 'react';
 import {PermissionsAndroid} from 'react-native';
 import {
   initialize,
   startDiscoveringPeers,
+  stopDiscoveringPeers,
   getAvailablePeers,
+  connect,
+  sendMessage,
+  createGroup,
 } from 'react-native-wifi-p2p';
+import {RootNavigatorRouteNames} from '../../App';
 
 export interface Device {
   deviceAddress: string;
@@ -20,6 +26,7 @@ export const useWifiDirect = () => {
   const [nearbyDevices, setNearbyDevices] = useState<Device[]>([]);
   const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
   const [isScanLoading, setIsScanLoading] = useState<boolean>(false);
+  const {navigation} = useNavigation();
 
   const init = async () => {
     if (!isInitialized) {
@@ -45,6 +52,7 @@ export const useWifiDirect = () => {
       .then(
         getAvailablePeers().then(({devices}) => {
           console.log('devices', devices);
+          stopDiscoveringPeers();
           setNearbyDevices(devices);
           setIsScanLoading(false);
         }),
@@ -55,5 +63,36 @@ export const useWifiDirect = () => {
         ),
       );
   };
-  return {init, scanDevices, nearbyDevices, isScanLoading, connectedDevices};
+  const createGroup = async () => {
+    await createGroup()
+      .then(() => console.log('Group created successfully!'))
+      .catch((err) => console.error('Something gone wrong. Details: ', err));
+  };
+  const connectToDevice = async (device: Device) => {
+    await connect(device.deviceAddress)
+      .then(setConnectedDevices(connectedDevices.concat([device])))
+      .catch((error) => {
+        console.warn(error);
+      });
+    await createGroup()
+      .then(() => console.log('Group created successfully!'))
+      .catch((err) => console.error('Something gone wrong. Details: ', err));
+
+    navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration);
+  };
+  const sendMessageToDevice = async () => {
+    // await sendMessage('Hello world')
+    //   .then((metaInfo) => console.log('Message sent successfully', metaInfo))
+    //   .catch((err) => console.log('Error while message sending', err));
+  };
+  return {
+    createGroup,
+    init,
+    scanDevices,
+    nearbyDevices,
+    isScanLoading,
+    connectedDevices,
+    connectToDevice,
+    sendMessageToDevice,
+  };
 };

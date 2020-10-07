@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useEffect, useState} from 'react';
-import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
+import {View, SafeAreaView, ViewStyle, StyleSheet, Button} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
@@ -77,6 +77,9 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
     nearbyDevices,
     isScanLoading,
     connectedDevices,
+    connectToDevice,
+    sendMessageToDevice,
+    createGroup,
   } = useWifiDirect();
 
   useEffect(() => {
@@ -114,6 +117,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
               }
               key={device.deviceAddress}
               onPress={() => {
+                sendMessageToDevice();
                 navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration);
               }}
             />
@@ -126,6 +130,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
             scanDevices();
           }}
         />
+        <Button onPress={createGroup} title="create group" />
       </View>
       <NearbyDevicesModal
         isModalVisible={isBluetoothModalDisplayed}
@@ -133,6 +138,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
         nearbyDevices={nearbyDevices}
         scanDevices={scanDevices}
         isScanLoading={isScanLoading}
+        connectToDevice={connectToDevice}
       />
       <ColorsModal
         isModalVisible={isColorsModalDisplayed}
