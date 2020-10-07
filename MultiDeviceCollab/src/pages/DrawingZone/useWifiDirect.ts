@@ -18,6 +18,7 @@ export interface Device {
 export const useWifiDirect = () => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [nearbyDevices, setNearbyDevices] = useState<Device[]>([]);
+  const [connectedDevices, setConnectedDevices] = useState<Device[]>([]);
   const [isScanLoading, setIsScanLoading] = useState<boolean>(false);
 
   const init = async () => {
@@ -54,5 +55,5 @@ export const useWifiDirect = () => {
         ),
       );
   };
-  return {init, scanDevices, nearbyDevices, isScanLoading};
+  return {init, scanDevices, nearbyDevices, isScanLoading, connectedDevices};
 };
