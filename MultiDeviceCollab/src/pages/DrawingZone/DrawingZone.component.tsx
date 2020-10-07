@@ -4,7 +4,7 @@ import {FloatingButton} from '../../components/FloatingButton/FloatingButton.com
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useBluetooth} from './useBluetooth.hook';
+import {useWifiDirect} from './useWifiDirect';
 import {Device} from 'react-native-ble-plx';
 import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.component';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -102,7 +102,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   };
   const inset = useSafeAreaInsets();
 
-  const {init, scanDevices, nearbyDevices, isScanLoading} = useBluetooth();
+  const {init, scanDevices, nearbyDevices, isScanLoading} = useWifiDirect();
 
   useEffect(() => {
     init();

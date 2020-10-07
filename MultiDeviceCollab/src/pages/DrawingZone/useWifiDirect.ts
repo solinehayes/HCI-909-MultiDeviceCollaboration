@@ -15,7 +15,7 @@ export interface Device {
   status: number;
 }
 
-export const useBluetooth = () => {
+export const useWifiDirect = () => {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [nearbyDevices, setNearbyDevices] = useState<Device[]>([]);
   const [isScanLoading, setIsScanLoading] = useState<boolean>(false);
