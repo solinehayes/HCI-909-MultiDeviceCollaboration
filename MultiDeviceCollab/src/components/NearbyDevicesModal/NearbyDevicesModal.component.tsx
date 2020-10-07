@@ -8,17 +8,21 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
-import {Device} from 'react-native-ble-plx';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {theme} from '../../../theme/index';
+import {Device} from '../../pages/DrawingZone/useWifiDirect';
 
 interface Props {
   isModalVisible: boolean;
   setIsModalVisible: (visibility: boolean) => void;
   style?: StyleProp<ViewStyle>;
-  connectedDevices: Partial<Device>[];
+  nearbyDevices: Device[];
+  scanDevices: () => void;
+  isScanLoading: boolean;
+  connectToDevice: (device: Device) => void;
 }
 interface Styles {
   modal: ViewStyle;
@@ -29,14 +33,22 @@ interface Styles {
   separator: ViewStyle;
 }
 
-const renderDevices = ({item, index}: {item: Device; index: any}) => {
+const renderDevices = ({
+  item,
+  index,
+  connectToDevice,
+}: {
+  item: Device;
+  index: any;
+  connectToDevice: (device: Device) => void;
+}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log('connect to ', item.id);
+        connectToDevice(item);
       }}
       style={styles.deviceItem}>
-      <Text>{item.name}</Text>
+      <Text>{item.deviceName}</Text>
       <Icon name="wifi" color={theme.colors.blue} size={20} />
     </TouchableOpacity>
   );
@@ -72,10 +84,13 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-export const BluetoothModal: FunctionComponent<Props> = ({
+export const NearbyDevicesModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
-  connectedDevices,
+  nearbyDevices,
+  scanDevices,
+  isScanLoading,
+  connectToDevice,
 }) => {
   return (
     <Modal
@@ -86,8 +101,14 @@ export const BluetoothModal: FunctionComponent<Props> = ({
       }}>
       <SafeAreaView style={styles.modal}>
         <View style={styles.header}>
-          <Icon name="undo" color={theme.colors.blue} size={30} />
-          <Text style={styles.title}>Connected devices</Text>
+          <TouchableOpacity onPress={scanDevices}>
+            {isScanLoading ? (
+              <ActivityIndicator color={theme.colors.blue} />
+            ) : (
+              <Icon name="undo" color={theme.colors.blue} size={30} />
+            )}
+          </TouchableOpacity>
+          <Text style={styles.title}>Nearby devices</Text>
           <TouchableOpacity
             onPress={() => {
               setIsModalVisible(false);
@@ -96,12 +117,18 @@ export const BluetoothModal: FunctionComponent<Props> = ({
           </TouchableOpacity>
         </View>
         <View style={styles.body}>
-          <FlatList
-            data={connectedDevices}
-            renderItem={renderDevices}
-            keyExtractor={(device: Device): string => device.id}
-            ItemSeparatorComponent={() => <View style={styles.separator} />}
-          />
+          {isScanLoading ? (
+            <ActivityIndicator color={theme.colors.blue} />
+          ) : (
+            <FlatList
+              data={nearbyDevices}
+              renderItem={({index, item}: {item: Device; index: any}) => {
+                return renderDevices({index, item, connectToDevice});
+              }}
+              keyExtractor={(device: Device): string => device.deviceAddress}
+              ItemSeparatorComponent={() => <View style={styles.separator} />}
+            />
+          )}
         </View>
       </SafeAreaView>
     </Modal>

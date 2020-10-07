@@ -6,11 +6,11 @@ import {
   Text,
   TextStyle,
 } from 'react-native';
-import {Device} from 'react-native-ble-plx';
+import {Device} from '../../pages/DrawingZone/useWifiDirect';
 import {theme} from '../../../theme';
 
 interface Props {
-  device: Partial<Device>;
+  device: Device;
   color: string;
   onPress: () => void;
 }
@@ -46,7 +46,7 @@ export const ConnectedDevice: FunctionComponent<Props> = ({
     <TouchableOpacity
       style={[styles.container, {backgroundColor: color}]}
       onPress={onPress}>
-      <Text>{device.name}</Text>
+      <Text>{device.deviceName.slice(0, 2).toUpperCase()}</Text>
     </TouchableOpacity>
   );
 };
