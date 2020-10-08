@@ -79,7 +79,9 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
     connectedDevices,
     connectToDevice,
     sendMessageToDevice,
-    createGroup,
+    createGroupOnDevice,
+    getConnectionInfoFromDevice,
+    receivedMessageFromOthers,
   } = useWifiDirect();
 
   useEffect(() => {
@@ -130,7 +132,13 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
             scanDevices();
           }}
         />
-        <Button onPress={createGroup} title="create group" />
+        <Button onPress={createGroupOnDevice} title="create group" />
+        <Button
+          onPress={getConnectionInfoFromDevice}
+          title="getConnectionInfo"
+        />
+        <Button onPress={receivedMessageFromOthers} title="receive message" />
+        <Button onPress={sendMessageToDevice} title="send message" />
       </View>
       <NearbyDevicesModal
         isModalVisible={isBluetoothModalDisplayed}

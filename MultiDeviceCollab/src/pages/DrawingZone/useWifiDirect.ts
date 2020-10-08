@@ -9,6 +9,12 @@ import {
   connect,
   sendMessage,
   createGroup,
+  subscribeOnConnectionInfoUpdates,
+  getConnectionInfo,
+  receiveMessage,
+  getGroupInfo,
+  subscribeOnPeersUpdates,
+  subscribeOnThisDeviceChanged,
 } from 'react-native-wifi-p2p';
 import {RootNavigatorRouteNames} from '../../App';
 
@@ -28,6 +34,15 @@ export const useWifiDirect = () => {
   const [isScanLoading, setIsScanLoading] = useState<boolean>(false);
   const {navigation} = useNavigation();
 
+  subscribeOnConnectionInfoUpdates(async (event) => {
+    console.log('Connection Info Updates: ', event);
+  });
+  subscribeOnPeersUpdates(({devices}) => {
+    console.log(`New devices available: ${devices[0]}`);
+  });
+  subscribeOnThisDeviceChanged((event) => {
+    console.log('This device changed: ', event);
+  });
   const init = async () => {
     if (!isInitialized) {
       await initialize()
@@ -41,6 +56,11 @@ export const useWifiDirect = () => {
 
       setIsInitialized(!!granted);
     }
+  };
+  const getConnectionInfoFromDevice = () => {
+    getConnectionInfo().then((info) => {
+      console.log(info);
+    });
   };
   const scanDevices = async () => {
     setIsScanLoading(true);
@@ -63,30 +83,33 @@ export const useWifiDirect = () => {
         ),
       );
   };
-  const createGroup = async () => {
-    await createGroup()
+  const createGroupOnDevice = async () => {
+    createGroup()
       .then(() => console.log('Group created successfully!'))
       .catch((err) => console.error('Something gone wrong. Details: ', err));
   };
+
   const connectToDevice = async (device: Device) => {
     await connect(device.deviceAddress)
       .then(setConnectedDevices(connectedDevices.concat([device])))
       .catch((error) => {
         console.warn(error);
       });
-    await createGroup()
-      .then(() => console.log('Group created successfully!'))
-      .catch((err) => console.error('Something gone wrong. Details: ', err));
 
     navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration);
   };
   const sendMessageToDevice = async () => {
-    // await sendMessage('Hello world')
-    //   .then((metaInfo) => console.log('Message sent successfully', metaInfo))
-    //   .catch((err) => console.log('Error while message sending', err));
+    await sendMessage('Hello world from soline')
+      .then((metaInfo) => console.log('Message sent successfully', metaInfo))
+      .catch((err) => console.log('Error while message sending', err));
+  };
+  const receivedMessageFromOthers = () => {
+    receiveMessage().then((message) =>
+      console.log(`Received message: ${message}`),
+    );
   };
   return {
-    createGroup,
+    createGroupOnDevice,
     init,
     scanDevices,
     nearbyDevices,
@@ -94,5 +117,7 @@ export const useWifiDirect = () => {
     connectedDevices,
     connectToDevice,
     sendMessageToDevice,
+    getConnectionInfoFromDevice,
+    receivedMessageFromOthers,
   };
 };
