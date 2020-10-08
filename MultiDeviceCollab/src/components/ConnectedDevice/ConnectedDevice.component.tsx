@@ -6,11 +6,11 @@ import {
   Text,
   TextStyle,
 } from 'react-native';
-import {Device} from 'react-native-ble-plx';
 import {theme} from '../../../theme';
+import {EndPoint} from '../../pages/DrawingZone/useGoogleNearby.hook';
 
 interface Props {
-  device: Partial<Device>;
+  device: EndPoint;
   color: string;
   onPress: () => void;
 }
@@ -46,7 +46,7 @@ export const ConnectedDevice: FunctionComponent<Props> = ({
     <TouchableOpacity
       style={[styles.container, {backgroundColor: color}]}
       onPress={onPress}>
-      <Text>{device.name}</Text>
+      <Text>{device.endpointName.slice(0, 2).toUpperCase()}</Text>
     </TouchableOpacity>
   );
 };

@@ -9,16 +9,17 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import {Device} from 'react-native-ble-plx';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {theme} from '../../../theme/index';
+import {EndPoint} from '../../pages/DrawingZone/useGoogleNearby.hook';
 
 interface Props {
   isModalVisible: boolean;
   setIsModalVisible: (visibility: boolean) => void;
   style?: StyleProp<ViewStyle>;
-  connectedDevices: Partial<Device>[];
+  nearbyDevices: EndPoint[];
+  connectToDevice: (endpoint: EndPoint) => void;
 }
 interface Styles {
   modal: ViewStyle;
@@ -29,14 +30,20 @@ interface Styles {
   separator: ViewStyle;
 }
 
-const renderDevices = ({item, index}: {item: Device; index: any}) => {
+const renderDevices = ({
+  item,
+  connectToDevice,
+}: {
+  item: EndPoint;
+  connectToDevice: (endpoint: EndPoint) => void;
+}) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        console.log('connect to ', item.id);
+        connectToDevice(item);
       }}
       style={styles.deviceItem}>
-      <Text>{item.name}</Text>
+      <Text>{item.endpointName}</Text>
       <Icon name="wifi" color={theme.colors.blue} size={20} />
     </TouchableOpacity>
   );
@@ -75,7 +82,8 @@ const styles = StyleSheet.create<Styles>({
 export const BluetoothModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
-  connectedDevices,
+  nearbyDevices,
+  connectToDevice,
 }) => {
   return (
     <Modal
@@ -87,7 +95,7 @@ export const BluetoothModal: FunctionComponent<Props> = ({
       <SafeAreaView style={styles.modal}>
         <View style={styles.header}>
           <Icon name="undo" color={theme.colors.blue} size={30} />
-          <Text style={styles.title}>Connected devices</Text>
+          <Text style={styles.title}>Nearby devices</Text>
           <TouchableOpacity
             onPress={() => {
               setIsModalVisible(false);
@@ -97,9 +105,11 @@ export const BluetoothModal: FunctionComponent<Props> = ({
         </View>
         <View style={styles.body}>
           <FlatList
-            data={connectedDevices}
-            renderItem={renderDevices}
-            keyExtractor={(device: Device): string => device.id}
+            data={nearbyDevices}
+            renderItem={({item, index}: {item: EndPoint; index: number}) => {
+              return renderDevices({item, connectToDevice});
+            }}
+            keyExtractor={(device: EndPoint): string => device.endpointId}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
           />
         </View>

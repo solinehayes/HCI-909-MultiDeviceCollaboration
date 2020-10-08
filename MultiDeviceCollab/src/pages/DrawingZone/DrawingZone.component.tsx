@@ -4,13 +4,13 @@ import {FloatingButton} from '../../components/FloatingButton/FloatingButton.com
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {useBluetooth} from './useBluetooth.hook';
 import {Device} from 'react-native-ble-plx';
 import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.component';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
 import {BluetoothModal} from '../../components/BluetoothModal/BluetoothModal.component';
 import {ColorsModal} from '../../components/ColorsModal/ColorsModal.component';
+import {EndPoint, useGoogleNearby} from './useGoogleNearby.hook';
 
 type DrawingComponentNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -45,36 +45,6 @@ const styles = StyleSheet.create<Styles>({
     zIndex: 1,
   },
 });
-const mockDevices: Partial<Device>[] = [
-  {
-    id: 'EC:81:93:2A:25:57',
-    isConnectable: null,
-    localName: '',
-    manufacturerData: 'AwABGE4AAAyUe+eykVbsgZMqJVci',
-    mtu: 23,
-    name: 'MEGABOOM 3 RAPH',
-    overflowServiceUUIDs: null,
-    rssi: -65,
-    serviceData: null,
-    serviceUUIDs: ['0000fe61-0000-1000-8000-00805f9b34fb'],
-    solicitedServiceUUIDs: null,
-    txPowerLevel: null,
-  },
-  {
-    id: 'EC:81:93:2A:25:58',
-    isConnectable: null,
-    localName: '',
-    manufacturerData: 'AwABGE4AAAyUe+eykVbsgZMqJVci',
-    mtu: 23,
-    name: 'EB',
-    overflowServiceUUIDs: null,
-    rssi: -65,
-    serviceData: null,
-    serviceUUIDs: ['0000fe61-0000-1000-8000-00805f9b34fb'],
-    solicitedServiceUUIDs: null,
-    txPowerLevel: null,
-  },
-];
 
 export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   // List of post it to render
@@ -103,19 +73,13 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   const inset = useSafeAreaInsets();
 
   const {
-    createBleManager,
-    scanDevices,
-    connectedDevices,
-    checkBluetoothState,
-  } = useBluetooth();
+    startDiscovering,
+    startAdvertisingAndSend,
+    connectToNearbyEndpoint,
+    nearbyEndpoints,
+    connectedEndPoints,
+  } = useGoogleNearby();
 
-  useEffect(() => {
-    createBleManager();
-  });
-  useEffect(() => {
-    console.log('CONNECTED DEVICES');
-    console.log(connectedDevices);
-  }, [connectedDevices]);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topButtonContainer}>
@@ -136,7 +100,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
       </View>
 
       <View style={[styles.bottomButtonContainer, {bottom: inset.bottom}]}>
-        {mockDevices.map((device: Partial<Device>) => {
+        {connectedEndPoints.map((device: EndPoint) => {
           return (
             <ConnectedDevice
               device={device}
@@ -145,9 +109,10 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
                   Math.floor(Math.random() * (theme.postItColors.length - 1))
                 ]
               }
-              key={device.id}
+              key={device.endpointId}
               onPress={() => {
                 navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration);
+                startAdvertisingAndSend(device.endpointName, device.endpointId);
               }}
             />
           );
@@ -156,18 +121,15 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
           iconName="bluetooth-b"
           onPress={() => {
             setIsBluetoothModalDisplayed(true);
-            //let permissionGranted = checkBluetoothState();
-            //if (permissionGranted) {
-            //console.log('permission granted');
-            scanDevices();
-            //}
+            startDiscovering();
           }}
         />
       </View>
       <BluetoothModal
         isModalVisible={isBluetoothModalDisplayed}
         setIsModalVisible={setIsBluetoothModalDisplayed}
-        connectedDevices={connectedDevices}
+        nearbyDevices={nearbyEndpoints}
+        connectToDevice={connectToNearbyEndpoint}
       />
       <ColorsModal
         isModalVisible={isColorsModalDisplayed}
