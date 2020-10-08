@@ -42,9 +42,8 @@ const styles = StyleSheet.create<Styles>({
 const {width, height} = Dimensions.get('window');
 
 export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos, squareSize, color}) => {
-  console.log(width);
   const [textValue, onChangeText] = useState(textInit);
-  const [size, setSize] = useState(squareSize);
+  //const [size, setSize] = useState(squareSize);
   //const [left, setLeft] = useState(topPos);
   //const [top, setTop] = useState(leftPos);
   const [gesture, setGesture] = useState({});
@@ -58,6 +57,14 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
     await dispatch(action2);
   };
 
+  const resizePostIt = async (resizeFactor) => {
+    const action = {type: 'RESIZE_POSTIT', value: {id: id, resizeFactor: resizeFactor}};
+    await dispatch(action);
+    // Resize le deuxieme post it, pour le test
+    const action2 = {type: 'RESIZE_POSTIT', value: {id: -id, resizeFactor: resizeFactor}};
+    await dispatch(action2);
+  }
+
   const gestureResponder = createResponder({
     onStartShouldSetResponder: (evt, gestureState) => true,
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
@@ -69,7 +76,8 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
     onResponderGrant: (evt, gestureState) => {},
     onResponderMove: (evt, gestureState) => {
       if (gestureState.pinch && gestureState.previousPinch) {
-        setSize(size * (gestureState.pinch / gestureState.previousPinch));
+        resizePostIt(gestureState.pinch / gestureState.previousPinch);
+        //setSize(size * (gestureState.pinch / gestureState.previousPinch));
       }
       movePostIt(gestureState.moveY - gestureState.previousMoveY, gestureState.moveX - gestureState.previousMoveX);
       //setLeft(left + (gestureState.moveX - gestureState.previousMoveX));
