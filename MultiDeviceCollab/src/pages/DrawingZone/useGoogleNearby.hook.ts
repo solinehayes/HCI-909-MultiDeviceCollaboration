@@ -11,7 +11,7 @@ export interface EndPoint {
 
 export const useGoogleNearby = () => {
   const userviceId = '12';
-  const userviceName = 'ServiceName 2';
+  const [userName, setUserName] = useState<string>('');
 
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
@@ -22,16 +22,16 @@ export const useGoogleNearby = () => {
     );
   };
   const startAdvertising = () => {
-    console.log("startAdvertising début");
+    console.log('startAdvertising début');
     NearbyConnection.startAdvertising(
-      userviceName, // This nodes endpoint name
+      userName, // This nodes endpoint name
       userviceId, // A unique identifier for the service
       Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
     );
-    console.log("startAdvertising fin");
-  }
+    console.log('startAdvertising fin');
+  };
   const sendMessage = (message: string, endpointName: string, endpointId) => {
-    console.log("Send message to " + endpointName);
+    console.log('Send message to ' + endpointName);
     NearbyConnection.sendBytes(
       userviceId, // A unique identifier for the service
       endpointId, // ID of the endpoint wishing to stop playing audio from
@@ -39,7 +39,7 @@ export const useGoogleNearby = () => {
     );
   };
   const connectToNearbyEndpoint = (endpoint: EndPoint) => {
-    console.log("connect to nearby endpoint " + endpoint.endpointId);
+    console.log('connect to nearby endpoint ' + endpoint.endpointId);
     NearbyConnection.connectToEndpoint(
       userviceId, // A unique identifier for the service
       endpoint.endpointId, // ID of the endpoint to connect to
@@ -101,33 +101,41 @@ export const useGoogleNearby = () => {
       endpointName, // The name of the service thats starting to advertise
       serviceId, // A unique identifier for the service
     }) => {
-      console.log("onStartAdvertising");
-        },
+      console.log('onStartAdvertising');
+    },
   );
 
-  NearbyConnection.onReceivePayload(({
-    serviceId,              // A unique identifier for the service
-    endpointId,             // ID of the endpoint we got the payload from
-    payloadType,            // The type of this payload (File or a Stream) [See Payload](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Payload)
-    payloadId               // Unique identifier of the payload
+  NearbyConnection.onReceivePayload(
+    ({
+      serviceId, // A unique identifier for the service
+      endpointId, // ID of the endpoint we got the payload from
+      payloadType, // The type of this payload (File or a Stream) [See Payload](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Payload)
+      payloadId, // Unique identifier of the payload
     }) => {
       NearbyConnection.readBytes(
-        serviceId,               // A unique identifier for the service
-        endpointId,              // ID of the endpoint wishing to stop playing audio from
-        payloadId                // Unique identifier of the payload
-        ).then(({
-        type,                    // The Payload.Type represented by this payload
-        bytes,                   // [Payload.Type.BYTES] The bytes string that was sent
-        payloadId,               // [Payload.Type.FILE or Payload.Type.STREAM] The payloadId of the payload this payload is describing
-        filename,                // [Payload.Type.FILE] The name of the file being sent
-        metadata,                // [Payload.Type.FILE] The metadata sent along with the file
-        streamType,              // [Payload.Type.STREAM] The type of stream this is [audio or video]
-      }) => {
-      ToastAndroid.showWithGravity("Message received : "+bytes, ToastAndroid.SHORT, ToastAndroid.CENTER);
+        serviceId, // A unique identifier for the service
+        endpointId, // ID of the endpoint wishing to stop playing audio from
+        payloadId, // Unique identifier of the payload
+      ).then(
+        ({
+          type, // The Payload.Type represented by this payload
+          bytes, // [Payload.Type.BYTES] The bytes string that was sent
+          payloadId, // [Payload.Type.FILE or Payload.Type.STREAM] The payloadId of the payload this payload is describing
+          filename, // [Payload.Type.FILE] The name of the file being sent
+          metadata, // [Payload.Type.FILE] The metadata sent along with the file
+          streamType, // [Payload.Type.STREAM] The type of stream this is [audio or video]
+        }) => {
+          ToastAndroid.showWithGravity(
+            'Message received : ' + bytes,
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER,
+          );
 
-      console.log("Message received: " + bytes);
-    });
-  });
+          console.log('Message received: ' + bytes);
+        },
+      );
+    },
+  );
 
   return {
     startDiscovering,
