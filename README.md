@@ -20,11 +20,8 @@ Make sure you have installed:
 ```bash
 git clone git@github.com:solinehayes/HCI-909.git
 cd project-name
-nvm use
-bundle install
 yarn
-bundle exec pod repo update
-cd ios && bundle exec pod install && cd ..
+cd ios && pod install && cd ..
 ```
 
 # Develop
@@ -35,5 +32,5 @@ cd ios && bundle exec pod install && cd ..
 
 Then:
 
-- iOS: `yarn react-native run-ios`
-- Android: `yarn react-native run-android`
+- iOS: `yarn ios`
+- Android: `yarn android`
