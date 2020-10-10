@@ -7,7 +7,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {ConnectedDevice} from '../../components/ConnectedDevice/ConnectedDevice.component';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
-import {BluetoothModal} from '../../components/BluetoothModal/BluetoothModal.component';
+import {ConnectionModal} from '../../components/ConnectionModal/ConnectionModal.component';
 import {ColorsModal} from '../../components/ColorsModal/ColorsModal.component';
 import {EndPoint, useGoogleNearby} from './useGoogleNearby.hook';
 import {connect, ConnectedProps, useDispatch} from 'react-redux';
@@ -199,7 +199,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
             }}
           />
         </View>
-        <BluetoothModal
+        <ConnectionModal
           isModalVisible={isBluetoothModalDisplayed}
           setIsModalVisible={setIsBluetoothModalDisplayed}
           nearbyDevices={nearbyEndpoints}

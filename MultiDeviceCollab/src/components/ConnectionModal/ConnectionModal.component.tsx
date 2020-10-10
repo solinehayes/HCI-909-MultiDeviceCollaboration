@@ -79,7 +79,7 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-export const BluetoothModal: FunctionComponent<Props> = ({
+export const ConnectionModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
   nearbyDevices,
@@ -106,7 +106,7 @@ export const BluetoothModal: FunctionComponent<Props> = ({
         <View style={styles.body}>
           <FlatList
             data={nearbyDevices}
-            renderItem={({item, index}: {item: EndPoint; index: number}) => {
+            renderItem={({item}: {item: EndPoint; index: number}) => {
               return renderDevices({item, connectToDevice});
             }}
             keyExtractor={(device: EndPoint): string => device.endpointId}
