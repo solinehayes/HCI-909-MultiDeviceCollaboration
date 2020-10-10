@@ -73,7 +73,8 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
   const inset = useSafeAreaInsets();
 
   const {
-    startDiscovering,
+    searchForDevices,
+    stopSearchingForDevices,
     startAdvertisingAndSend,
     connectToNearbyEndpoint,
     nearbyEndpoints,
@@ -121,7 +122,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
           iconName="bluetooth-b"
           onPress={() => {
             setIsBluetoothModalDisplayed(true);
-            startDiscovering();
+            searchForDevices();
           }}
         />
       </View>
@@ -130,6 +131,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
         setIsModalVisible={setIsBluetoothModalDisplayed}
         nearbyDevices={nearbyEndpoints}
         connectToDevice={connectToNearbyEndpoint}
+        onClose={stopSearchingForDevices}
       />
       <ColorsModal
         isModalVisible={isColorsModalDisplayed}

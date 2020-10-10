@@ -9,22 +9,25 @@ export interface EndPoint {
 }
 
 export const useGoogleNearby = () => {
-  const userviceId = '2a5c508a-096c-11eb-adc1-0242ac120002';
+  const userviceId = '239741ce-0985-11eb-adc1-0242ac120002';
+  let subscribed_events = [];
 
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
 
-  const startDiscovering = () => {
-    NearbyConnection.startDiscovering(
+  const searchForDevices = async () => {
+    await NearbyConnection.startDiscovering(
       userviceId, // A unique identifier for the service
     );
+    NearbyConnection.startAdvertising('Soline', userviceId, Strategy.P2P_STAR);
+  };
+  const stopSearchingForDevices = async () => {
+    await NearbyConnection.stopDiscovering(
+      userviceId, // A unique identifier for the service
+    );
+    NearbyConnection.stopAdvertising(userviceId);
   };
   const startAdvertisingAndSend = (endpointName: string, endpointId) => {
-    NearbyConnection.startAdvertising(
-      endpointName, // This nodes endpoint name
-      userviceId, // A unique identifier for the service
-      Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
-    );
     let string = 'Hello World';
     NearbyConnection.sendBytes(
       userviceId, // A unique identifier for the service
@@ -40,7 +43,7 @@ export const useGoogleNearby = () => {
   };
   NearbyConnection.onEndpointDiscovered(
     ({endpointId, endpointName, serviceId}) => {
-      console.log(serviceId);
+      console.log('Endpoint found: ', endpointName);
       setNearbyEndpoints(nearbyEndpoints.concat([{endpointId, endpointName}]));
     },
   );
@@ -78,6 +81,7 @@ export const useGoogleNearby = () => {
       endpointName, // The name of the remote device we lost
       serviceId, // A unique identifier for the service
     }) => {
+      console.log('Lost connection of: ', endpointName, ' for ', serviceId);
       for (let i = 0; i < connectedEndPoints.length; i++) {
         if (connectedEndPoints[0].endpointId === endpointId) {
           setConnectedEndPoints(
@@ -89,39 +93,59 @@ export const useGoogleNearby = () => {
       }
     },
   );
-  NearbyConnection.onAdvertisingStarting(
+  NearbyConnection.onDiscoveryStarting(
     ({
-      endpointName, // The name of the service thats starting to advertise
       serviceId, // A unique identifier for the service
     }) => {
-      NearbyConnection.readBytes(
-        serviceId, // A unique identifier for the service
-        connectedEndPoints.map((endpoint) => {
-          if (endpoint.endpointName === endpointName) {
-            return endpoint.endpointId;
-          }
-        }), // ID of the endpoint wishing to stop playing audio from
-        'payloadId', // Unique identifier of the payload
-      ).then(
-        ({
-          type, // The Payload.Type represented by this payload
-          bytes, // [Payload.Type.BYTES] The bytes string that was sent
-          payloadId, // [Payload.Type.FILE or Payload.Type.STREAM] The payloadId of the payload this payload is describing
-          filename, // [Payload.Type.FILE] The name of the file being sent
-          metadata, // [Payload.Type.FILE] The metadata sent along with the file
-          streamType, // [Payload.Type.STREAM] The type of stream this is [audio or video]
-        }) => {
-          console.log('Received: ', bytes);
-        },
+      console.log('Discovery starting on', serviceId);
+    },
+  );
+
+  NearbyConnection.onDiscoveryStarted(
+    ({
+      serviceId, // A unique identifier for the service
+    }) => {
+      console.log('Discovery started on', serviceId);
+    },
+  );
+
+  NearbyConnection.onDiscoveryStartFailed(
+    ({
+      serviceId, // A unique identifier for the service
+      statusCode, // The status of the response [See CommonStatusCodes](https://developers.google.com/android/reference/com/google/android/gms/common/api/CommonStatusCodes)
+    }) => {
+      console.log('Discovery failed on ', serviceId, ': ', statusCode);
+    },
+  );
+  NearbyConnection.onAdvertisingStarted(
+    ({
+      endpointName, // The name of the service thats started to advertise
+      serviceId, // A unique identifier for the service
+    }) => {
+      console.log(
+        'Started to advertise as: ',
+        endpointName,
+        'for : ',
+        serviceId,
       );
+    },
+  );
+  NearbyConnection.onAdvertisingStartFailed(
+    ({
+      endpointName, // The name of the service thats failed to start to advertising
+      serviceId, // A unique identifier for the service
+      statusCode, // The status of the response [See CommonStatusCodes](https://developers.google.com/android/reference/com/google/android/gms/common/api/CommonStatusCodes)
+    }) => {
+      console.log('advertising failed on ', serviceId, ': ', statusCode);
     },
   );
 
   return {
-    startDiscovering,
+    searchForDevices,
     startAdvertisingAndSend,
     connectToNearbyEndpoint,
     nearbyEndpoints,
     connectedEndPoints,
+    stopSearchingForDevices,
   };
 };

@@ -20,6 +20,7 @@ interface Props {
   style?: StyleProp<ViewStyle>;
   nearbyDevices: EndPoint[];
   connectToDevice: (endpoint: EndPoint) => void;
+  onClose: () => void;
 }
 interface Styles {
   modal: ViewStyle;
@@ -84,6 +85,7 @@ export const BluetoothModal: FunctionComponent<Props> = ({
   setIsModalVisible,
   nearbyDevices,
   connectToDevice,
+  onClose,
 }) => {
   return (
     <Modal
@@ -98,6 +100,7 @@ export const BluetoothModal: FunctionComponent<Props> = ({
           <Text style={styles.title}>Nearby devices</Text>
           <TouchableOpacity
             onPress={() => {
+              onClose();
               setIsModalVisible(false);
             }}>
             <Icon name="close" color={theme.colors.blue} size={30} />
