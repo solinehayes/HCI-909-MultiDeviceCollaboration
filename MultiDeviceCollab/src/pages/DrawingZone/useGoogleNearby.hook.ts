@@ -144,5 +144,7 @@ export const useGoogleNearby = () => {
     connectToNearbyEndpoint,
     nearbyEndpoints,
     connectedEndPoints,
+    userName,
+    setUserName,
   };
 };

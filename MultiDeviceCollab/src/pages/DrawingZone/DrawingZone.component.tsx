@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useState} from 'react';
+import React, {FunctionComponent, useEffect, useState} from 'react';
 import {View, SafeAreaView, ViewStyle, StyleSheet, Button} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
@@ -11,6 +11,7 @@ import {BluetoothModal} from '../../components/BluetoothModal/BluetoothModal.com
 import {ColorsModal} from '../../components/ColorsModal/ColorsModal.component';
 import {EndPoint, useGoogleNearby} from './useGoogleNearby.hook';
 import {connect, ConnectedProps, useDispatch} from 'react-redux';
+import {UserNameModal} from '../../components/UserNameModal/UserNameModal.component';
 
 type DrawingComponentNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -70,6 +71,10 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     const [isColorsModalDisplayed, setIsColorsModalDisplayed] = useState<
       boolean
     >(false);
+
+    const [isUserNameModalDisplayed, setIsUserNameModalDisplayed] = useState<
+      boolean
+    >(false);
     const openColorChooser = () => {
       setIsColorsModalDisplayed(true);
     };
@@ -109,7 +114,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       //setPostIts(postIts.slice(0, postIts.length - 1));
       //}
     };
-    const inset = useSafeAreaInsets();
 
     const {
       startDiscovering,
@@ -118,16 +122,29 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       connectToNearbyEndpoint,
       nearbyEndpoints,
       connectedEndPoints,
+      userName,
+      setUserName,
     } = useGoogleNearby();
 
+    useEffect(() => {
+      if (!userName) {
+        setIsUserNameModalDisplayed(true);
+      }
+    }, [userName]);
+    const inset = useSafeAreaInsets();
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.topButtonContainer}>
+          <ConnectedDevice
+            device={{endpointName: userName, endpointId: 'me'}}
+            color={theme.colors.grey}
+            onPress={() => {
+              setIsUserNameModalDisplayed(true);
+            }}
+          />
           <FloatingButton iconName="file-o" onPress={openColorChooser} />
           <FloatingButton iconName="undo" onPress={removeLastPostIt} />
-          <FloatingButton iconName="pencil" onPress={() => {}} />
         </View>
-
         <View>
           {props.postits.map((postit) => (
             <PostIt
@@ -162,7 +179,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
             );
           })}
           <FloatingButton
-            iconName="bluetooth-b"
+            iconName="wifi"
             onPress={() => {
               setIsBluetoothModalDisplayed(true);
               startDiscovering();
@@ -192,6 +209,12 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           isModalVisible={isColorsModalDisplayed}
           setIsModalVisible={setIsColorsModalDisplayed}
           createPostIt={addPostIt}
+        />
+        <UserNameModal
+          isModalVisible={isUserNameModalDisplayed}
+          setIsModalVisible={setIsUserNameModalDisplayed}
+          userName={userName}
+          setUserName={setUserName}
         />
       </SafeAreaView>
     );
