@@ -10,7 +10,6 @@ export interface EndPoint {
 
 export const useGoogleNearby = () => {
   const userviceId = '239741ce-0985-11eb-adc1-0242ac120002';
-  let subscribed_events = [];
 
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
