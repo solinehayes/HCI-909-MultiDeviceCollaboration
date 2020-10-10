@@ -6316,6 +6316,11 @@ react-native-gesture-responder@^0.1.1:
   dependencies:
     react-timer-mixin "^0.13.3"
 
+react-native-google-nearby-connection@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/react-native-google-nearby-connection/-/react-native-google-nearby-connection-0.0.9.tgz#f85b380c704cbd638a69b4846283346de5748048"
+  integrity sha512-TDkmyj4vktaLM6qcxm9MqE51ZEgoMBxeZdSmm0czFxsUlCRdWrO47kpm54oTcYtxwsW/de2eICyZHlkybgA+9w==
+
 react-native-iphone-x-helper@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
