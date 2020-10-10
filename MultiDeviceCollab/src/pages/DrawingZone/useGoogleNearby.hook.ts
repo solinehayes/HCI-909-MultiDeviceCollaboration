@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import {ToastAndroid} from 'react-native';
 import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
@@ -10,7 +11,7 @@ export interface EndPoint {
 
 export const useGoogleNearby = () => {
   const userviceId = '12';
-  const userviceName = 'ServiceName';
+  const userviceName = 'ServiceName 2';
 
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
@@ -29,16 +30,16 @@ export const useGoogleNearby = () => {
     );
     console.log("startAdvertising fin");
   }
-  const sendMessage = (endpointName: string, endpointId) => {
-
-    let string = 'Hello World';
+  const sendMessage = (message: string, endpointName: string, endpointId) => {
+    console.log("Send message to " + endpointName);
     NearbyConnection.sendBytes(
       userviceId, // A unique identifier for the service
       endpointId, // ID of the endpoint wishing to stop playing audio from
-      string, // A string of bytes to send
+      message, // A string of bytes to send
     );
   };
   const connectToNearbyEndpoint = (endpoint: EndPoint) => {
+    console.log("connect to nearby endpoint " + endpoint.endpointId);
     NearbyConnection.connectToEndpoint(
       userviceId, // A unique identifier for the service
       endpoint.endpointId, // ID of the endpoint to connect to
@@ -100,31 +101,33 @@ export const useGoogleNearby = () => {
       endpointName, // The name of the service thats starting to advertise
       serviceId, // A unique identifier for the service
     }) => {
-      console.log("onStartAdvertising debut");
-      /*NearbyConnection.readBytes(
-        serviceId, // A unique identifier for the service
-        connectedEndPoints.map((endpoint) => {
-          if (endpoint.endpointName === endpointName) {
-            return endpoint.endpointId;
-          }
-        }), // ID of the endpoint wishing to stop playing audio from
-        'payloadId', // Unique identifier of the payload
-      ).then(
-        ({
-          type, // The Payload.Type represented by this payload
-          bytes, // [Payload.Type.BYTES] The bytes string that was sent
-          payloadId, // [Payload.Type.FILE or Payload.Type.STREAM] The payloadId of the payload this payload is describing
-          filename, // [Payload.Type.FILE] The name of the file being sent
-          metadata, // [Payload.Type.FILE] The metadata sent along with the file
-          streamType, // [Payload.Type.STREAM] The type of stream this is [audio or video]
-        }) => {
-          console.log('Received: ', bytes);
+      console.log("onStartAdvertising");
         },
-      );
-      console.log("onStartAdvertising fin");*/
-
-    },
   );
+
+  NearbyConnection.onReceivePayload(({
+    serviceId,              // A unique identifier for the service
+    endpointId,             // ID of the endpoint we got the payload from
+    payloadType,            // The type of this payload (File or a Stream) [See Payload](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Payload)
+    payloadId               // Unique identifier of the payload
+    }) => {
+      NearbyConnection.readBytes(
+        serviceId,               // A unique identifier for the service
+        endpointId,              // ID of the endpoint wishing to stop playing audio from
+        payloadId                // Unique identifier of the payload
+        ).then(({
+        type,                    // The Payload.Type represented by this payload
+        bytes,                   // [Payload.Type.BYTES] The bytes string that was sent
+        payloadId,               // [Payload.Type.FILE or Payload.Type.STREAM] The payloadId of the payload this payload is describing
+        filename,                // [Payload.Type.FILE] The name of the file being sent
+        metadata,                // [Payload.Type.FILE] The metadata sent along with the file
+        streamType,              // [Payload.Type.STREAM] The type of stream this is [audio or video]
+      }) => {
+      ToastAndroid.showWithGravity("Message received : "+bytes, ToastAndroid.SHORT, ToastAndroid.CENTER);
+
+      console.log("Message received: " + bytes);
+    });
+  });
 
   return {
     startDiscovering,

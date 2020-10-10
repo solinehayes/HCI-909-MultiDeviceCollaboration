@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useEffect, useState} from 'react';
-import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
+import {View, SafeAreaView, ViewStyle, StyleSheet, Button} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
@@ -113,7 +113,6 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
               key={device.endpointId}
               onPress={() => {
                 navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration);
-                sendMessage(device.endpointName, device.endpointId);
               }}
             />
           );
@@ -125,6 +124,11 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
             startDiscovering();
             startAdvertising();
           }}
+        />
+        <Button title="Send Hello world"
+          onPress={() => {connectedEndPoints.map((device: EndPoint) => {
+            sendMessage("Hello World",device.endpointName, device.endpointId);
+          })}}
         />
       </View>
       <BluetoothModal
