@@ -9,7 +9,8 @@ export interface EndPoint {
 }
 
 export const useGoogleNearby = () => {
-  const userviceId = '2a5c508a-096c-11eb-adc1-0242ac120002';
+  const userviceId = '12';
+  const userviceName = 'ServiceName';
 
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
@@ -19,12 +20,17 @@ export const useGoogleNearby = () => {
       userviceId, // A unique identifier for the service
     );
   };
-  const startAdvertisingAndSend = (endpointName: string, endpointId) => {
+  const startAdvertising = () => {
+    console.log("startAdvertising début");
     NearbyConnection.startAdvertising(
-      endpointName, // This nodes endpoint name
+      userviceName, // This nodes endpoint name
       userviceId, // A unique identifier for the service
       Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
     );
+    console.log("startAdvertising fin");
+  }
+  const sendMessage = (endpointName: string, endpointId) => {
+
     let string = 'Hello World';
     NearbyConnection.sendBytes(
       userviceId, // A unique identifier for the service
@@ -94,7 +100,8 @@ export const useGoogleNearby = () => {
       endpointName, // The name of the service thats starting to advertise
       serviceId, // A unique identifier for the service
     }) => {
-      NearbyConnection.readBytes(
+      console.log("onStartAdvertising debut");
+      /*NearbyConnection.readBytes(
         serviceId, // A unique identifier for the service
         connectedEndPoints.map((endpoint) => {
           if (endpoint.endpointName === endpointName) {
@@ -114,12 +121,15 @@ export const useGoogleNearby = () => {
           console.log('Received: ', bytes);
         },
       );
+      console.log("onStartAdvertising fin");*/
+
     },
   );
 
   return {
     startDiscovering,
-    startAdvertisingAndSend,
+    startAdvertising,
+    sendMessage,
     connectToNearbyEndpoint,
     nearbyEndpoints,
     connectedEndPoints,

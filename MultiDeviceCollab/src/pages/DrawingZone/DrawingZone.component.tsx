@@ -74,7 +74,8 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
 
   const {
     startDiscovering,
-    startAdvertisingAndSend,
+    startAdvertising,
+    sendMessage,
     connectToNearbyEndpoint,
     nearbyEndpoints,
     connectedEndPoints,
@@ -112,7 +113,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
               key={device.endpointId}
               onPress={() => {
                 navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration);
-                startAdvertisingAndSend(device.endpointName, device.endpointId);
+                sendMessage(device.endpointName, device.endpointId);
               }}
             />
           );
@@ -122,6 +123,7 @@ export const DrawingZone: FunctionComponent<Props> = ({navigation}) => {
           onPress={() => {
             setIsBluetoothModalDisplayed(true);
             startDiscovering();
+            startAdvertising();
           }}
         />
       </View>
