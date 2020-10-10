@@ -2,10 +2,12 @@ import {useState} from 'react';
 import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
+import {theme} from '../../../theme';
 
 export interface EndPoint {
   endpointId: string;
   endpointName: string;
+  color: string;
 }
 
 export const useGoogleNearby = () => {
@@ -21,16 +23,15 @@ export const useGoogleNearby = () => {
     );
   };
   const startAdvertising = () => {
-    console.log("startAdvertising début");
+    console.log('startAdvertising début');
     NearbyConnection.startAdvertising(
       userviceName, // This nodes endpoint name
       userviceId, // A unique identifier for the service
       Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
     );
-    console.log("startAdvertising fin");
-  }
+    console.log('startAdvertising fin');
+  };
   const sendMessage = (endpointName: string, endpointId) => {
-
     let string = 'Hello World';
     NearbyConnection.sendBytes(
       userviceId, // A unique identifier for the service
@@ -47,7 +48,9 @@ export const useGoogleNearby = () => {
   NearbyConnection.onEndpointDiscovered(
     ({endpointId, endpointName, serviceId}) => {
       console.log(serviceId);
-      setNearbyEndpoints(nearbyEndpoints.concat([{endpointId, endpointName}]));
+      setNearbyEndpoints(
+        nearbyEndpoints.concat([{endpointId, endpointName, color: ''}]),
+      );
     },
   );
   NearbyConnection.onConnectedToEndpoint(
@@ -58,7 +61,16 @@ export const useGoogleNearby = () => {
     }) => {
       console.log('Successfully connected to ', endpointName);
       setConnectedEndPoints(
-        connectedEndPoints.concat([{endpointId, endpointName}]),
+        connectedEndPoints.concat([
+          {
+            endpointId,
+            endpointName,
+            color:
+              theme.postItColors[
+                Math.floor(Math.random() * (theme.postItColors.length - 1))
+              ],
+          },
+        ]),
       );
     },
   );
@@ -100,7 +112,7 @@ export const useGoogleNearby = () => {
       endpointName, // The name of the service thats starting to advertise
       serviceId, // A unique identifier for the service
     }) => {
-      console.log("onStartAdvertising debut");
+      console.log('onStartAdvertising debut');
       /*NearbyConnection.readBytes(
         serviceId, // A unique identifier for the service
         connectedEndPoints.map((endpoint) => {
@@ -122,7 +134,6 @@ export const useGoogleNearby = () => {
         },
       );
       console.log("onStartAdvertising fin");*/
-
     },
   );
 
