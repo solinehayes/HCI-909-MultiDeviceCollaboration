@@ -49,7 +49,6 @@ export const useGoogleNearby = () => {
   };
   NearbyConnection.onEndpointDiscovered(
     ({endpointId, endpointName, serviceId}) => {
-      console.log(serviceId);
       setNearbyEndpoints(
         nearbyEndpoints.concat([{endpointId, endpointName, color: ''}]),
       );
@@ -61,7 +60,7 @@ export const useGoogleNearby = () => {
       endpointName, // The name of the service
       serviceId, // A unique identifier for the service
     }) => {
-      console.log('Successfully connected to ', endpointName);
+      //console.log('Successfully connected to ', endpointName);
       setConnectedEndPoints(
         connectedEndPoints.concat([
           {
@@ -133,14 +132,14 @@ export const useGoogleNearby = () => {
           type, // The Payload.Type represented by this payload
           bytes, // [Payload.Type.BYTES] The bytes string that was sent
         }) => {
-          ToastAndroid.showWithGravity(
+          /*ToastAndroid.showWithGravity(
             'Message received : ' + bytes,
             ToastAndroid.SHORT,
             ToastAndroid.CENTER,
-          );
+          );*/
           setNewPostit(bytes);
           //dispatch(JSON.parse(bytes));
-          console.log('Message received: ' + bytes);
+          //console.log('Message received: ' + bytes);
         },
       );
     },

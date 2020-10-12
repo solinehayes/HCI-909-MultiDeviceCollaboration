@@ -1,8 +1,7 @@
 import {theme} from '../../../theme';
 
 // Deuxième post it pour le test
-const initialState = {postits: [{id: 1, text: 'post-it 1', topPos: 100, leftPos: 100, squareSize: 100, color: theme.postItColors[0]},
-                                {id: -1, text: 'post-it 1 bis', topPos: 100, leftPos: -260, squareSize: 100, color: theme.postItColors[0]}]};
+const initialState = {postits: []};
 
 export const modifyPostit = (state = initialState, action) => {
   let nextState;

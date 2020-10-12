@@ -50,13 +50,14 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
   const [gesture, setGesture] = useState({});
   const dispatch = useDispatch();
 
-  const movePostIt = async (newTopPos, newLeftPos) => {
+  const movePostIt = (newTopPos, newLeftPos) => {
     const action = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos}};
-    await dispatch(action);
-    // Bouger le deuxieme post it, pour le test, mais ensuite, envoyer message
-    //const action2 = {type: 'MOVE_POSTIT', value: {id: -id, newTopPos: newTopPos, newLeftPos: newLeftPos-360}};
-    //await dispatch(action2);
-    sendMessageToAll(JSON.stringify(action));
+    dispatch(action);
+    if (newLeftPos+squareSize/2>width || newLeftPos-squareSize/2<0 || newTopPos-squareSize/2<0 || newTopPos+squareSize/2>height){
+      console.log("Send !");
+      const action2 = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos-width}};
+      sendMessageToAll(JSON.stringify(action2));
+    }
   };
 
   const resizePostIt = async (resizeFactor) => {

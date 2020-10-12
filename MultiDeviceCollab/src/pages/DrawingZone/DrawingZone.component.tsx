@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useEffect, useState} from 'react';
-import {View, SafeAreaView, ViewStyle, StyleSheet, Button} from 'react-native';
+import {View, SafeAreaView, ViewStyle, StyleSheet, Button, Dimensions} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
@@ -86,10 +86,12 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     };
 
     // Function to add a post it
+    const {width, height} = Dimensions.get('window');
+    console.log(width);
     const addPostIt = (color: string) => {
       //const newId = postIts.length + 1;
       //setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId, color}));
-      const newId = props.postits.length / 2 + 1;
+      const newId = props.postits.length + 1;
       const action = {
         type: 'ADD_POSTIT',
         value: {
@@ -102,7 +104,18 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         },
       };
       dispatch(action);
-      sendMessageToAll(JSON.stringify(action));
+      const action2 = {
+        type: 'ADD_POSTIT',
+        value: {
+          id: newId,
+          text: 'post-it ' + newId,
+          leftPos: 100-width,
+          topPos: 100,
+          squareSize: 100,
+          color: color,
+        },
+      };
+      sendMessageToAll(JSON.stringify(action2));
     };
     const removeLastPostIt = () => {
       //if (postIts.length !== 0) {
@@ -166,7 +179,11 @@ export const DrawingZone: FunctionComponent<Props> = connector(
             return (
               <ConnectedDevice
                 device={device}
-                color={device.color}
+                color={
+                  theme.postItColors[
+                    Math.floor(Math.random() * (theme.postItColors.length - 1))
+                  ]
+                }
                 key={device.endpointId}
                 onPress={() => {
                   props.navigation.navigate(
