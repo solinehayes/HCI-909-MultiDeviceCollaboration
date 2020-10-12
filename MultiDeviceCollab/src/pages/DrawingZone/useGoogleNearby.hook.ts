@@ -3,6 +3,7 @@ import {ToastAndroid} from 'react-native';
 import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
+import {useDispatch} from 'react-redux';
 
 export interface EndPoint {
   endpointId: string;
@@ -10,6 +11,7 @@ export interface EndPoint {
 }
 
 export const useGoogleNearby = () => {
+  const dispatch = useDispatch();
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
 
@@ -130,7 +132,7 @@ export const useGoogleNearby = () => {
             ToastAndroid.SHORT,
             ToastAndroid.CENTER,
           );
-
+          dispatch(JSON.parse(bytes));
           console.log('Message received: ' + bytes);
         },
       );

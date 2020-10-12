@@ -78,6 +78,17 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     const openColorChooser = () => {
       setIsColorsModalDisplayed(true);
     };
+
+    const sendMessageToAll = (message: string) => {
+      connectedEndPoints.map((device: EndPoint) => {
+        sendMessage(
+          message,
+          device.endpointName,
+          device.endpointId,
+        );
+      });
+    } ;
+
     // Function to add a post it
     const addPostIt = (color: string) => {
       //const newId = postIts.length + 1;
@@ -94,20 +105,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           color: color,
         },
       };
-      // Ajouter post it bis pour test
-      const action2 = {
-        type: 'ADD_POSTIT',
-        value: {
-          id: -newId,
-          text: 'post-it ' + newId + ' bis',
-          leftPos: 100 - 360,
-          topPos: 100,
-          squareSize: 100,
-          color: color,
-        },
-      };
       dispatch(action);
-      dispatch(action2);
+      sendMessageToAll(JSON.stringify(action));
     };
     const removeLastPostIt = () => {
       //if (postIts.length !== 0) {
@@ -189,13 +188,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           <Button
             title="Send Hello world"
             onPress={() => {
-              connectedEndPoints.map((device: EndPoint) => {
-                sendMessage(
-                  'Hello World',
-                  device.endpointName,
-                  device.endpointId,
-                );
-              });
+              sendMessageToAll("HelloWorld");
             }}
           />
         </View>
