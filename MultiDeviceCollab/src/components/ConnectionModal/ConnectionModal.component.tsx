@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -57,15 +58,16 @@ const styles = StyleSheet.create<Styles>({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     marginHorizontal: 3 * theme.gridUnit,
     paddingVertical: 4 * theme.gridUnit,
   },
-  title: {fontSize: 20, fontWeight: 'bold'},
+  title: {fontSize: 20, fontWeight: 'bold', textAlign: 'center', flex: 1},
   body: {
     flex: 1,
     marginHorizontal: 3 * theme.gridUnit,
     paddingVertical: 4 * theme.gridUnit,
+    justifyContent: 'center',
   },
   deviceItem: {
     marginVertical: 3 * theme.gridUnit,
@@ -79,7 +81,7 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
-export const BluetoothModal: FunctionComponent<Props> = ({
+export const ConnectionModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
   nearbyDevices,
@@ -94,7 +96,6 @@ export const BluetoothModal: FunctionComponent<Props> = ({
       }}>
       <SafeAreaView style={styles.modal}>
         <View style={styles.header}>
-          <Icon name="undo" color={theme.colors.blue} size={30} />
           <Text style={styles.title}>Nearby devices</Text>
           <TouchableOpacity
             onPress={() => {
@@ -106,11 +107,14 @@ export const BluetoothModal: FunctionComponent<Props> = ({
         <View style={styles.body}>
           <FlatList
             data={nearbyDevices}
-            renderItem={({item, index}: {item: EndPoint; index: number}) => {
+            renderItem={({item}: {item: EndPoint; index: number}) => {
               return renderDevices({item, connectToDevice});
             }}
             keyExtractor={(device: EndPoint): string => device.endpointId}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ListEmptyComponent={() => (
+              <ActivityIndicator color={theme.colors.blue} size={40} />
+            )}
           />
         </View>
       </SafeAreaView>
