@@ -3,15 +3,15 @@ import {ToastAndroid} from 'react-native';
 import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
-import {useDispatch} from 'react-redux';
+import {theme} from '../../../theme';
 
 export interface EndPoint {
   endpointId: string;
   endpointName: string;
+  color: string;
 }
 
 export const useGoogleNearby = () => {
-  const dispatch = useDispatch();
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
   const [newPostit, setNewPostit] = useState<string>('');
@@ -50,7 +50,9 @@ export const useGoogleNearby = () => {
   NearbyConnection.onEndpointDiscovered(
     ({endpointId, endpointName, serviceId}) => {
       console.log(serviceId);
-      setNearbyEndpoints(nearbyEndpoints.concat([{endpointId, endpointName}]));
+      setNearbyEndpoints(
+        nearbyEndpoints.concat([{endpointId, endpointName, color: ''}]),
+      );
     },
   );
   NearbyConnection.onConnectedToEndpoint(
@@ -61,7 +63,16 @@ export const useGoogleNearby = () => {
     }) => {
       console.log('Successfully connected to ', endpointName);
       setConnectedEndPoints(
-        connectedEndPoints.concat([{endpointId, endpointName}]),
+        connectedEndPoints.concat([
+          {
+            endpointId,
+            endpointName,
+            color:
+              theme.postItColors[
+                Math.floor(Math.random() * (theme.postItColors.length - 1))
+              ],
+          },
+        ]),
       );
     },
   );

@@ -166,11 +166,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
             return (
               <ConnectedDevice
                 device={device}
-                color={
-                  theme.postItColors[
-                    Math.floor(Math.random() * (theme.postItColors.length - 1))
-                  ]
-                }
+                color={device.color}
                 key={device.endpointId}
                 onPress={() => {
                   props.navigation.navigate(
