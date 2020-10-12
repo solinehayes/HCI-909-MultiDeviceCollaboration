@@ -105,18 +105,17 @@ export const ConnectionModal: FunctionComponent<Props> = ({
           </TouchableOpacity>
         </View>
         <View style={styles.body}>
-          {nearbyDevices === [] ? (
-            <FlatList
-              data={nearbyDevices}
-              renderItem={({item}: {item: EndPoint; index: number}) => {
-                return renderDevices({item, connectToDevice});
-              }}
-              keyExtractor={(device: EndPoint): string => device.endpointId}
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
-            />
-          ) : (
-            <ActivityIndicator color={theme.colors.blue} size={40} />
-          )}
+          <FlatList
+            data={nearbyDevices}
+            renderItem={({item}: {item: EndPoint; index: number}) => {
+              return renderDevices({item, connectToDevice});
+            }}
+            keyExtractor={(device: EndPoint): string => device.endpointId}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ListEmptyComponent={() => (
+              <ActivityIndicator color={theme.colors.blue} size={40} />
+            )}
+          />
         </View>
       </SafeAreaView>
     </Modal>
