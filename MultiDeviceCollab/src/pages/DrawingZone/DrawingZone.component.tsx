@@ -81,13 +81,9 @@ export const DrawingZone: FunctionComponent<Props> = connector(
 
     const sendMessageToAll = (message: string) => {
       connectedEndPoints.map((device: EndPoint) => {
-        sendMessage(
-          message,
-          device.endpointName,
-          device.endpointId,
-        );
+        sendMessage(message, device.endpointName, device.endpointId);
       });
-    } ;
+    };
 
     // Function to add a post it
     const addPostIt = (color: string) => {
@@ -123,6 +119,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       connectedEndPoints,
       userName,
       setUserName,
+      newPostit,
     } = useGoogleNearby();
 
     useEffect(() => {
@@ -130,6 +127,11 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         setIsUserNameModalDisplayed(true);
       }
     }, [userName]);
+    useEffect(() => {
+      if (dispatch && newPostit) {
+        dispatch(JSON.parse(newPostit));
+      }
+    }, [newPostit, dispatch]);
     const inset = useSafeAreaInsets();
     return (
       <SafeAreaView style={styles.container}>
@@ -188,7 +190,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           <Button
             title="Send Hello world"
             onPress={() => {
-              sendMessageToAll("HelloWorld");
+              sendMessageToAll('HelloWorld');
             }}
           />
         </View>

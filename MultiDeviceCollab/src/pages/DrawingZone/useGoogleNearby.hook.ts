@@ -14,7 +14,7 @@ export const useGoogleNearby = () => {
   const dispatch = useDispatch();
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
-
+  const [newPostit, setNewPostit] = useState<string>('');
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
 
@@ -111,7 +111,6 @@ export const useGoogleNearby = () => {
     ({
       serviceId, // A unique identifier for the service
       endpointId, // ID of the endpoint we got the payload from
-      payloadType, // The type of this payload (File or a Stream) [See Payload](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Payload)
       payloadId, // Unique identifier of the payload
     }) => {
       NearbyConnection.readBytes(
@@ -122,17 +121,14 @@ export const useGoogleNearby = () => {
         ({
           type, // The Payload.Type represented by this payload
           bytes, // [Payload.Type.BYTES] The bytes string that was sent
-          payloadId, // [Payload.Type.FILE or Payload.Type.STREAM] The payloadId of the payload this payload is describing
-          filename, // [Payload.Type.FILE] The name of the file being sent
-          metadata, // [Payload.Type.FILE] The metadata sent along with the file
-          streamType, // [Payload.Type.STREAM] The type of stream this is [audio or video]
         }) => {
           ToastAndroid.showWithGravity(
             'Message received : ' + bytes,
             ToastAndroid.SHORT,
             ToastAndroid.CENTER,
           );
-          dispatch(JSON.parse(bytes));
+          setNewPostit(bytes);
+          //dispatch(JSON.parse(bytes));
           console.log('Message received: ' + bytes);
         },
       );
@@ -148,5 +144,6 @@ export const useGoogleNearby = () => {
     connectedEndPoints,
     userName,
     setUserName,
+    newPostit,
   };
 };
