@@ -49,11 +49,11 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
   const [gesture, setGesture] = useState({});
   const dispatch = useDispatch();
 
-  const movePostIt = async (moveTop, moveLeft) => {
-    const action = {type: 'MOVE_POSTIT', value: {id: id, moveTop: moveTop, moveLeft: moveLeft}};
+  const movePostIt = async (newTopPos, newLeftPos) => {
+    const action = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos}};
     await dispatch(action);
     // Bouger le deuxieme post it, pour le test, mais ensuite, envoyer message
-    const action2 = {type: 'MOVE_POSTIT', value: {id: -id, moveTop: moveTop, moveLeft: moveLeft}};
+    const action2 = {type: 'MOVE_POSTIT', value: {id: -id, newTopPos: newTopPos, newLeftPos: newLeftPos-360}};
     await dispatch(action2);
   };
 
@@ -79,7 +79,7 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
         resizePostIt(gestureState.pinch / gestureState.previousPinch);
         //setSize(size * (gestureState.pinch / gestureState.previousPinch));
       }
-      movePostIt(gestureState.moveY - gestureState.previousMoveY, gestureState.moveX - gestureState.previousMoveX);
+      movePostIt(topPos + gestureState.moveY - gestureState.previousMoveY, leftPos + gestureState.moveX - gestureState.previousMoveX);
       //setLeft(left + (gestureState.moveX - gestureState.previousMoveX));
       //setTop(top + (gestureState.moveY - gestureState.previousMoveY));
 

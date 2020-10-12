@@ -17,8 +17,8 @@ export const modifyPostit = (state = initialState, action) => {
       const postitIndex_m = state.postits.findIndex(item=>item.id === action.value.id);
       // Récupérer les propriétés du post it à bouger
       const postit_m = state.postits[postitIndex_m];
-      const newTopPos = postit_m.topPos + action.value.moveTop;
-      const newLeftPos = postit_m.leftPos + action.value.moveLeft;
+      const newTopPos = action.value.newTopPos;
+      const newLeftPos = action.value.newLeftPos;
       // Supprimer le post it et en créer un nouveau
       const newPostIt_m = {id: action.value.id, text: postit_m.text, topPos: newTopPos, leftPos: newLeftPos, squareSize : postit_m.squareSize, color: postit_m.color};
       nextState = {
