@@ -156,6 +156,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
               squareSize={postit.squareSize}
               key={postit.id}
               color={postit.color}
+              sendMessageToAll = {sendMessageToAll}
             />
           ))}
         </View>

@@ -21,6 +21,7 @@ interface Props {
   leftPos: number;
   squareSize: number;
   color: string;
+  sendMessageToAll;
 }
 interface Styles {
   container: ViewStyle;
@@ -41,7 +42,7 @@ const styles = StyleSheet.create<Styles>({
 
 const {width, height} = Dimensions.get('window');
 
-export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos, squareSize, color}) => {
+export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos, squareSize, color, sendMessageToAll}) => {
   const [textValue, onChangeText] = useState(textInit);
   //const [size, setSize] = useState(squareSize);
   //const [left, setLeft] = useState(topPos);
@@ -53,8 +54,9 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
     const action = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos}};
     await dispatch(action);
     // Bouger le deuxieme post it, pour le test, mais ensuite, envoyer message
-    const action2 = {type: 'MOVE_POSTIT', value: {id: -id, newTopPos: newTopPos, newLeftPos: newLeftPos-360}};
-    await dispatch(action2);
+    //const action2 = {type: 'MOVE_POSTIT', value: {id: -id, newTopPos: newTopPos, newLeftPos: newLeftPos-360}};
+    //await dispatch(action2);
+    sendMessageToAll(JSON.stringify(action));
   };
 
   const resizePostIt = async (resizeFactor) => {
