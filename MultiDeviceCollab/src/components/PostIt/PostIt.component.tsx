@@ -12,10 +12,14 @@ import {
 } from 'react-native';
 import {theme} from '../../../theme';
 import {createResponder} from 'react-native-gesture-responder';
+import {connect, ConnectedProps, useDispatch} from 'react-redux';
 
 interface Props {
   textInit: string;
   id: number;
+  topPos: number;
+  leftPos: number;
+  squareSize: number;
   color: string;
 }
 interface Styles {
@@ -37,12 +41,29 @@ const styles = StyleSheet.create<Styles>({
 
 const {width, height} = Dimensions.get('window');
 
-export const PostIt: FunctionComponent<Props> = ({textInit, id, color}) => {
+export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos, squareSize, color}) => {
   const [textValue, onChangeText] = useState(textInit);
-  const [size, setSize] = useState(100);
-  const [left, setLeft] = useState(100);
-  const [top, setTop] = useState(100);
+  //const [size, setSize] = useState(squareSize);
+  //const [left, setLeft] = useState(topPos);
+  //const [top, setTop] = useState(leftPos);
   const [gesture, setGesture] = useState({});
+  const dispatch = useDispatch();
+
+  const movePostIt = async (moveTop, moveLeft) => {
+    const action = {type: 'MOVE_POSTIT', value: {id: id, moveTop: moveTop, moveLeft: moveLeft}};
+    await dispatch(action);
+    // Bouger le deuxieme post it, pour le test, mais ensuite, envoyer message
+    const action2 = {type: 'MOVE_POSTIT', value: {id: -id, moveTop: moveTop, moveLeft: moveLeft}};
+    await dispatch(action2);
+  };
+
+  const resizePostIt = async (resizeFactor) => {
+    const action = {type: 'RESIZE_POSTIT', value: {id: id, resizeFactor: resizeFactor}};
+    await dispatch(action);
+    // Resize le deuxieme post it, pour le test
+    const action2 = {type: 'RESIZE_POSTIT', value: {id: -id, resizeFactor: resizeFactor}};
+    await dispatch(action2);
+  }
 
   const gestureResponder = createResponder({
     onStartShouldSetResponder: (evt, gestureState) => true,
@@ -55,10 +76,12 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, color}) => {
     onResponderGrant: (evt, gestureState) => {},
     onResponderMove: (evt, gestureState) => {
       if (gestureState.pinch && gestureState.previousPinch) {
-        setSize(size * (gestureState.pinch / gestureState.previousPinch));
+        resizePostIt(gestureState.pinch / gestureState.previousPinch);
+        //setSize(size * (gestureState.pinch / gestureState.previousPinch));
       }
-      setLeft(left + (gestureState.moveX - gestureState.previousMoveX));
-      setTop(top + (gestureState.moveY - gestureState.previousMoveY));
+      movePostIt(gestureState.moveY - gestureState.previousMoveY, gestureState.moveX - gestureState.previousMoveX);
+      //setLeft(left + (gestureState.moveX - gestureState.previousMoveX));
+      //setTop(top + (gestureState.moveY - gestureState.previousMoveY));
 
       setGesture({...gestureState});
     },
@@ -76,10 +99,10 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, color}) => {
       <TouchableOpacity
         style={[
           {
-            width: size,
-            height: size,
-            left: left - size / 2,
-            top: top - size / 2,
+            width: squareSize,
+            height: squareSize,
+            left: leftPos - squareSize / 2,
+            top: topPos - squareSize / 2,
           },
           styles.container,
           {backgroundColor: color},
