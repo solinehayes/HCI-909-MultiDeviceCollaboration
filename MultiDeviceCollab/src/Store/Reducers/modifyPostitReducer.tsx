@@ -1,18 +1,22 @@
 import {theme} from '../../../theme';
 
 // Deuxième post it pour le test
-const initialState = {postits: []};
+const initialState = {postits: [], index: 1};
 
 export const modifyPostit = (state = initialState, action) => {
   let nextState;
   switch(action.type){
     case 'ADD_POSTIT':
+      console.log("ADD");
+      console.log(state.postits);
       if (state.postits.findIndex(item=>item.id == action.value.id)==-1){
         nextState = {
           ...state,
-          postits : [...state.postits, action.value]
+          postits : [...state.postits, action.value],
+          index : state.index+1
         };
       }
+      console.log(nextState.postits);
       return nextState || state;
 
     case 'MOVE_POSTIT':
@@ -49,6 +53,15 @@ export const modifyPostit = (state = initialState, action) => {
         ...state,
         postits: [...state.postits.filter((item, index) => index!=postitIndex_t), newPostIt_t]
       };
+
+      case 'REMOVE_LAST':
+        console.log("REMOVE");
+        console.log(state.postits);
+        nextState = {
+          ...state,
+          postits: state.postits.slice(0, state.postits.length-1)
+        };
+        console.log(nextState.postits);
       return nextState || state;
 
     default:

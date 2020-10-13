@@ -21,6 +21,7 @@ type DrawingComponentNavigationProp = StackNavigationProp<
 const mapStateToProps = (state) => {
   return {
     postits: state.postits,
+    index: state.index,
   };
 };
 
@@ -87,16 +88,16 @@ export const DrawingZone: FunctionComponent<Props> = connector(
 
     // Function to add a post it
     const {width, height} = Dimensions.get('window');
-    console.log(width);
+
     const addPostIt = (color: string) => {
       //const newId = postIts.length + 1;
       //setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId, color}));
-      const newId = props.postits.length + 1;
+      //const newId = props.postits.length + 1;
       const action = {
         type: 'ADD_POSTIT',
         value: {
-          id: newId,
-          text: 'post-it ' + newId,
+          id: props.index,
+          text: 'post-it ' + props.index,
           leftPos: 100,
           topPos: 100,
           squareSize: 100,
@@ -107,8 +108,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       const action2 = {
         type: 'ADD_POSTIT',
         value: {
-          id: newId,
-          text: 'post-it ' + newId,
+          id: props.index,
+          text: 'post-it ' + props.index,
           leftPos: 100-width,
           topPos: 100,
           squareSize: 100,
@@ -117,10 +118,14 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       };
       sendMessageToAll(JSON.stringify(action2));
     };
+
     const removeLastPostIt = () => {
-      //if (postIts.length !== 0) {
-      //setPostIts(postIts.slice(0, postIts.length - 1));
-      //}
+      const action = {
+        type : 'REMOVE_LAST',
+        value: {}
+      };
+      dispatch(action);
+      sendMessageToAll(JSON.stringify(action));
     };
 
     const {
