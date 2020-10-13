@@ -55,19 +55,23 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
     dispatch(action);
     if (newLeftPos+squareSize/2+30>width || newLeftPos-squareSize-30/2<0 || newTopPos-squareSize/2-30<0 || newTopPos+squareSize/2+30>height){
       if (Math.abs(newTopPos-topPos)>7 || Math.abs(newLeftPos-leftPos)>7){
-        console.log("Send !");
         const action2 = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos-width}};
         sendMessageToAll(JSON.stringify(action2));
       }
     }
   };
 
-  const resizePostIt = async (resizeFactor) => {
-    const action = {type: 'RESIZE_POSTIT', value: {id: id, resizeFactor: resizeFactor}};
-    await dispatch(action);
-    // Resize le deuxieme post it, pour le test
-    const action2 = {type: 'RESIZE_POSTIT', value: {id: -id, resizeFactor: resizeFactor}};
-    await dispatch(action2);
+  const resizePostIt = (newSquareSize) => {
+    const action = {type: 'RESIZE_POSTIT', value: {id: id, newSquareSize: newSquareSize}};
+    dispatch(action);
+    if (Math.abs(squareSize-newSquareSize)>7){
+      sendMessageToAll(JSON.stringify(action));
+    }
+  }
+
+  const changeText = (newText) => {
+    const action = {type: 'CHANGE_TEXT', value: {id: id, newText: newText}};
+    sendMessageToAll(JSON.stringify(action));
   }
 
   const gestureResponder = createResponder({
@@ -81,12 +85,9 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
     onResponderGrant: (evt, gestureState) => {},
     onResponderMove: (evt, gestureState) => {
       if (gestureState.pinch && gestureState.previousPinch) {
-        resizePostIt(gestureState.pinch / gestureState.previousPinch);
-        //setSize(size * (gestureState.pinch / gestureState.previousPinch));
+        resizePostIt(squareSize * gestureState.pinch / gestureState.previousPinch);
       }
       movePostIt(topPos + gestureState.moveY - gestureState.previousMoveY, leftPos + gestureState.moveX - gestureState.previousMoveX);
-      //setLeft(left + (gestureState.moveX - gestureState.previousMoveX));
-      //setTop(top + (gestureState.moveY - gestureState.previousMoveY));
 
       setGesture({...gestureState});
     },
@@ -114,7 +115,7 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
         ]}>
         <TextInput
           style={styles.text}
-          onChangeText={(text) => onChangeText(text)}
+          onChangeText={(text) => {onChangeText(text); changeText(text);}}
           multiline={true}>
           {' '}
           {textInit}{' '}
