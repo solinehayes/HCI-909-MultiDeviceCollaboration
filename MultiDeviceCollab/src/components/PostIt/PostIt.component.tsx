@@ -9,6 +9,7 @@ import {
   Dimensions,
   Animated,
   TextStyle,
+  StatusBar,
 } from 'react-native';
 import {theme} from '../../../theme';
 import {createResponder} from 'react-native-gesture-responder';
@@ -51,7 +52,7 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
   const movePostIt = (newTopPos, newLeftPos) => {
     const action = {type: 'MOVE_POSTIT', value: {id: id, topPos: newTopPos, leftPos: newLeftPos}};
     dispatch(action);
-    if (newLeftPos+squareSize/2+30>width || newLeftPos-squareSize-30/2<0 || newTopPos-squareSize/2-30<0 || newTopPos+squareSize/2+30>height){
+    if (newLeftPos+squareSize/2+20>width || newLeftPos-squareSize/2-20<0 || newTopPos-squareSize/2-20<0 || newTopPos+squareSize/2+20>height-80){
       if (Math.abs(newTopPos-topPos)>7 || Math.abs(newLeftPos-leftPos)>7){
         transposeAndSendAction(action);
       }

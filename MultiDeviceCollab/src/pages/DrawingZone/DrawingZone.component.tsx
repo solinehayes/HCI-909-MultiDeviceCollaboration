@@ -90,9 +90,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     const {width, height} = Dimensions.get('window');
 
     const addPostIt = (color: string) => {
-      //const newId = postIts.length + 1;
-      //setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId, color}));
-      //const newId = props.postits.length + 1;
       const action = {
         type: 'ADD_POSTIT',
         value: {

@@ -23,6 +23,8 @@ export const useGoogleNearby = () => {
   // A changer en fonction de la configuration
   const [deviceLeft, setDeviceLeft] = useState();
   const [deviceRight, setDeviceRight] = useState();
+  const [deviceUp, setDeviceUp] = useState();
+  const [deviceDown, setDeviceDown] = useState();
 
   const startDiscovering = () => {
     NearbyConnection.startDiscovering(
@@ -58,6 +60,20 @@ export const useGoogleNearby = () => {
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
       sendMessage(JSON.stringify(actionRight), deviceRight.name, deviceRight.id);
+    }
+    // Transpose and send to up
+    if (deviceUp!=undefined){
+      const actionUp = JSON.parse(JSON.stringify(action));
+      // 80 : valeur arbitraire pour compenser la hauteur du bandeau
+      actionUp.value.topPos = action.value.topPos + deviceUp.height -80;
+      sendMessage(JSON.stringify(actionUp), deviceUp.name, deviceUp.id);
+    }
+    // Transpose and send down
+    if (deviceDown!=undefined){
+      const actionDown = JSON.parse(JSON.stringify(action));
+      // 80 : valeur arbitraire pour compenser la hauteur du bandeau
+      actionDown.value.topPos = action.value.topPos - height +80;
+      sendMessage(JSON.stringify(actionDown), deviceDown.name, deviceDown.id);
     }
   };
 
@@ -95,7 +111,7 @@ export const useGoogleNearby = () => {
         ]),
       );
       // Par défaut pour le test mais à changer avec la configuration
-      setDeviceLeft({id: endpointId, name: endpointName, width: 320});
+      setDeviceUp({id: endpointId, name: endpointName, width: 360, height: 640});
     },
   );
   NearbyConnection.onConnectionInitiatedToEndpoint(
