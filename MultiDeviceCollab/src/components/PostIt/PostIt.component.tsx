@@ -22,6 +22,7 @@ interface Props {
   squareSize: number;
   color: string;
   sendMessageToAll;
+  transposeAndSendAction;
 }
 interface Styles {
   container: ViewStyle;
@@ -42,21 +43,17 @@ const styles = StyleSheet.create<Styles>({
 
 const {width, height} = Dimensions.get('window');
 
-export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos, squareSize, color, sendMessageToAll}) => {
+export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos, squareSize, color, sendMessageToAll, transposeAndSendAction}) => {
   const [textValue, onChangeText] = useState(textInit);
-  //const [size, setSize] = useState(squareSize);
-  //const [left, setLeft] = useState(topPos);
-  //const [top, setTop] = useState(leftPos);
   const [gesture, setGesture] = useState({});
   const dispatch = useDispatch();
 
   const movePostIt = (newTopPos, newLeftPos) => {
-    const action = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos}};
+    const action = {type: 'MOVE_POSTIT', value: {id: id, topPos: newTopPos, leftPos: newLeftPos}};
     dispatch(action);
     if (newLeftPos+squareSize/2+30>width || newLeftPos-squareSize-30/2<0 || newTopPos-squareSize/2-30<0 || newTopPos+squareSize/2+30>height){
       if (Math.abs(newTopPos-topPos)>7 || Math.abs(newLeftPos-leftPos)>7){
-        const action2 = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos-width}};
-        sendMessageToAll(JSON.stringify(action2));
+        transposeAndSendAction(action);
       }
     }
   };

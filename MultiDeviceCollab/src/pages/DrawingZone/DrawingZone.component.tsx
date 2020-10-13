@@ -105,18 +105,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         },
       };
       dispatch(action);
-      const action2 = {
-        type: 'ADD_POSTIT',
-        value: {
-          id: props.index,
-          text: 'post-it ' + props.index,
-          leftPos: 100-width,
-          topPos: 100,
-          squareSize: 100,
-          color: color,
-        },
-      };
-      sendMessageToAll(JSON.stringify(action2));
+      transposeAndSendAction(action);
     };
 
     const removeLastPostIt = () => {
@@ -132,6 +121,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       startDiscovering,
       startAdvertising,
       sendMessage,
+      transposeAndSendAction,
       connectToNearbyEndpoint,
       nearbyEndpoints,
       connectedEndPoints,
@@ -177,6 +167,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
               key={postit.id}
               color={postit.color}
               sendMessageToAll = {sendMessageToAll}
+              transposeAndSendAction = {transposeAndSendAction}
             />
           ))}
         </View>
