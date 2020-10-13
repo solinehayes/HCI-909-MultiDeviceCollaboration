@@ -7,10 +7,12 @@ export const modifyPostit = (state = initialState, action) => {
   let nextState;
   switch(action.type){
     case 'ADD_POSTIT':
-      nextState = {
-        ...state,
-        postits : [...state.postits, action.value]
-      };
+      if (state.postits.findIndex(item=>item.id == action.value.id)==-1){
+        nextState = {
+          ...state,
+          postits : [...state.postits, action.value]
+        };
+      }
       return nextState || state;
     case 'MOVE_POSTIT':
       const postitIndex_m = state.postits.findIndex(item=>item.id === action.value.id);

@@ -140,11 +140,13 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         setIsUserNameModalDisplayed(true);
       }
     }, [userName]);
+
     useEffect(() => {
       if (dispatch && newPostit) {
         dispatch(JSON.parse(newPostit));
       }
     }, [newPostit, dispatch]);
+
     const inset = useSafeAreaInsets();
     return (
       <SafeAreaView style={styles.container}>

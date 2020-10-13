@@ -53,10 +53,12 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
   const movePostIt = (newTopPos, newLeftPos) => {
     const action = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos}};
     dispatch(action);
-    if (newLeftPos+squareSize/2>width || newLeftPos-squareSize/2<0 || newTopPos-squareSize/2<0 || newTopPos+squareSize/2>height){
-      console.log("Send !");
-      const action2 = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos-width}};
-      sendMessageToAll(JSON.stringify(action2));
+    if (newLeftPos+squareSize/2+30>width || newLeftPos-squareSize-30/2<0 || newTopPos-squareSize/2-30<0 || newTopPos+squareSize/2+30>height){
+      if (Math.abs(newTopPos-topPos)>7 || Math.abs(newLeftPos-leftPos)>7){
+        console.log("Send !");
+        const action2 = {type: 'MOVE_POSTIT', value: {id: id, newTopPos: newTopPos, newLeftPos: newLeftPos-width}};
+        sendMessageToAll(JSON.stringify(action2));
+      }
     }
   };
 
