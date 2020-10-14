@@ -6,6 +6,13 @@ import NearbyConnection, {
 import {theme} from '../../../theme';
 import {useNavigation} from '@react-navigation/native';
 import {RootNavigatorRouteNames} from '../../App';
+import {useSelector} from 'react-redux';
+import {
+  bottomDeviceSelector,
+  leftDeviceSelector,
+  rightDeviceSelector,
+  topDeviceSelector,
+} from '../../Store/Devices/deviceSelectors';
 
 export interface EndPoint {
   endpointId: string;
@@ -24,10 +31,10 @@ export const useGoogleNearby = () => {
 
   const {width, height} = Dimensions.get('window');
   // A changer en fonction de la configuration
-  const [deviceLeft, setDeviceLeft] = useState();
-  const [deviceRight, setDeviceRight] = useState();
-  const [deviceUp, setDeviceUp] = useState();
-  const [deviceDown, setDeviceDown] = useState();
+  const deviceLeft = useSelector(leftDeviceSelector);
+  const deviceRight = useSelector(rightDeviceSelector);
+  const deviceTop = useSelector(topDeviceSelector);
+  const deviceBottom = useSelector(bottomDeviceSelector);
 
   const startDiscovering = () => {
     NearbyConnection.startDiscovering(
@@ -53,34 +60,46 @@ export const useGoogleNearby = () => {
 
   const transposeAndSendAction = (action) => {
     // Transpose and send to left
-    if (deviceLeft != undefined) {
+    if (deviceLeft !== undefined) {
       const actionLeft = JSON.parse(JSON.stringify(action));
-      actionLeft.value.leftPos = action.value.leftPos + deviceLeft.width;
-      sendMessage(JSON.stringify(actionLeft), deviceLeft.name, deviceLeft.id);
+      actionLeft.value.leftPos = action.value.leftPos + deviceLeft.size.width;
+      sendMessage(
+        JSON.stringify(actionLeft),
+        deviceLeft.endpointName,
+        deviceLeft.endpointId,
+      );
     }
     // Transpose and send to right
-    if (deviceRight != undefined) {
+    if (deviceRight !== undefined) {
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
       sendMessage(
         JSON.stringify(actionRight),
-        deviceRight.name,
-        deviceRight.id,
+        deviceRight.endpointName,
+        deviceRight.endpointId,
       );
     }
     // Transpose and send to up
-    if (deviceUp != undefined) {
+    if (deviceTop !== undefined) {
       const actionUp = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
-      actionUp.value.topPos = action.value.topPos + deviceUp.height - 80;
-      sendMessage(JSON.stringify(actionUp), deviceUp.name, deviceUp.id);
+      actionUp.value.topPos = action.value.topPos + deviceTop.size.height - 80;
+      sendMessage(
+        JSON.stringify(actionUp),
+        deviceTop.endpointName,
+        deviceTop.endpointId,
+      );
     }
     // Transpose and send down
-    if (deviceDown != undefined) {
+    if (deviceBottom !== undefined) {
       const actionDown = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
       actionDown.value.topPos = action.value.topPos - height + 80;
-      sendMessage(JSON.stringify(actionDown), deviceDown.name, deviceDown.id);
+      sendMessage(
+        JSON.stringify(actionDown),
+        deviceBottom.endpointName,
+        deviceBottom.endpointId,
+      );
     }
   };
 
