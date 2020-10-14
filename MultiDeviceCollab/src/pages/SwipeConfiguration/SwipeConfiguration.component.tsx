@@ -5,7 +5,8 @@ import {
   SafeAreaView,
   ViewStyle,
   StyleSheet,
-  Text,, Dimensions
+  Text,
+  Dimensions,
 } from 'react-native';
 import {useDispatch} from 'react-redux';
 import {theme} from '../../../theme';
@@ -32,14 +33,22 @@ const styles = StyleSheet.create<Styles>({
     alignItems: 'center',
   },
 });
+type SwipeConfigurationNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  RootNavigatorRouteNames.SwipeConfiguration
+>;
 interface Props {
+  navigation: SwipeConfigurationNavigationProp;
   route: RouteProp<
     RootStackParamList,
     RootNavigatorRouteNames.SwipeConfiguration
   >;
 }
 
-export const SwipeConfiguration: FunctionComponent<Props> = ({route}) => {
+export const SwipeConfiguration: FunctionComponent<Props> = ({
+  route,
+  navigation,
+}) => {
   const endpoint = route.params.endPoint;
   const sendMessage = route.params.sendMessage;
   const config = {
@@ -50,7 +59,7 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({route}) => {
 
   const onSwipe = (gestureName) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
-    let actionName= "";
+    let actionName = '';
     switch (gestureName) {
       case SWIPE_UP:
         dispatch(
@@ -58,7 +67,7 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({route}) => {
             bottomDevice: {endPoint: endpoint, size: undefined},
           }),
         );
-        actionName = "SET_TOP_DEVICE_SIZE";
+        actionName = 'SET_TOP_DEVICE_SIZE';
         console.log('swipe up');
         break;
       case SWIPE_DOWN:
@@ -67,7 +76,7 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({route}) => {
             topDevice: {endPoint: endpoint, size: undefined},
           }),
         );
-        actionName = "SET_BOTTOM_DEVICE_SIZE";
+        actionName = 'SET_BOTTOM_DEVICE_SIZE';
         console.log('swipe down');
         break;
       case SWIPE_LEFT:
@@ -76,28 +85,33 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({route}) => {
             rightDevice: {endPoint: endpoint, size: undefined},
           }),
         );
-        actionName = "SET_LEFT_DEVICE_SIZE";
+        actionName = 'SET_LEFT_DEVICE_SIZE';
         console.log('swipe left');
         break;
-        
+
       case SWIPE_RIGHT:
         dispatch(
           addDeviceActionCreator({
             leftDevice: {endPoint: endpoint, size: undefined},
           }),
         );
-        actionName = "SET_RIGHT_DEVICE_SIZE";
+        actionName = 'SET_RIGHT_DEVICE_SIZE';
         console.log('swipe right');
         break;
     }
     const action = {
       type: actionName,
       value: {
-        width: Dimensions.get("window").width,
-        height: Dimensions.get("window").height,
-      }
-    }
-    sendMessage(JSON.stringify(action), endpoint.endpointName, endpoint.endpointId);
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
+      },
+    };
+    sendMessage(
+      JSON.stringify(action),
+      endpoint.endpointName,
+      endpoint.endpointId,
+    );
+    navigation.navigate(RootNavigatorRouteNames.DrawingZone);
   };
 
   return (
