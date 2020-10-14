@@ -8,10 +8,11 @@ import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 import {modifyPostit} from './Store/Reducers/modifyPostitReducer.tsx';
+import {EndPoint} from './pages/DrawingZone/useGoogleNearby.hook';
 
 export type RootStackParamList = {
   DrawingZone: undefined;
-  SwipeConfiguration: undefined;
+  SwipeConfiguration: {endPoint: EndPoint};
 };
 export enum RootNavigatorRouteNames {
   SwipeConfiguration = 'SwipeConfiguration',

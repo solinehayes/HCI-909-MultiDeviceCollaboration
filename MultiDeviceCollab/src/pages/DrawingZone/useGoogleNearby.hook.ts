@@ -4,6 +4,8 @@ import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
 import {theme} from '../../../theme';
+import {useNavigation} from '@react-navigation/native';
+import {RootNavigatorRouteNames} from '../../App';
 
 export interface EndPoint {
   endpointId: string;
@@ -11,11 +13,12 @@ export interface EndPoint {
   color: string;
 }
 
-
 export const useGoogleNearby = () => {
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
   const [newPostit, setNewPostit] = useState<string>('');
+  const navigation = useNavigation();
+
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
 
@@ -50,29 +53,33 @@ export const useGoogleNearby = () => {
 
   const transposeAndSendAction = (action) => {
     // Transpose and send to left
-    if (deviceLeft!=undefined){
+    if (deviceLeft != undefined) {
       const actionLeft = JSON.parse(JSON.stringify(action));
       actionLeft.value.leftPos = action.value.leftPos + deviceLeft.width;
       sendMessage(JSON.stringify(actionLeft), deviceLeft.name, deviceLeft.id);
     }
     // Transpose and send to right
-    if (deviceRight!=undefined){
+    if (deviceRight != undefined) {
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
-      sendMessage(JSON.stringify(actionRight), deviceRight.name, deviceRight.id);
+      sendMessage(
+        JSON.stringify(actionRight),
+        deviceRight.name,
+        deviceRight.id,
+      );
     }
     // Transpose and send to up
-    if (deviceUp!=undefined){
+    if (deviceUp != undefined) {
       const actionUp = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
-      actionUp.value.topPos = action.value.topPos + deviceUp.height -80;
+      actionUp.value.topPos = action.value.topPos + deviceUp.height - 80;
       sendMessage(JSON.stringify(actionUp), deviceUp.name, deviceUp.id);
     }
     // Transpose and send down
-    if (deviceDown!=undefined){
+    if (deviceDown != undefined) {
       const actionDown = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
-      actionDown.value.topPos = action.value.topPos - height +80;
+      actionDown.value.topPos = action.value.topPos - height + 80;
       sendMessage(JSON.stringify(actionDown), deviceDown.name, deviceDown.id);
     }
   };
@@ -111,7 +118,10 @@ export const useGoogleNearby = () => {
         ]),
       );
       // Par défaut pour le test mais à changer avec la configuration
-      setDeviceUp({id: endpointId, name: endpointName, width: 360, height: 640});
+      //setDeviceUp({id: endpointId, name: endpointName, width: 360, height: 640});
+      navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration, {
+        endPoint: {endpointId, endpointName},
+      });
     },
   );
   NearbyConnection.onConnectionInitiatedToEndpoint(
