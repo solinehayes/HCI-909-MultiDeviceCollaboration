@@ -131,7 +131,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       connectedEndPoints,
       userName,
       setUserName,
-      newPostit,
+      newAction,
     } = useGoogleNearby();
 
     useEffect(() => {
@@ -141,10 +141,10 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     }, [userName]);
 
     useEffect(() => {
-      if (dispatch && newPostit) {
-        dispatch(JSON.parse(newPostit));
+      if (dispatch && newAction) {
+        dispatch(JSON.parse(newAction));
       }
-    }, [newPostit, dispatch]);
+    }, [newAction, dispatch]);
 
     const inset = useSafeAreaInsets();
     return (

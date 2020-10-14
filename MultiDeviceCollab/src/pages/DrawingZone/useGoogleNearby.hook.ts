@@ -16,7 +16,7 @@ export interface EndPoint {
 export const useGoogleNearby = () => {
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
-  const [newPostit, setNewPostit] = useState<string>('');
+  const [newAction, setNewAction] = useState<string>('');
   const navigation = useNavigation();
 
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
@@ -182,7 +182,7 @@ export const useGoogleNearby = () => {
           type, // The Payload.Type represented by this payload
           bytes, // [Payload.Type.BYTES] The bytes string that was sent
         }) => {
-          setNewPostit(bytes);
+          setNewAction(bytes);
         },
       );
     },
@@ -198,6 +198,6 @@ export const useGoogleNearby = () => {
     connectedEndPoints,
     userName,
     setUserName,
-    newPostit,
+    newAction,
   };
 };
