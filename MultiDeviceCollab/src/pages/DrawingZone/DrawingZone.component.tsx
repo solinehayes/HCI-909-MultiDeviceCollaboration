@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useEffect, useState} from 'react';
-import {View, SafeAreaView, ViewStyle, StyleSheet, Button} from 'react-native';
+import {View, SafeAreaView, ViewStyle, StyleSheet, Button, Dimensions} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
@@ -21,6 +21,7 @@ type DrawingComponentNavigationProp = StackNavigationProp<
 const mapStateToProps = (state) => {
   return {
     postits: state.postits,
+    index: state.index,
   };
 };
 
@@ -78,52 +79,52 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     const openColorChooser = () => {
       setIsColorsModalDisplayed(true);
     };
+
+    const sendMessageToAll = (message: string) => {
+      connectedEndPoints.map((device: EndPoint) => {
+        sendMessage(message, device.endpointName, device.endpointId);
+      });
+    };
+
     // Function to add a post it
+    const {width, height} = Dimensions.get('window');
+
     const addPostIt = (color: string) => {
-      //const newId = postIts.length + 1;
-      //setPostIts(postIts.concat({id: newId, text: 'post-it ' + newId, color}));
-      const newId = props.postits.length / 2 + 1;
       const action = {
         type: 'ADD_POSTIT',
         value: {
-          id: newId,
-          text: 'post-it ' + newId,
+          id: props.index,
+          text: 'post-it ' + props.index,
           leftPos: 100,
           topPos: 100,
           squareSize: 100,
           color: color,
         },
       };
-      // Ajouter post it bis pour test
-      const action2 = {
-        type: 'ADD_POSTIT',
-        value: {
-          id: -newId,
-          text: 'post-it ' + newId + ' bis',
-          leftPos: 100 - 360,
-          topPos: 100,
-          squareSize: 100,
-          color: color,
-        },
+      dispatch(action);
+      transposeAndSendAction(action);
+    };
+
+    const removeLastPostIt = () => {
+      const action = {
+        type : 'REMOVE_LAST',
+        value: {}
       };
       dispatch(action);
-      dispatch(action2);
-    };
-    const removeLastPostIt = () => {
-      //if (postIts.length !== 0) {
-      //setPostIts(postIts.slice(0, postIts.length - 1));
-      //}
+      sendMessageToAll(JSON.stringify(action));
     };
 
     const {
       startDiscovering,
       startAdvertising,
       sendMessage,
+      transposeAndSendAction,
       connectToNearbyEndpoint,
       nearbyEndpoints,
       connectedEndPoints,
       userName,
       setUserName,
+      newPostit,
     } = useGoogleNearby();
 
     useEffect(() => {
@@ -131,6 +132,13 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         setIsUserNameModalDisplayed(true);
       }
     }, [userName]);
+
+    useEffect(() => {
+      if (dispatch && newPostit) {
+        dispatch(JSON.parse(newPostit));
+      }
+    }, [newPostit, dispatch]);
+
     const inset = useSafeAreaInsets();
     return (
       <SafeAreaView style={styles.container}>
@@ -155,6 +163,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
               squareSize={postit.squareSize}
               key={postit.id}
               color={postit.color}
+              sendMessageToAll = {sendMessageToAll}
+              transposeAndSendAction = {transposeAndSendAction}
             />
           ))}
         </View>
@@ -189,13 +199,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           <Button
             title="Send Hello world"
             onPress={() => {
-              connectedEndPoints.map((device: EndPoint) => {
-                sendMessage(
-                  'Hello World',
-                  device.endpointName,
-                  device.endpointId,
-                );
-              });
+              sendMessageToAll('HelloWorld');
             }}
           />
         </View>

@@ -1,20 +1,30 @@
 import {useState} from 'react';
-import {ToastAndroid} from 'react-native';
+import {ToastAndroid, Dimensions} from 'react-native';
 import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
+import {theme} from '../../../theme';
 
 export interface EndPoint {
   endpointId: string;
   endpointName: string;
+  color: string;
 }
+
 
 export const useGoogleNearby = () => {
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
-
+  const [newPostit, setNewPostit] = useState<string>('');
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
+
+  const {width, height} = Dimensions.get('window');
+  // A changer en fonction de la configuration
+  const [deviceLeft, setDeviceLeft] = useState();
+  const [deviceRight, setDeviceRight] = useState();
+  const [deviceUp, setDeviceUp] = useState();
+  const [deviceDown, setDeviceDown] = useState();
 
   const startDiscovering = () => {
     NearbyConnection.startDiscovering(
@@ -22,14 +32,13 @@ export const useGoogleNearby = () => {
     );
   };
   const startAdvertising = () => {
-    console.log('startAdvertising début');
     NearbyConnection.startAdvertising(
       userName, // This nodes endpoint name
       userviceId, // A unique identifier for the service
       Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
     );
-    console.log('startAdvertising fin');
   };
+
   const sendMessage = (message: string, endpointName: string, endpointId) => {
     console.log('Send message to ' + endpointName);
     NearbyConnection.sendBytes(
@@ -38,6 +47,36 @@ export const useGoogleNearby = () => {
       message, // A string of bytes to send
     );
   };
+
+  const transposeAndSendAction = (action) => {
+    // Transpose and send to left
+    if (deviceLeft!=undefined){
+      const actionLeft = JSON.parse(JSON.stringify(action));
+      actionLeft.value.leftPos = action.value.leftPos + deviceLeft.width;
+      sendMessage(JSON.stringify(actionLeft), deviceLeft.name, deviceLeft.id);
+    }
+    // Transpose and send to right
+    if (deviceRight!=undefined){
+      const actionRight = JSON.parse(JSON.stringify(action));
+      actionRight.value.leftPos = action.value.leftPos - width;
+      sendMessage(JSON.stringify(actionRight), deviceRight.name, deviceRight.id);
+    }
+    // Transpose and send to up
+    if (deviceUp!=undefined){
+      const actionUp = JSON.parse(JSON.stringify(action));
+      // 80 : valeur arbitraire pour compenser la hauteur du bandeau
+      actionUp.value.topPos = action.value.topPos + deviceUp.height -80;
+      sendMessage(JSON.stringify(actionUp), deviceUp.name, deviceUp.id);
+    }
+    // Transpose and send down
+    if (deviceDown!=undefined){
+      const actionDown = JSON.parse(JSON.stringify(action));
+      // 80 : valeur arbitraire pour compenser la hauteur du bandeau
+      actionDown.value.topPos = action.value.topPos - height +80;
+      sendMessage(JSON.stringify(actionDown), deviceDown.name, deviceDown.id);
+    }
+  };
+
   const connectToNearbyEndpoint = (endpoint: EndPoint) => {
     console.log('connect to nearby endpoint ' + endpoint.endpointId);
     NearbyConnection.connectToEndpoint(
@@ -47,8 +86,9 @@ export const useGoogleNearby = () => {
   };
   NearbyConnection.onEndpointDiscovered(
     ({endpointId, endpointName, serviceId}) => {
-      console.log(serviceId);
-      setNearbyEndpoints(nearbyEndpoints.concat([{endpointId, endpointName}]));
+      setNearbyEndpoints(
+        nearbyEndpoints.concat([{endpointId, endpointName, color: ''}]),
+      );
     },
   );
   NearbyConnection.onConnectedToEndpoint(
@@ -57,10 +97,21 @@ export const useGoogleNearby = () => {
       endpointName, // The name of the service
       serviceId, // A unique identifier for the service
     }) => {
-      console.log('Successfully connected to ', endpointName);
+      //console.log('Successfully connected to ', endpointName);
       setConnectedEndPoints(
-        connectedEndPoints.concat([{endpointId, endpointName}]),
+        connectedEndPoints.concat([
+          {
+            endpointId,
+            endpointName,
+            color:
+              theme.postItColors[
+                Math.floor(Math.random() * (theme.postItColors.length - 1))
+              ],
+          },
+        ]),
       );
+      // Par défaut pour le test mais à changer avec la configuration
+      setDeviceUp({id: endpointId, name: endpointName, width: 360, height: 640});
     },
   );
   NearbyConnection.onConnectionInitiatedToEndpoint(
@@ -109,7 +160,6 @@ export const useGoogleNearby = () => {
     ({
       serviceId, // A unique identifier for the service
       endpointId, // ID of the endpoint we got the payload from
-      payloadType, // The type of this payload (File or a Stream) [See Payload](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Payload)
       payloadId, // Unique identifier of the payload
     }) => {
       NearbyConnection.readBytes(
@@ -120,18 +170,8 @@ export const useGoogleNearby = () => {
         ({
           type, // The Payload.Type represented by this payload
           bytes, // [Payload.Type.BYTES] The bytes string that was sent
-          payloadId, // [Payload.Type.FILE or Payload.Type.STREAM] The payloadId of the payload this payload is describing
-          filename, // [Payload.Type.FILE] The name of the file being sent
-          metadata, // [Payload.Type.FILE] The metadata sent along with the file
-          streamType, // [Payload.Type.STREAM] The type of stream this is [audio or video]
         }) => {
-          ToastAndroid.showWithGravity(
-            'Message received : ' + bytes,
-            ToastAndroid.SHORT,
-            ToastAndroid.CENTER,
-          );
-
-          console.log('Message received: ' + bytes);
+          setNewPostit(bytes);
         },
       );
     },
@@ -141,10 +181,12 @@ export const useGoogleNearby = () => {
     startDiscovering,
     startAdvertising,
     sendMessage,
+    transposeAndSendAction,
     connectToNearbyEndpoint,
     nearbyEndpoints,
     connectedEndPoints,
     userName,
     setUserName,
+    newPostit,
   };
 };
