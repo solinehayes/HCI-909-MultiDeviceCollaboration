@@ -1,12 +1,23 @@
 import React, {FunctionComponent} from 'react';
-import {TouchableWithoutFeedback, View, SafeAreaView, ViewStyle, StyleSheet, Text} from 'react-native';
-import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
+import {
+  TouchableWithoutFeedback,
+  View,
+  SafeAreaView,
+  ViewStyle,
+  StyleSheet,
+  Text,, Dimensions
+} from 'react-native';
+import {useDispatch} from 'react-redux';
 import {theme} from '../../../theme';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
+import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RouteProp} from '@react-navigation/native';
+import {addDeviceActionCreator} from '../../Store/Devices/deviceActions';
 
 interface Styles {
   container: ViewStyle;
-  bottomButtonContainer: ViewStyle;
+  gestureRecognizeContainer: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
@@ -15,80 +26,90 @@ const styles = StyleSheet.create<Styles>({
     backgroundColor: theme.colors.white,
     justifyContent: 'space-between',
   },
-  gestureRecognizeContainer:{
+  gestureRecognizeContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 });
+interface Props {
+  route: RouteProp<
+    RootStackParamList,
+    RootNavigatorRouteNames.SwipeConfiguration
+  >;
+}
 
-export const SwipeConfiguration: FunctionComponent = () => {
-
+export const SwipeConfiguration: FunctionComponent<Props> = ({route}) => {
+  const endpoint = route.params.endPoint;
+  const sendMessage = route.params.sendMessage;
   const config = {
-      velocityThreshold: 0.5,
-      directionalOffsetThreshold: 80
-    };
+    velocityThreshold: 0.5,
+    directionalOffsetThreshold: 80,
+  };
+  const dispatch = useDispatch();
 
-  const [swipeText, setSwipeText] = React.useState("")
-
-  const onSwipeUp = (gestureState) => {
-    setSwipeText('You swiped up!');
-    console.log('swipe up');
-  }
-
-  const onSwipeDown = (gestureState) => {
-    setSwipeText('You swiped down!');
-    console.log('swipe down');
-  }
-
-  const onSwipeLeft = (gestureState) => {
-    setSwipeText('You swiped left!');
-    console.log('swipe left');
-  }
-
-  const onSwipeRight = (gestureState) => {
-    setSwipeText('You swiped right!');
-    console.log('swipe right');
-  }
-
-  const onSwipe = (gestureName, gestureState) => {
+  const onSwipe = (gestureName) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
+    let actionName= "";
     switch (gestureName) {
       case SWIPE_UP:
-        setSwipeText('You swiped up!');
+        dispatch(
+          addDeviceActionCreator({
+            bottomDevice: {endPoint: endpoint, size: undefined},
+          }),
+        );
+        actionName = "SET_TOP_DEVICE_SIZE";
         console.log('swipe up');
         break;
       case SWIPE_DOWN:
-        setSwipeText('You swiped down!');
+        dispatch(
+          addDeviceActionCreator({
+            topDevice: {endPoint: endpoint, size: undefined},
+          }),
+        );
+        actionName = "SET_BOTTOM_DEVICE_SIZE";
         console.log('swipe down');
         break;
       case SWIPE_LEFT:
-        setSwipeText('You swiped left!');
+        dispatch(
+          addDeviceActionCreator({
+            rightDevice: {endPoint: endpoint, size: undefined},
+          }),
+        );
+        actionName = "SET_LEFT_DEVICE_SIZE";
         console.log('swipe left');
         break;
+        
       case SWIPE_RIGHT:
-        setSwipeText('You swiped right!');
+        dispatch(
+          addDeviceActionCreator({
+            leftDevice: {endPoint: endpoint, size: undefined},
+          }),
+        );
+        actionName = "SET_RIGHT_DEVICE_SIZE";
         console.log('swipe right');
         break;
     }
-  }
+    const action = {
+      type: actionName,
+      value: {
+        width: Dimensions.get("window").width,
+        height: Dimensions.get("window").height,
+      }
+    }
+    sendMessage(JSON.stringify(action), endpoint.endpointName, endpoint.endpointId);
+  };
 
   return (
     <TouchableWithoutFeedback>
       <GestureRecognizer
         onSwipe={onSwipe}
-        onPress={(state) => onSwipeUp(state)}
-        onSwipeDown={onSwipeDown}
-        onSwipeLeft={onSwipeLeft}
-        onSwipeRight={onSwipeRight}
         config={config}
-        style={styles.gestureRecognizeContainer}
-      >
-        <Text> Swipe to configure </Text>
-        <Text> {swipeText} </Text>
+        style={styles.gestureRecognizeContainer}>
+        <Text>
+          {`Swipe to configure position of: ${endpoint.endpointName}`}
+        </Text>
       </GestureRecognizer>
-
     </TouchableWithoutFeedback>
-
   );
 };

@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {ToastAndroid, Dimensions} from 'react-native';
+import {Dimensions} from 'react-native';
 import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
@@ -121,6 +121,7 @@ export const useGoogleNearby = () => {
       //setDeviceUp({id: endpointId, name: endpointName, width: 360, height: 640});
       navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration, {
         endPoint: {endpointId, endpointName},
+        sendMessage,
       });
     },
   );

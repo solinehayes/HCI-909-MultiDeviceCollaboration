@@ -1,5 +1,12 @@
 import React, {FunctionComponent, useEffect, useState} from 'react';
-import {View, SafeAreaView, ViewStyle, StyleSheet, Button, Dimensions} from 'react-native';
+import {
+  View,
+  SafeAreaView,
+  ViewStyle,
+  StyleSheet,
+  Button,
+  Dimensions,
+} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
@@ -20,8 +27,8 @@ type DrawingComponentNavigationProp = StackNavigationProp<
 
 const mapStateToProps = (state) => {
   return {
-    postits: state.postits,
-    index: state.index,
+    postits: state.postit.postits,
+    index: state.postit.index,
   };
 };
 
@@ -107,8 +114,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
 
     const removeLastPostIt = () => {
       const action = {
-        type : 'REMOVE_LAST',
-        value: {}
+        type: 'REMOVE_LAST',
+        value: {},
       };
       dispatch(action);
       sendMessageToAll(JSON.stringify(action));
@@ -144,7 +151,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       <SafeAreaView style={styles.container}>
         <View style={styles.topButtonContainer}>
           <ConnectedDevice
-            device={{endpointName: userName, endpointId: 'me'}}
+            device={{endpointName: userName, endpointId: 'me', color: ''}}
             color={theme.colors.grey}
             onPress={() => {
               setIsUserNameModalDisplayed(true);
@@ -163,8 +170,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
               squareSize={postit.squareSize}
               key={postit.id}
               color={postit.color}
-              sendMessageToAll = {sendMessageToAll}
-              transposeAndSendAction = {transposeAndSendAction}
+              sendMessageToAll={sendMessageToAll}
+              transposeAndSendAction={transposeAndSendAction}
             />
           ))}
         </View>
@@ -183,6 +190,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
                 onPress={() => {
                   props.navigation.navigate(
                     RootNavigatorRouteNames.SwipeConfiguration,
+                    {endPoint: device},
                   );
                 }}
               />
