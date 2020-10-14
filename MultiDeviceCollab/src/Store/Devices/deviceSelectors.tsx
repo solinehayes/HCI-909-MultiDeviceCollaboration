@@ -1,25 +1,25 @@
 export const leftDeviceSelector = (state) => {
   return {
-    ...state.device.leftDevice.endPoint,
-    size: state.device.leftDevice.size,
+    ...state.devices.leftDevice.endPoint,
+    size: state.devices.leftDevice.size,
   };
 };
 
 export const rightDeviceSelector = (state) => {
   return {
-    ...state.device.rightDevice.endPoint,
-    size: state.device.rightDevice.size,
+    ...state.devices.rightDevice.endPoint,
+    size: state.devices.rightDevice.size,
   };
 };
 export const topDeviceSelector = (state) => {
   return {
-    ...state.device.topDevice.endPoint,
-    size: state.device.topDevice.size,
+    ...state.devices.topDevice.endPoint,
+    size: state.devices.topDevice.size,
   };
 };
 export const bottomDeviceSelector = (state) => {
   return {
-    ...state.device.bottomDevice.endPoint,
-    size: state.device.bottomDevice.size,
+    ...state.devices.bottomDevice.endPoint,
+    size: state.devices.bottomDevice.size,
   };
 };
