@@ -1,6 +1,13 @@
 import {getType} from 'typesafe-actions';
 import {EndPoint} from '../../pages/DrawingZone/useGoogleNearby.hook';
-import {addDeviceActionCreator, DeviceActions} from './deviceActions';
+import {
+  addDeviceActionCreator,
+  DeviceActions,
+  setBottomSizeActionCreator,
+  setLeftSizeActionCreator,
+  setRightSizeActionCreator,
+  setTopSizeActionCreator,
+} from './deviceActions';
 
 interface Device {
   endPoint: EndPoint | undefined;
@@ -29,6 +36,38 @@ export const deviceReducer = (
       return {
         ...state,
         ...action.payload,
+      };
+    case getType(setBottomSizeActionCreator):
+      return {
+        ...state,
+        bottomDevice: {
+          size: action.payload,
+          endPoint: state.bottomDevice.endPoint,
+        },
+      };
+    case getType(setTopSizeActionCreator):
+      return {
+        ...state,
+        topDevice: {
+          size: action.payload,
+          endPoint: state.topDevice.endPoint,
+        },
+      };
+    case getType(setLeftSizeActionCreator):
+      return {
+        ...state,
+        leftDevice: {
+          size: action.payload,
+          endPoint: state.leftDevice.endPoint,
+        },
+      };
+    case getType(setRightSizeActionCreator):
+      return {
+        ...state,
+        rightDevice: {
+          size: action.payload,
+          endPoint: state.rightDevice.endPoint,
+        },
       };
 
     default:
