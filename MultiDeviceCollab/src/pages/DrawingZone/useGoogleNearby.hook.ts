@@ -60,7 +60,7 @@ export const useGoogleNearby = () => {
 
   const transposeAndSendAction = (action) => {
     // Transpose and send to left
-    if (deviceLeft !== undefined) {
+    if (deviceLeft.endPoint !== undefined) {
       const actionLeft = JSON.parse(JSON.stringify(action));
       actionLeft.value.leftPos = action.value.leftPos + deviceLeft.size.width;
       sendMessage(
@@ -70,7 +70,7 @@ export const useGoogleNearby = () => {
       );
     }
     // Transpose and send to right
-    if (deviceRight !== undefined) {
+    if (deviceRight.endPoint !== undefined) {
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
       sendMessage(
@@ -80,7 +80,7 @@ export const useGoogleNearby = () => {
       );
     }
     // Transpose and send to up
-    if (deviceTop !== undefined) {
+    if (deviceTop.endPoint !== undefined) {
       const actionUp = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
       actionUp.value.topPos = action.value.topPos + deviceTop.size.height - 80;
@@ -91,7 +91,7 @@ export const useGoogleNearby = () => {
       );
     }
     // Transpose and send down
-    if (deviceBottom !== undefined) {
+    if (deviceBottom.endPoint !== undefined) {
       const actionDown = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
       actionDown.value.topPos = action.value.topPos - height + 80;

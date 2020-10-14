@@ -101,7 +101,7 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({
     }
     const action = {
       type: actionName,
-      value: {
+      payload: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
       },
