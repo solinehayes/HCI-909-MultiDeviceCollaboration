@@ -1,5 +1,5 @@
 import React, {FunctionComponent, useEffect, useState} from 'react';
-import {View, SafeAreaView, ViewStyle, StyleSheet, Button, Dimensions} from 'react-native';
+import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
@@ -20,8 +20,8 @@ type DrawingComponentNavigationProp = StackNavigationProp<
 
 const mapStateToProps = (state) => {
   return {
-    postits: state.postits,
-    index: state.index,
+    postits: state.postit.postits,
+    index: state.postit.index,
   };
 };
 
@@ -66,9 +66,10 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     //  {id: 1, text: 'post-it 1', color: theme.postItColors[0]},
     //]);
     const dispatch = useDispatch();
-    const [isBluetoothModalDisplayed, setIsBluetoothModalDisplayed] = useState<
-      boolean
-    >(false);
+    const [
+      isConnectionModalDisplayed,
+      setIsConnectionModalDisplayed,
+    ] = useState<boolean>(false);
     const [isColorsModalDisplayed, setIsColorsModalDisplayed] = useState<
       boolean
     >(false);
@@ -85,9 +86,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         sendMessage(message, device.endpointName, device.endpointId);
       });
     };
-
-    // Function to add a post it
-    const {width, height} = Dimensions.get('window');
 
     const addPostIt = (color: string) => {
       const action = {
@@ -107,8 +105,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
 
     const removeLastPostIt = () => {
       const action = {
-        type : 'REMOVE_LAST',
-        value: {}
+        type: 'REMOVE_LAST',
+        value: {},
       };
       dispatch(action);
       sendMessageToAll(JSON.stringify(action));
@@ -124,8 +122,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       connectedEndPoints,
       userName,
       setUserName,
-      newPostit,
-    } = useGoogleNearby();
+      newAction,
+    } = useGoogleNearby({setIsConnectionModalDisplayed});
 
     useEffect(() => {
       if (!userName) {
@@ -134,17 +132,17 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     }, [userName]);
 
     useEffect(() => {
-      if (dispatch && newPostit) {
-        dispatch(JSON.parse(newPostit));
+      if (dispatch && newAction) {
+        dispatch(JSON.parse(newAction));
       }
-    }, [newPostit, dispatch]);
+    }, [newAction, dispatch]);
 
     const inset = useSafeAreaInsets();
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.topButtonContainer}>
           <ConnectedDevice
-            device={{endpointName: userName, endpointId: 'me'}}
+            device={{endpointName: userName, endpointId: 'me', color: ''}}
             color={theme.colors.grey}
             onPress={() => {
               setIsUserNameModalDisplayed(true);
@@ -163,8 +161,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
               squareSize={postit.squareSize}
               key={postit.id}
               color={postit.color}
-              sendMessageToAll = {sendMessageToAll}
-              transposeAndSendAction = {transposeAndSendAction}
+              sendMessageToAll={sendMessageToAll}
+              transposeAndSendAction={transposeAndSendAction}
             />
           ))}
         </View>
@@ -183,6 +181,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
                 onPress={() => {
                   props.navigation.navigate(
                     RootNavigatorRouteNames.SwipeConfiguration,
+                    {endPoint: device},
                   );
                 }}
               />
@@ -191,21 +190,15 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           <FloatingButton
             iconName="wifi"
             onPress={() => {
-              setIsBluetoothModalDisplayed(true);
+              setIsConnectionModalDisplayed(true);
               startDiscovering();
               startAdvertising();
             }}
           />
-          <Button
-            title="Send Hello world"
-            onPress={() => {
-              sendMessageToAll('HelloWorld');
-            }}
-          />
         </View>
         <ConnectionModal
-          isModalVisible={isBluetoothModalDisplayed}
-          setIsModalVisible={setIsBluetoothModalDisplayed}
+          isModalVisible={isConnectionModalDisplayed}
+          setIsModalVisible={setIsConnectionModalDisplayed}
           nearbyDevices={nearbyEndpoints}
           connectToDevice={connectToNearbyEndpoint}
         />

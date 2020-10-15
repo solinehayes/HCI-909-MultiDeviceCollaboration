@@ -45,18 +45,18 @@ export const modifyPostit = (state = initialState, action) => {
       // Récupérer les propriétés du post it dont on change le texte
       const postit_t = state.postits[postitIndex_t];
       // Supprimer le post it et en créer un nouveau
-      const newPostIt_t = {id: postit_t.id, text: action.value.newText, topPos: postit_t.topPos, leftPos: postit_t.leftPos, squareSize : postit_t.squareSize, color: postit_t.color};
+      const newPostIt_t = {id: action.value.id, text: action.value.newText, topPos: postit_t.topPos, leftPos: postit_t.leftPos, squareSize : postit_t.squareSize, color: postit_t.color};
       nextState = {
         ...state,
         postits: [...state.postits.filter((item, index) => index!=postitIndex_t), newPostIt_t]
       };
-
-      case 'REMOVE_LAST':
+      return nextState || state;
+    case 'REMOVE_LAST':
         nextState = {
           ...state,
           postits: state.postits.slice(0, state.postits.length-1)
         };
-      return nextState || state;
+    return nextState || state;
 
     default:
       return state;

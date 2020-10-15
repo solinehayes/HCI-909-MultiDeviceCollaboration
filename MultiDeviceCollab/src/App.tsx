@@ -6,12 +6,18 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
-import {createStore} from 'redux';
-import {modifyPostit} from './Store/Reducers/modifyPostitReducer.tsx';
+import {combineReducers, createStore} from 'redux';
+import {modifyPostit} from './Store/Reducers/modifyPostitReducer';
+import {EndPoint} from './pages/DrawingZone/useGoogleNearby.hook';
+import {deviceReducer} from './Store/Devices/devicesReducer';
+import {composeWithDevTools} from 'redux-devtools-extension';
 
 export type RootStackParamList = {
   DrawingZone: undefined;
-  SwipeConfiguration: undefined;
+  SwipeConfiguration: {
+    endPoint: EndPoint;
+    sendMessage: (message: string, endpointName: string, endpointId) => void;
+  };
 };
 export enum RootNavigatorRouteNames {
   SwipeConfiguration = 'SwipeConfiguration',
@@ -19,7 +25,13 @@ export enum RootNavigatorRouteNames {
 }
 const Stack = createStackNavigator<RootStackParamList>();
 
-const Store = createStore(modifyPostit);
+const Store = createStore(
+  combineReducers({
+    devices: deviceReducer,
+    postit: modifyPostit,
+  }),
+  composeWithDevTools(),
+);
 
 const App: FunctionComponent = () => {
   useEffect(() => {

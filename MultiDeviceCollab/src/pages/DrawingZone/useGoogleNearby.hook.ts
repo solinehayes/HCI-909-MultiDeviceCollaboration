@@ -1,9 +1,18 @@
-import {useState} from 'react';
-import {ToastAndroid, Dimensions} from 'react-native';
+import {useEffect, useState} from 'react';
+import {Dimensions} from 'react-native';
 import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
 import {theme} from '../../../theme';
+import {useNavigation} from '@react-navigation/native';
+import {RootNavigatorRouteNames} from '../../App';
+import {useSelector, useDispatch} from 'react-redux';
+import {
+  bottomDeviceSelector,
+  leftDeviceSelector,
+  rightDeviceSelector,
+  topDeviceSelector,
+} from '../../Store/Devices/deviceSelectors';
 
 export interface EndPoint {
   endpointId: string;
@@ -11,20 +20,26 @@ export interface EndPoint {
   color: string;
 }
 
-
-export const useGoogleNearby = () => {
+export const useGoogleNearby = ({
+  setIsConnectionModalDisplayed,
+}: {
+  setIsConnectionModalDisplayed: (visibility: boolean) => void;
+}) => {
+  const dispatch = useDispatch();
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
-  const [newPostit, setNewPostit] = useState<string>('');
+  const [newAction, setNewAction] = useState<string>('');
+  const navigation = useNavigation();
+
   const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
 
   const {width, height} = Dimensions.get('window');
   // A changer en fonction de la configuration
-  const [deviceLeft, setDeviceLeft] = useState();
-  const [deviceRight, setDeviceRight] = useState();
-  const [deviceUp, setDeviceUp] = useState();
-  const [deviceDown, setDeviceDown] = useState();
+  const deviceLeft = useSelector(leftDeviceSelector);
+  const deviceRight = useSelector(rightDeviceSelector);
+  const deviceTop = useSelector(topDeviceSelector);
+  const deviceBottom = useSelector(bottomDeviceSelector);
 
   const startDiscovering = () => {
     NearbyConnection.startDiscovering(
@@ -50,30 +65,46 @@ export const useGoogleNearby = () => {
 
   const transposeAndSendAction = (action) => {
     // Transpose and send to left
-    if (deviceLeft!=undefined){
+    if (deviceLeft.endPoint !== null) {
       const actionLeft = JSON.parse(JSON.stringify(action));
-      actionLeft.value.leftPos = action.value.leftPos + deviceLeft.width;
-      sendMessage(JSON.stringify(actionLeft), deviceLeft.name, deviceLeft.id);
+      actionLeft.value.leftPos = action.value.leftPos + deviceLeft.size.width;
+      sendMessage(
+        JSON.stringify(actionLeft),
+        deviceLeft.endPoint.endpointName,
+        deviceLeft.endPoint.endpointId,
+      );
     }
     // Transpose and send to right
-    if (deviceRight!=undefined){
+    if (deviceRight.endPoint !== null) {
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
-      sendMessage(JSON.stringify(actionRight), deviceRight.name, deviceRight.id);
+      sendMessage(
+        JSON.stringify(actionRight),
+        deviceRight.endPoint.endpointName,
+        deviceRight.endPoint.endpointId,
+      );
     }
     // Transpose and send to up
-    if (deviceUp!=undefined){
+    if (deviceTop.endPoint !== null) {
       const actionUp = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
-      actionUp.value.topPos = action.value.topPos + deviceUp.height -80;
-      sendMessage(JSON.stringify(actionUp), deviceUp.name, deviceUp.id);
+      actionUp.value.topPos = action.value.topPos + deviceTop.size.height - 80;
+      sendMessage(
+        JSON.stringify(actionUp),
+        deviceTop.endPoint.endpointName,
+        deviceTop.endPoint.endpointId,
+      );
     }
     // Transpose and send down
-    if (deviceDown!=undefined){
+    if (deviceBottom.endPoint !== null) {
       const actionDown = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
-      actionDown.value.topPos = action.value.topPos - height +80;
-      sendMessage(JSON.stringify(actionDown), deviceDown.name, deviceDown.id);
+      actionDown.value.topPos = action.value.topPos - height + 80;
+      sendMessage(
+        JSON.stringify(actionDown),
+        deviceBottom.endPoint.endpointName,
+        deviceBottom.endPoint.endpointId,
+      );
     }
   };
 
@@ -111,7 +142,11 @@ export const useGoogleNearby = () => {
         ]),
       );
       // Par défaut pour le test mais à changer avec la configuration
-      setDeviceUp({id: endpointId, name: endpointName, width: 360, height: 640});
+      setIsConnectionModalDisplayed(false);
+      navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration, {
+        endPoint: {endpointId, endpointName},
+        sendMessage,
+      });
     },
   );
   NearbyConnection.onConnectionInitiatedToEndpoint(
@@ -171,7 +206,7 @@ export const useGoogleNearby = () => {
           type, // The Payload.Type represented by this payload
           bytes, // [Payload.Type.BYTES] The bytes string that was sent
         }) => {
-          setNewPostit(bytes);
+          setNewAction(bytes);
         },
       );
     },
@@ -187,6 +222,6 @@ export const useGoogleNearby = () => {
     connectedEndPoints,
     userName,
     setUserName,
-    newPostit,
+    newAction,
   };
 };

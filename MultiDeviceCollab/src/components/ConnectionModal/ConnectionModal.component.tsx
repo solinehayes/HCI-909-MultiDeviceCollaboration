@@ -34,14 +34,17 @@ interface Styles {
 const renderDevices = ({
   item,
   connectToDevice,
+  setVisible,
 }: {
   item: EndPoint;
   connectToDevice: (endpoint: EndPoint) => void;
+  setVisible: (visibility: boolean) => void;
 }) => {
   return (
     <TouchableOpacity
       onPress={() => {
         connectToDevice(item);
+        setVisible(false);
       }}
       style={styles.deviceItem}>
       <Text>{item.endpointName}</Text>
@@ -108,7 +111,11 @@ export const ConnectionModal: FunctionComponent<Props> = ({
           <FlatList
             data={nearbyDevices}
             renderItem={({item}: {item: EndPoint; index: number}) => {
-              return renderDevices({item, connectToDevice});
+              return renderDevices({
+                item,
+                connectToDevice,
+                setVisible: setIsModalVisible,
+              });
             }}
             keyExtractor={(device: EndPoint): string => device.endpointId}
             ItemSeparatorComponent={() => <View style={styles.separator} />}
