@@ -69,6 +69,7 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
 
   const changeText = (newText) => {
     const action = {type: 'CHANGE_TEXT', value: {id: id, newText: newText}};
+    console.log(action);
     sendMessageToAll(JSON.stringify(action));
   }
 
