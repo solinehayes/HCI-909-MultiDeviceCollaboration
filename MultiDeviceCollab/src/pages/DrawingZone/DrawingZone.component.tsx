@@ -103,6 +103,23 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       transposeAndSendAction(action);
     };
 
+    const copyPostits = () => {
+      props.postits.map((postit) => {
+        const action = {
+          type: 'ADD_POSTIT',
+          value: {
+            id: postit.id,
+            text: postit.text,
+            leftPos: postit.leftPos,
+            topPos: postit.topPos,
+            squareSize: postit.squareSize,
+            color: postit.color,
+          },
+        };
+        transposeAndSendAction(action);
+      });
+    }
+
     const removeLastPostIt = () => {
       const action = {
         type: 'REMOVE_LAST',
@@ -123,7 +140,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       userName,
       setUserName,
       newAction,
-    } = useGoogleNearby({setIsConnectionModalDisplayed});
+    } = useGoogleNearby({setIsConnectionModalDisplayed, copyPostits});
 
     useEffect(() => {
       if (!userName) {
