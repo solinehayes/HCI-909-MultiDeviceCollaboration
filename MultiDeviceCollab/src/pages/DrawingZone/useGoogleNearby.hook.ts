@@ -20,7 +20,11 @@ export interface EndPoint {
   color: string;
 }
 
-export const useGoogleNearby = () => {
+export const useGoogleNearby = ({
+  setIsConnectionModalDisplayed,
+}: {
+  setIsConnectionModalDisplayed: (visibility: boolean) => void;
+}) => {
   const dispatch = useDispatch();
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
@@ -138,7 +142,7 @@ export const useGoogleNearby = () => {
         ]),
       );
       // Par défaut pour le test mais à changer avec la configuration
-      //setDeviceUp({id: endpointId, name: endpointName, width: 360, height: 640});
+      setIsConnectionModalDisplayed(false);
       navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration, {
         endPoint: {endpointId, endpointName},
         sendMessage,

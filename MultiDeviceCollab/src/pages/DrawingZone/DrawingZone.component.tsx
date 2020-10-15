@@ -73,9 +73,10 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     //  {id: 1, text: 'post-it 1', color: theme.postItColors[0]},
     //]);
     const dispatch = useDispatch();
-    const [isBluetoothModalDisplayed, setIsBluetoothModalDisplayed] = useState<
-      boolean
-    >(false);
+    const [
+      isConnectionModalDisplayed,
+      setIsConnectionModalDisplayed,
+    ] = useState<boolean>(false);
     const [isColorsModalDisplayed, setIsColorsModalDisplayed] = useState<
       boolean
     >(false);
@@ -132,7 +133,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       userName,
       setUserName,
       newAction,
-    } = useGoogleNearby();
+    } = useGoogleNearby({setIsConnectionModalDisplayed});
 
     useEffect(() => {
       if (!userName) {
@@ -199,7 +200,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           <FloatingButton
             iconName="wifi"
             onPress={() => {
-              setIsBluetoothModalDisplayed(true);
+              setIsConnectionModalDisplayed(true);
               startDiscovering();
               startAdvertising();
             }}
@@ -212,8 +213,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           />
         </View>
         <ConnectionModal
-          isModalVisible={isBluetoothModalDisplayed}
-          setIsModalVisible={setIsBluetoothModalDisplayed}
+          isModalVisible={isConnectionModalDisplayed}
+          setIsModalVisible={setIsConnectionModalDisplayed}
           nearbyDevices={nearbyEndpoints}
           connectToDevice={connectToNearbyEndpoint}
         />
