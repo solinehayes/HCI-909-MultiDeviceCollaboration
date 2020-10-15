@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {Dimensions} from 'react-native';
+import {useState} from 'react';
+import {DeviceEventEmitter, Dimensions} from 'react-native';
 import NearbyConnection, {
   Strategy,
 } from 'react-native-google-nearby-connection';
@@ -23,6 +23,9 @@ export interface EndPoint {
   endpointName: string;
   color: string;
 }
+export const EventEmitKey = {
+  ERROR: 'ERROR',
+};
 
 export const useGoogleNearby = ({
   setIsConnectionModalDisplayed,
@@ -119,18 +122,15 @@ export const useGoogleNearby = ({
       endpoint.endpointId, // ID of the endpoint to connect to
     );
   };
-  NearbyConnection.onEndpointDiscovered(
-    ({endpointId, endpointName, serviceId}) => {
-      setNearbyEndpoints(
-        nearbyEndpoints.concat([{endpointId, endpointName, color: ''}]),
-      );
-    },
-  );
+  NearbyConnection.onEndpointDiscovered(({endpointId, endpointName}) => {
+    setNearbyEndpoints(
+      nearbyEndpoints.concat([{endpointId, endpointName, color: ''}]),
+    );
+  });
   NearbyConnection.onConnectedToEndpoint(
     ({
       endpointId, // ID of the endpoint we connected to
       endpointName, // The name of the service
-      serviceId, // A unique identifier for the service
     }) => {
       //console.log('Successfully connected to ', endpointName);
       setConnectedEndPoints(
@@ -158,9 +158,7 @@ export const useGoogleNearby = ({
     ({
       endpointId, // ID of the endpoint wishing to connect
       endpointName, // The name of the remote device we're connecting to.
-      authenticationToken, // A small symmetrical token that has been given to both devices.
       serviceId, // A unique identifier for the service
-      incomingConnection, // True if the connection request was initated from a remote device.
     }) => {
       console.log('Connexion initiated by ', endpointName);
       console.log('Accepting connexion');
@@ -173,8 +171,6 @@ export const useGoogleNearby = ({
   NearbyConnection.onEndpointLost(
     ({
       endpointId, // ID of the endpoint we lost
-      endpointName, // The name of the remote device we lost
-      serviceId, // A unique identifier for the service
     }) => {
       for (let i = 0; i < connectedEndPoints.length; i++) {
         if (connectedEndPoints[0].endpointId === endpointId) {
@@ -187,14 +183,9 @@ export const useGoogleNearby = ({
       }
     },
   );
-  NearbyConnection.onAdvertisingStarting(
-    ({
-      endpointName, // The name of the service thats starting to advertise
-      serviceId, // A unique identifier for the service
-    }) => {
-      console.log('onStartAdvertising');
-    },
-  );
+  NearbyConnection.onAdvertisingStarting(() => {
+    console.log('onStartAdvertising');
+  });
 
   NearbyConnection.onReceivePayload(
     ({
@@ -208,7 +199,6 @@ export const useGoogleNearby = ({
         payloadId, // Unique identifier of the payload
       ).then(
         ({
-          type, // The Payload.Type represented by this payload
           bytes, // [Payload.Type.BYTES] The bytes string that was sent
         }) => {
           setNewAction(bytes);
@@ -216,6 +206,19 @@ export const useGoogleNearby = ({
       );
     },
   );
+  NearbyConnection.onEndpointConnectionFailed(() => {
+    dispatch(finishLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
+    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+  });
+  NearbyConnection.onSendPayloadFailed(() => {
+    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+  });
+  NearbyConnection.onAdvertisingStartFailed(() => {
+    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+  });
+  NearbyConnection.onDiscoveryStartFailed(() => {
+    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+  });
 
   return {
     startDiscovering,
