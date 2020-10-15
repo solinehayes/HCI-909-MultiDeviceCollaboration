@@ -13,6 +13,10 @@ import {
   rightDeviceSelector,
   topDeviceSelector,
 } from '../../Store/Devices/deviceSelectors';
+import {
+  finishLoading,
+  LoadingStatusKey,
+} from '../../Store/Loader/LoaderActions';
 
 export interface EndPoint {
   endpointId: string;
@@ -142,6 +146,7 @@ export const useGoogleNearby = ({
         ]),
       );
       // Par défaut pour le test mais à changer avec la configuration
+      dispatch(finishLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
       setIsConnectionModalDisplayed(false);
       navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration, {
         endPoint: {endpointId, endpointName},
