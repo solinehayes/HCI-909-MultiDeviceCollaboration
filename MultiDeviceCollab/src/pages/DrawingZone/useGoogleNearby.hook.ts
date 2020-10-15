@@ -202,16 +202,7 @@ export const useGoogleNearby = () => {
           type, // The Payload.Type represented by this payload
           bytes, // [Payload.Type.BYTES] The bytes string that was sent
         }) => {
-          if (
-            JSON.parse(bytes).type == 'SET_BOTTOM_DEVICE_SIZE' ||
-            JSON.parse(bytes).type == 'SET_RIGHT_DEVICE_SIZE' ||
-            JSON.parse(bytes).type == 'SET_LEFT_DEVICE_SIZE' ||
-            JSON.parse(bytes).type == 'SET_TOP_DEVICE_SIZE'
-          ) {
-            dispatch(JSON.parse(bytes));
-          } else {
-            setNewAction(bytes);
-          }
+          setNewAction(bytes);
         },
       );
     },

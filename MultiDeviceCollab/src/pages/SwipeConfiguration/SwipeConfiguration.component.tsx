@@ -59,58 +59,47 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({
 
   const onSwipe = (gestureName) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
-    let actionName = '';
+    let actionSizeName = '';
+    let actionEndpointName = '';
     switch (gestureName) {
       case SWIPE_UP:
-        dispatch(
-          addDeviceActionCreator({
-            bottomDevice: {endPoint: endpoint, size: undefined},
-          }),
-        );
-        actionName = 'SET_TOP_DEVICE_SIZE';
+        actionSizeName = 'SET_TOP_DEVICE_SIZE';
+        actionEndpointName = 'SET_BOTTOM_DEVICE_ENDPOINT';
         console.log('swipe up');
         break;
       case SWIPE_DOWN:
-        dispatch(
-          addDeviceActionCreator({
-            topDevice: {endPoint: endpoint, size: undefined},
-          }),
-        );
-        actionName = 'SET_BOTTOM_DEVICE_SIZE';
+        actionSizeName = 'SET_BOTTOM_DEVICE_SIZE';
+        actionEndpointName = 'SET_TOP_DEVICE_ENDPOINT';
         console.log('swipe down');
         break;
       case SWIPE_LEFT:
-        dispatch(
-          addDeviceActionCreator({
-            rightDevice: {endPoint: endpoint, size: undefined},
-          }),
-        );
-        actionName = 'SET_LEFT_DEVICE_SIZE';
+        actionSizeName = 'SET_LEFT_DEVICE_SIZE';
+        actionEndpointName = 'SET_RIGHT_DEVICE_ENDPOINT';
         console.log('swipe left');
         break;
-
       case SWIPE_RIGHT:
-        dispatch(
-          addDeviceActionCreator({
-            leftDevice: {endPoint: endpoint, size: undefined},
-          }),
-        );
-        actionName = 'SET_RIGHT_DEVICE_SIZE';
+        actionSizeName = 'SET_RIGHT_DEVICE_SIZE';
+        actionEndpointName = 'SET_LEFT_DEVICE_ENDPOINT';
         console.log('swipe right');
         break;
     }
-    const action = {
-      type: actionName,
+    const actionSize = {
+      type: actionSizeName,
       payload: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
       },
     };
     sendMessage(
-      JSON.stringify(action),
+      JSON.stringify(actionSize),
       endpoint.endpointName,
       endpoint.endpointId,
     );
+    const actionEndPoint = {
+      type : actionEndpointName,
+      payload: endpoint,
+    };
+    dispatch(actionEndPoint);
     navigation.navigate(RootNavigatorRouteNames.DrawingZone);
   };
 
