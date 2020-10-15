@@ -10,7 +10,7 @@ import {
 } from './deviceActions';
 
 interface Device {
-  endPoint: EndPoint | undefined;
+  endPoint: EndPoint | null;
   size: {width: number; height: number} | undefined;
 }
 export interface DeviceState {
@@ -21,10 +21,10 @@ export interface DeviceState {
 }
 
 export const initialDeviceState: DeviceState = {
-  leftDevice: {endPoint: undefined, size: undefined},
-  rightDevice: {endPoint: undefined, size: undefined},
-  topDevice: {endPoint: undefined, size: undefined},
-  bottomDevice: {endPoint: undefined, size: undefined},
+  leftDevice: {endPoint: null, size: undefined},
+  rightDevice: {endPoint: null, size: undefined},
+  topDevice: {endPoint: null, size: undefined},
+  bottomDevice: {endPoint: null, size: undefined},
 };
 
 export const deviceReducer = (

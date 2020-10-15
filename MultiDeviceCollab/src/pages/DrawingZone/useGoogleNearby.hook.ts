@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Dimensions} from 'react-native';
 import NearbyConnection, {
   Strategy,
@@ -6,7 +6,7 @@ import NearbyConnection, {
 import {theme} from '../../../theme';
 import {useNavigation} from '@react-navigation/native';
 import {RootNavigatorRouteNames} from '../../App';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   bottomDeviceSelector,
   leftDeviceSelector,
@@ -21,6 +21,7 @@ export interface EndPoint {
 }
 
 export const useGoogleNearby = () => {
+  const dispatch = useDispatch();
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
   const [newAction, setNewAction] = useState<string>('');
@@ -60,45 +61,45 @@ export const useGoogleNearby = () => {
 
   const transposeAndSendAction = (action) => {
     // Transpose and send to left
-    if (deviceLeft.endPoint !== undefined) {
+    if (deviceLeft.endPoint !== null) {
       const actionLeft = JSON.parse(JSON.stringify(action));
       actionLeft.value.leftPos = action.value.leftPos + deviceLeft.size.width;
       sendMessage(
         JSON.stringify(actionLeft),
-        deviceLeft.endpointName,
-        deviceLeft.endpointId,
+        deviceLeft.endPoint.endpointName,
+        deviceLeft.endPoint.endpointId,
       );
     }
     // Transpose and send to right
-    if (deviceRight.endPoint !== undefined) {
+    if (deviceRight.endPoint !== null) {
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
       sendMessage(
         JSON.stringify(actionRight),
-        deviceRight.endpointName,
-        deviceRight.endpointId,
+        deviceRight.endPoint.endpointName,
+        deviceRight.endPoint.endpointId,
       );
     }
     // Transpose and send to up
-    if (deviceTop.endPoint !== undefined) {
+    if (deviceTop.endPoint !== null) {
       const actionUp = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
       actionUp.value.topPos = action.value.topPos + deviceTop.size.height - 80;
       sendMessage(
         JSON.stringify(actionUp),
-        deviceTop.endpointName,
-        deviceTop.endpointId,
+        deviceTop.endPoint.endpointName,
+        deviceTop.endPoint.endpointId,
       );
     }
     // Transpose and send down
-    if (deviceBottom.endPoint !== undefined) {
+    if (deviceBottom.endPoint !== null) {
       const actionDown = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
       actionDown.value.topPos = action.value.topPos - height + 80;
       sendMessage(
         JSON.stringify(actionDown),
-        deviceBottom.endpointName,
-        deviceBottom.endpointId,
+        deviceBottom.endPoint.endpointName,
+        deviceBottom.endPoint.endpointId,
       );
     }
   };
@@ -201,7 +202,16 @@ export const useGoogleNearby = () => {
           type, // The Payload.Type represented by this payload
           bytes, // [Payload.Type.BYTES] The bytes string that was sent
         }) => {
-          setNewAction(bytes);
+          if (
+            JSON.parse(bytes).type == 'SET_BOTTOM_DEVICE_SIZE' ||
+            JSON.parse(bytes).type == 'SET_RIGHT_DEVICE_SIZE' ||
+            JSON.parse(bytes).type == 'SET_LEFT_DEVICE_SIZE' ||
+            JSON.parse(bytes).type == 'SET_TOP_DEVICE_SIZE'
+          ) {
+            dispatch(JSON.parse(bytes));
+          } else {
+            setNewAction(bytes);
+          }
         },
       );
     },
