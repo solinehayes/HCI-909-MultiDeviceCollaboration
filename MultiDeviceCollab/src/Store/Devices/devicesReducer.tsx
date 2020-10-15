@@ -1,7 +1,6 @@
 import {getType} from 'typesafe-actions';
 import {EndPoint} from '../../pages/DrawingZone/useGoogleNearby.hook';
 import {
-  addDeviceActionCreator,
   DeviceActions,
   setBottomSizeActionCreator,
   setLeftSizeActionCreator,
@@ -53,14 +52,14 @@ export const deviceReducer = (
         },
       };
     case getType(setLeftSizeActionCreator):
-      console.log("set Left Size");
+      console.log('set Left Size');
       console.log({
         ...state,
         leftDevice: {
           size: action.payload,
           endPoint: state.leftDevice.endPoint,
         },
-      })
+      });
       return {
         ...state,
         leftDevice: {
@@ -69,7 +68,7 @@ export const deviceReducer = (
         },
       };
     case getType(setRightSizeActionCreator):
-      console.log("set right size");
+      console.log('set right size');
       console.log({
         ...state,
         rightDevice: {
@@ -85,54 +84,54 @@ export const deviceReducer = (
         },
       };
 
-      case getType(setBottomEndpointActionCreator):
-        return {
-          ...state,
-          bottomDevice: {
-            size: state.bottomDevice.size,
-            endPoint: action.payload,
-          },
-        };
-      case getType(setTopEndpointActionCreator):
-        return {
-          ...state,
-          topDevice: {
-            size: state.topDevice.size,
-            endPoint: action.payload,
-          },
-        };
-      case getType(setLeftEndpointActionCreator):
-        console.log("set left endpoint");
-        console.log({
-          ...state,
-          leftDevice: {
-            size: state.leftDevice.size,
-            endPoint: action.payload,
-          },
-        })
-        return {
-          ...state,
-          leftDevice: {
-            size: state.leftDevice.size,
-            endPoint: action.payload,
-          },
-        };
-      case getType(setRightEndpointActionCreator):
-        console.log("set right endpoint");
-        console.log({
-          ...state,
-          rightDevice: {
-            size: state.rightDevice.size,
-            endPoint: action.payload,
-          },
-        });
-        return {
-          ...state,
-          rightDevice: {
-            size: state.rightDevice.size,
-            endPoint: action.payload,
-          },
-        };
+    case getType(setBottomEndpointActionCreator):
+      return {
+        ...state,
+        bottomDevice: {
+          size: state.bottomDevice.size,
+          endPoint: action.payload,
+        },
+      };
+    case getType(setTopEndpointActionCreator):
+      return {
+        ...state,
+        topDevice: {
+          size: state.topDevice.size,
+          endPoint: action.payload,
+        },
+      };
+    case getType(setLeftEndpointActionCreator):
+      console.log('set left endpoint');
+      console.log({
+        ...state,
+        leftDevice: {
+          size: state.leftDevice.size,
+          endPoint: action.payload,
+        },
+      });
+      return {
+        ...state,
+        leftDevice: {
+          size: state.leftDevice.size,
+          endPoint: action.payload,
+        },
+      };
+    case getType(setRightEndpointActionCreator):
+      console.log('set right endpoint');
+      console.log({
+        ...state,
+        rightDevice: {
+          size: state.rightDevice.size,
+          endPoint: action.payload,
+        },
+      });
+      return {
+        ...state,
+        rightDevice: {
+          size: state.rightDevice.size,
+          endPoint: action.payload,
+        },
+      };
 
     default:
       return state;
