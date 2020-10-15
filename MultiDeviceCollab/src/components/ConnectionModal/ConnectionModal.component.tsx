@@ -10,10 +10,13 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import Modal from 'react-native-modal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {theme} from '../../../theme/index';
 import {EndPoint} from '../../pages/DrawingZone/useGoogleNearby.hook';
+import {LoadingStatusKey, startLoading} from '../../Store/Loader/LoaderActions';
+import {isLoadingSelector} from '../../Store/Loader/LoaderSelectors';
 
 interface Props {
   isModalVisible: boolean;
@@ -34,21 +37,27 @@ interface Styles {
 const renderDevices = ({
   item,
   connectToDevice,
-  setVisible,
+  isLoading,
+  dispatch,
 }: {
   item: EndPoint;
   connectToDevice: (endpoint: EndPoint) => void;
-  setVisible: (visibility: boolean) => void;
+  dispatch: (action) => void;
+  isLoading: boolean;
 }) => {
   return (
     <TouchableOpacity
       onPress={() => {
         connectToDevice(item);
-        setVisible(false);
+        dispatch(startLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
       }}
       style={styles.deviceItem}>
       <Text>{item.endpointName}</Text>
-      <Icon name="wifi" color={theme.colors.blue} size={20} />
+      {isLoading ? (
+        <ActivityIndicator color={theme.colors.blue} size={20} />
+      ) : (
+        <Icon name="wifi" color={theme.colors.blue} size={20} />
+      )}
     </TouchableOpacity>
   );
 };
@@ -90,6 +99,10 @@ export const ConnectionModal: FunctionComponent<Props> = ({
   nearbyDevices,
   connectToDevice,
 }) => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector(
+    isLoadingSelector(LoadingStatusKey.CONNECT_TO_DEVICE),
+  );
   return (
     <Modal
       isVisible={isModalVisible}
@@ -114,7 +127,8 @@ export const ConnectionModal: FunctionComponent<Props> = ({
               return renderDevices({
                 item,
                 connectToDevice,
-                setVisible: setIsModalVisible,
+                isLoading,
+                dispatch,
               });
             }}
             keyExtractor={(device: EndPoint): string => device.endpointId}
