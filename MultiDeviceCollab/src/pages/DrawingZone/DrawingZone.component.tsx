@@ -1,12 +1,5 @@
 import React, {FunctionComponent, useEffect, useState} from 'react';
-import {
-  View,
-  SafeAreaView,
-  ViewStyle,
-  StyleSheet,
-  Button,
-  Dimensions,
-} from 'react-native';
+import {View, SafeAreaView, ViewStyle, StyleSheet} from 'react-native';
 import {FloatingButton} from '../../components/FloatingButton/FloatingButton.component';
 import {PostIt} from '../../components/PostIt/PostIt.component';
 import {theme} from '../../../theme';
@@ -93,9 +86,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         sendMessage(message, device.endpointName, device.endpointId);
       });
     };
-
-    // Function to add a post it
-    const {width, height} = Dimensions.get('window');
 
     const addPostIt = (color: string) => {
       const action = {
@@ -203,12 +193,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
               setIsConnectionModalDisplayed(true);
               startDiscovering();
               startAdvertising();
-            }}
-          />
-          <Button
-            title="Send Hello world"
-            onPress={() => {
-              sendMessageToAll('HelloWorld');
             }}
           />
         </View>
