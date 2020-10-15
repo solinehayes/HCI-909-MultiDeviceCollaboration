@@ -14,6 +14,7 @@ const colors = {
   darkGrey: '#858585',
   white: '#FFFFFF',
   blue: '#ADD8E6',
+  red: '#FF6957',
 };
 const dimensions = {
   button: 40,

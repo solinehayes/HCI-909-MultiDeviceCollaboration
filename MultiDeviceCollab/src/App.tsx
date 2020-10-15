@@ -12,6 +12,7 @@ import {EndPoint} from './pages/DrawingZone/useGoogleNearby.hook';
 import {deviceReducer} from './Store/Devices/devicesReducer';
 import {composeWithDevTools} from 'redux-devtools-extension';
 import {loaderReducer} from './Store/Loader/LoaderReducer';
+import {ErrorModal} from './components/ErrorModal/ErrorModal.component';
 
 export type RootStackParamList = {
   DrawingZone: undefined;
@@ -53,6 +54,7 @@ const App: FunctionComponent = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      <ErrorModal />
     </Provider>
   );
 };
