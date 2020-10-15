@@ -11,6 +11,7 @@ import {modifyPostit} from './Store/Reducers/modifyPostitReducer';
 import {EndPoint} from './pages/DrawingZone/useGoogleNearby.hook';
 import {deviceReducer} from './Store/Devices/devicesReducer';
 import {composeWithDevTools} from 'redux-devtools-extension';
+import {loaderReducer} from './Store/Loader/LoaderReducer';
 
 export type RootStackParamList = {
   DrawingZone: undefined;
@@ -29,6 +30,7 @@ const Store = createStore(
   combineReducers({
     devices: deviceReducer,
     postit: modifyPostit,
+    loader: loaderReducer,
   }),
   composeWithDevTools(),
 );
