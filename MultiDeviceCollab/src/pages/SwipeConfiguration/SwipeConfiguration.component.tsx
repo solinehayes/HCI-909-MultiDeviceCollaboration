@@ -8,13 +8,15 @@ import {
   Text,
   Dimensions,
 } from 'react-native';
-import {useDispatch} from 'react-redux';
+import {connect, ConnectedProps,useDispatch} from 'react-redux';
 import {theme} from '../../../theme';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {addDeviceActionCreator} from '../../Store/Devices/deviceActions';
+import {useGoogleNearby} from './useGoogleNearby.hook';
+
 
 interface Styles {
   container: ViewStyle;
@@ -33,11 +35,23 @@ const styles = StyleSheet.create<Styles>({
     alignItems: 'center',
   },
 });
+
+const mapStateToProps = (state) => {
+  return {
+    postits: state.postit.postits,
+    index: state.postit.index,
+  };
+};
+
+const connector = connect(mapStateToProps);
+
+type ReduxProps = ConnectedProps<typeof connector>;
+
 type SwipeConfigurationNavigationProp = StackNavigationProp<
   RootStackParamList,
   RootNavigatorRouteNames.SwipeConfiguration
 >;
-interface Props {
+type Props = ReduxProps & {
   navigation: SwipeConfigurationNavigationProp;
   route: RouteProp<
     RootStackParamList,
@@ -45,9 +59,11 @@ interface Props {
   >;
 }
 
-export const SwipeConfiguration: FunctionComponent<Props> = ({
+export const SwipeConfiguration: FunctionComponent<Props> = connector(
+  ({
   route,
   navigation,
+  props: Props,
 }) => {
   const endpoint = route.params.endPoint;
   const sendMessage = route.params.sendMessage;
@@ -56,6 +72,19 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({
     directionalOffsetThreshold: 80,
   };
   const dispatch = useDispatch();
+
+  const {
+    startDiscovering,
+    startAdvertising,
+    sendMessage,
+    transposeAndSendAction,
+    connectToNearbyEndpoint,
+    nearbyEndpoints,
+    connectedEndPoints,
+    userName,
+    setUserName,
+    newAction,
+  } = useGoogleNearby({setIsConnectionModalDisplayed});
 
   const onSwipe = (gestureName) => {
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
@@ -100,6 +129,20 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({
       payload: endpoint,
     };
     dispatch(actionEndPoint);
+    props.postits.map((postit) => {
+      const action = {
+        type: 'ADD_POSTIT',
+        value: {
+          id: postit.id,
+          text: postit.text,
+          leftPos: postit.leftPos,
+          topPos: postit.topPos,
+          squareSize: postit.squareSize,
+          color: postit.color,
+        },
+      };
+      transposeAndSendAction(action);
+    });
     navigation.navigate(RootNavigatorRouteNames.DrawingZone);
   };
 
@@ -115,4 +158,5 @@ export const SwipeConfiguration: FunctionComponent<Props> = ({
       </GestureRecognizer>
     </TouchableWithoutFeedback>
   );
-};
+},
+);
