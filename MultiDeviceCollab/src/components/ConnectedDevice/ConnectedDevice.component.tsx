@@ -40,6 +40,9 @@ export const ConnectedDevice: FunctionComponent<Props> = ({
   device,
   onPress,
 }) => {
+  /***
+  Component used to display the connected devices on the DrawingZone page
+  ***/
   return (
     <TouchableOpacity
       style={[

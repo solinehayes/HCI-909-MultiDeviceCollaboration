@@ -59,6 +59,10 @@ const styles = StyleSheet.create<Styles>({
 });
 
 export const ErrorModal: FunctionComponent = () => {
+  /***
+    The error modal is displayed whenever there is an error (especially with the connection between devices)
+    eg. connection failed, send message failed etc..
+  ***/
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const setModalVisible = async (text: string) => {
@@ -66,6 +70,9 @@ export const ErrorModal: FunctionComponent = () => {
     setIsModalVisible(true);
   };
   useEffect(() => {
+    /***
+    Used to display the error modal when an event with the key ERROR is emitted.
+    ***/
     DeviceEventEmitter.addListener(EventEmitKey.ERROR, setModalVisible);
     return () => {
       DeviceEventEmitter.removeListener(EventEmitKey.ERROR, setModalVisible);
