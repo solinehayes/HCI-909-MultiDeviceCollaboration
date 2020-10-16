@@ -27,6 +27,8 @@ cd ios && pod install && cd ..
 
 ### Run the app in your simulator
 
+In the folder MultiDeviceCollab:
+
 - `yarn start`
 
 Then on another terminal window:
@@ -43,5 +45,7 @@ Then on another terminal window:
 5. Run `adb devices` one device should appear with "device" written next to it (if it is written 'unauthorized' try unplugging the phone, runn `adb kill-server` and `adb start-server`and try step 4 again) 
 6. Launch `yarn start`in a seperate terminal window
 7. Run `yarn android`
+
+For more information: https://reactnative.dev/docs/running-on-device
 
 _Warning_ : You might not see devices on the connection modal right after you've accepted the localisation authorization on your phone. Try reloading the app (`yarn android`) or close it and re-lauch it again from your phone
