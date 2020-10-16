@@ -64,6 +64,11 @@ export const UserNameModal: FunctionComponent<Props> = ({
   setUserName,
   userName,
 }) => {
+  /***
+    Modal displayed on the launch of the application to setup the device's username. It is also accessible through The page Drawing
+    Zone to update the username
+    ***/
+
   const [newUserName, setNewUserName] = useState<string>(userName);
   const isSaveDisabled = !newUserName;
   const isCancelDisabled = !userName;
