@@ -18,7 +18,7 @@ Make sure you have installed:
 
 ```bash
 git clone git@github.com:solinehayes/HCI-909.git
-cd project-name
+cd project-name/MultiDeviceCollab
 yarn
 cd ios && pod install && cd ..
 ```
