@@ -44,4 +44,4 @@ Then on another terminal window:
 6. Launch `yarn start`in a seperate terminal window
 7. Run `yarn android`
 
-_Warining_ : You might not see devices on the connection modal right after you've accepted the localisation authorization on your phone. Try reloading the app (`yarn android`) or close it and re-lauch it again from your phone
+_Warning_ : You might not see devices on the connection modal right after you've accepted the localisation authorization on your phone. Try reloading the app (`yarn android`) or close it and re-lauch it again from your phone
