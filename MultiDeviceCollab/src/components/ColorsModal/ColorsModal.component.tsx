@@ -11,12 +11,13 @@ interface Props {
   createPostIt: (color: string) => void;
 }
 interface Styles {
-  modal: ViewStyle;
+  container: ViewStyle;
   colorPin: ViewStyle;
+  modal: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
-  modal: {
+  container: {
     ...theme.shadow,
     backgroundColor: theme.colors.white,
     marginVertical: 5 * theme.gridUnit,
@@ -28,6 +29,9 @@ const styles = StyleSheet.create<Styles>({
     width: theme.dimensions.button,
     borderRadius: theme.dimensions.button / 2,
     margin: theme.gridUnit * 3,
+  },
+  modal: {
+    justifyContent: 'flex-start',
   },
 });
 
@@ -57,11 +61,13 @@ export const ColorsModal: FunctionComponent<Props> = ({
         setIsModalVisible(false);
       }}
       backdropColor={theme.colors.white}
-      style={{
-        justifyContent: 'flex-start',
-        marginTop: inset.top + 4 * theme.gridUnit,
-      }}>
-      <View style={styles.modal}>
+      style={[
+        {
+          marginTop: inset.top + 4 * theme.gridUnit,
+        },
+        styles.modal,
+      ]}>
+      <View style={styles.container}>
         <FlatList
           data={theme.postItColors}
           horizontal
