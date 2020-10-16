@@ -40,7 +40,14 @@ export const ColorsModal: FunctionComponent<Props> = ({
   setIsModalVisible,
   createPostIt,
 }) => {
+  /***
+  The Color Modal is displayed on the create post-it button and allows us to select the color we want the new post-it to be
+  ***/
+
   const renderColors = ({item, index}: {item: string; index: any}) => {
+    /***
+    Displays one color as clickable on the modal color
+    ***/
     return (
       <TouchableOpacity
         key={index}
