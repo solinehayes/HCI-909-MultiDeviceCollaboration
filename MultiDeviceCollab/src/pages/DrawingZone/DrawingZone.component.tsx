@@ -15,7 +15,7 @@ import {UserNameModal} from '../../components/UserNameModal/UserNameModal.compon
 
 type DrawingComponentNavigationProp = StackNavigationProp<
   RootStackParamList,
-  RootNavigatorRouteNames.DrawingZone
+  RootNavigatorRouteNames.DRAWING_ZONE
 >;
 
 const mapStateToProps = (state) => {
@@ -196,7 +196,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
                 key={device.endpointId}
                 onPress={() => {
                   props.navigation.navigate(
-                    RootNavigatorRouteNames.SwipeConfiguration,
+                    RootNavigatorRouteNames.SWIPE_CONFIGURATION,
                     {endPoint: device},
                   );
                 }}

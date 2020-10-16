@@ -167,7 +167,7 @@ export const useGoogleNearby = ({
       // Par défaut pour le test mais à changer avec la configuration
       dispatch(finishLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
       setIsConnectionModalDisplayed(false);
-      navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration, {
+      navigation.navigate(RootNavigatorRouteNames.SWIPE_CONFIGURATION, {
         endPoint: {endpointId, endpointName},
         sendMessage,
       });

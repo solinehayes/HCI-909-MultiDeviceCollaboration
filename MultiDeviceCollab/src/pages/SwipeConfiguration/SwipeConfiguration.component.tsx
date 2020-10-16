@@ -37,13 +37,13 @@ const styles = StyleSheet.create<Styles>({
 
 type SwipeConfigurationNavigationProp = StackNavigationProp<
   RootStackParamList,
-  RootNavigatorRouteNames.SwipeConfiguration
+  RootNavigatorRouteNames.SWIPE_CONFIGURATION
 >;
 interface Props {
   navigation: SwipeConfigurationNavigationProp;
   route: RouteProp<
     RootStackParamList,
-    RootNavigatorRouteNames.SwipeConfiguration
+    RootNavigatorRouteNames.SWIPE_CONFIGURATION
   >;
 }
 
@@ -98,11 +98,11 @@ export const SwipeConfiguration: FunctionComponent<Props> =  ({
       endpoint.endpointId,
     );
     const actionEndPoint = {
-      type : actionEndpointName,
+      type: actionEndpointName,
       payload: endpoint,
     };
     dispatch(actionEndPoint);
-    navigation.navigate(RootNavigatorRouteNames.DrawingZone);
+    navigation.navigate(RootNavigatorRouteNames.DRAWING_ZONE);
   };
 
   return (

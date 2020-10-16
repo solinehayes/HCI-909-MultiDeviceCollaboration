@@ -22,8 +22,8 @@ export type RootStackParamList = {
   };
 };
 export enum RootNavigatorRouteNames {
-  SwipeConfiguration = 'SwipeConfiguration',
-  DrawingZone = 'DrawingZone',
+  SWIPE_CONFIGURATION = 'SwipeConfiguration',
+  DRAWING_ZONE = 'DrawingZone',
 }
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -46,11 +46,11 @@ const App: FunctionComponent = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name={RootNavigatorRouteNames.DrawingZone}
+            name={RootNavigatorRouteNames.DRAWING_ZONE}
             component={DrawingZone}
           />
           <Stack.Screen
-            name={RootNavigatorRouteNames.SwipeConfiguration}
+            name={RootNavigatorRouteNames.SWIPE_CONFIGURATION}
             component={SwipeConfiguration}
             options={{headerLeft: null}}
           />
