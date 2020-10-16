@@ -7,7 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
 import {combineReducers, createStore} from 'redux';
-import {modifyPostit} from './Store/Reducers/modifyPostitReducer';
+import {modifyPostit} from './Store/Postits/modifyPostitReducer';
 import {EndPoint} from './pages/DrawingZone/useGoogleNearby.hook';
 import {deviceReducer} from './Store/Devices/devicesReducer';
 import {composeWithDevTools} from 'redux-devtools-extension';
