@@ -29,6 +29,7 @@ export const EventEmitKey = {
 
 export const useGoogleNearby = ({
   setIsConnectionModalDisplayed,
+  copyPostits,
 }: {
   setIsConnectionModalDisplayed: (visibility: boolean) => void;
 }) => {
@@ -48,6 +49,16 @@ export const useGoogleNearby = ({
   const deviceTop = useSelector(topDeviceSelector);
   const deviceBottom = useSelector(bottomDeviceSelector);
 
+  useEffect(() => {
+    if ((deviceLeft.endPoint!==null&&deviceLeft.size!==undefined)||
+        (deviceRight.endPoint!==null&&deviceRight.size!==undefined)||
+        (deviceTop.endPoint!==null&&deviceTop.size!==undefined)||
+        (deviceBottom.endPoint!==null&&deviceBottom.size!==undefined)
+      ) {
+      copyPostits();
+    }
+  }, [deviceLeft, deviceRight, deviceTop, deviceBottom]);
+
   const startDiscovering = () => {
     NearbyConnection.startDiscovering(
       userviceId, // A unique identifier for the service
@@ -62,7 +73,6 @@ export const useGoogleNearby = ({
   };
 
   const sendMessage = (message: string, endpointName: string, endpointId) => {
-    console.log('Send message to ' + endpointName);
     NearbyConnection.sendBytes(
       userviceId, // A unique identifier for the service
       endpointId, // ID of the endpoint wishing to stop playing audio from

@@ -1,7 +1,7 @@
 import {theme} from '../../../theme';
 
 // Deuxième post it pour le test
-const initialState = {postits: [], index: 1};
+const initialState = {postits: [], index: 1, copied: false};
 
 export const modifyPostit = (state = initialState, action) => {
   let nextState;
@@ -57,6 +57,13 @@ export const modifyPostit = (state = initialState, action) => {
           postits: state.postits.slice(0, state.postits.length-1)
         };
     return nextState || state;
+
+    case 'SET_COPIED_TRUE':
+      nextState = {
+        ...state,
+        copied: true
+      };
+      return nextState || state;
 
     default:
       return state;

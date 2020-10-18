@@ -16,6 +16,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 import {addDeviceActionCreator} from '../../Store/Devices/deviceActions';
 
+
 interface Styles {
   container: ViewStyle;
   gestureRecognizeContainer: ViewStyle;
@@ -33,6 +34,7 @@ const styles = StyleSheet.create<Styles>({
     alignItems: 'center',
   },
 });
+
 type SwipeConfigurationNavigationProp = StackNavigationProp<
   RootStackParamList,
   RootNavigatorRouteNames.SwipeConfiguration
@@ -45,7 +47,7 @@ interface Props {
   >;
 }
 
-export const SwipeConfiguration: FunctionComponent<Props> = ({
+export const SwipeConfiguration: FunctionComponent<Props> =  ({
   route,
   navigation,
 }) => {
