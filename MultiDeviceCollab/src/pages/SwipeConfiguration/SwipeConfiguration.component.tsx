@@ -1,8 +1,6 @@
 import React, {FunctionComponent} from 'react';
 import {
   TouchableWithoutFeedback,
-  View,
-  SafeAreaView,
   ViewStyle,
   StyleSheet,
   Text,
@@ -14,7 +12,6 @@ import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
-import {addDeviceActionCreator} from '../../Store/Devices/deviceActions';
 
 
 interface Styles {
@@ -51,15 +48,19 @@ export const SwipeConfiguration: FunctionComponent<Props> =  ({
   route,
   navigation,
 }) => {
-  const endpoint = route.params.endPoint;
+  const endpoint = route.params.endPoint; // Endpoint to connect to
   const sendMessage = route.params.sendMessage;
   const config = {
     velocityThreshold: 0.5,
     directionalOffsetThreshold: 80,
   };
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Used to dispatch actions to the app's store
 
   const onSwipe = (gestureName) => {
+    /***
+    Function that send the right configuration (height and width of this device) to the other device depending on the swipe direction
+    and adds the endpoint to this device configuration device store
+    ***/
     const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
     let actionSizeName = '';
     let actionEndpointName = '';
