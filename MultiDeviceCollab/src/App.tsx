@@ -37,6 +37,7 @@ const App: FunctionComponent = () => {
   useEffect(() => {
     SplashScreen.hide();
   });
+  console.disableYellowBox = true;
   return (
     <Provider store={Store}>
       <NavigationContainer>

@@ -43,7 +43,11 @@ export const useGoogleNearby = ({
   const deviceBottom = useSelector(bottomDeviceSelector);
 
   useEffect(() => {
-    if ((deviceLeft.endPoint!==null&&deviceLeft.size!==undefined)) {
+    if ((deviceLeft.endPoint!==null&&deviceLeft.size!==undefined)||
+        (deviceRight.endPoint!==null&&deviceRight.size!==undefined)||
+        (deviceTop.endPoint!==null&&deviceTop.size!==undefined)||
+        (deviceBottom.endPoint!==null&&deviceBottom.size!==undefined)
+      ) {
       copyPostits();
     }
   }, [deviceLeft, deviceRight, deviceTop, deviceBottom]);
