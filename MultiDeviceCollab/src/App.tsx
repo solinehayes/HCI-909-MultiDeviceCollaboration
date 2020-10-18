@@ -18,7 +18,7 @@ export type RootStackParamList = {
   DrawingZone: undefined;
   SwipeConfiguration: {
     endPoint: EndPoint;
-    sendMessage: (message: string, endpointName: string, endpointId) => void;
+    sendMessage: (message: string, endpointId: string) => void;
   };
 };
 export enum RootNavigatorRouteNames {

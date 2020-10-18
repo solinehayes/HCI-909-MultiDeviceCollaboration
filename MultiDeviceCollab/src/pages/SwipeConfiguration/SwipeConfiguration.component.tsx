@@ -92,11 +92,7 @@ export const SwipeConfiguration: FunctionComponent<Props> =  ({
         height: Dimensions.get('window').height,
       },
     };
-    sendMessage(
-      JSON.stringify(actionSize),
-      endpoint.endpointName,
-      endpoint.endpointId,
-    );
+    sendMessage(JSON.stringify(actionSize), endpoint.endpointId);
     const actionEndPoint = {
       type: actionEndpointName,
       payload: endpoint,

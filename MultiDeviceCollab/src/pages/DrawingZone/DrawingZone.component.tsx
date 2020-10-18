@@ -84,7 +84,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
 
     const sendMessageToAll = (message: string) => {
       connectedEndPoints.map((device: EndPoint) => {
-        sendMessage(message, device.endpointName, device.endpointId);
+        sendMessage(message, device.endpointId);
       });
     };
 

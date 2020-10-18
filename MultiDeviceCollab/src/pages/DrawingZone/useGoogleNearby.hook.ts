@@ -44,7 +44,6 @@ export const useGoogleNearby = ({
   const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
 
   const {width, height} = Dimensions.get('window');
-  // A changer en fonction de la configuration
   const deviceLeft = useSelector(leftDeviceSelector);
   const deviceRight = useSelector(rightDeviceSelector);
   const deviceTop = useSelector(topDeviceSelector);
@@ -65,28 +64,32 @@ export const useGoogleNearby = ({
   }, [deviceLeft, deviceRight, deviceTop, deviceBottom, copyPostits]);
 
   const startDiscovering = () => {
+    /***
+    Function to start searching for nearby devices
+    ***/
     if (!isDiscovering) {
-      NearbyConnection.startDiscovering(
-        userviceId, // A unique identifier for the service
-      );
+      NearbyConnection.startDiscovering(userviceId);
     }
   };
   const startAdvertising = () => {
+    /***
+    Function to be seen by other devices
+    ***/
     if (!isAdvertising) {
       console.log('we advertize');
       NearbyConnection.startAdvertising(
-        userName, // This nodes endpoint name
-        userviceId, // A unique identifier for the service
-        Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
+        userName,
+        userviceId,
+        Strategy.P2P_POINT_TO_POINT,
       );
     }
   };
-  const sendMessage = (message: string, endpointName: string, endpointId) => {
-    NearbyConnection.sendBytes(
-      userviceId, // A unique identifier for the service
-      endpointId, // ID of the endpoint wishing to stop playing audio from
-      message, // A string of bytes to send
-    );
+
+  const sendMessage = (message: string, endpointId: string) => {
+    /***
+    Function to send message to another device
+    ***/
+    NearbyConnection.sendBytes(userviceId, endpointId, message);
   };
 
   const transposeAndSendAction = (action) => {
@@ -94,43 +97,27 @@ export const useGoogleNearby = ({
     if (deviceLeft.endPoint !== null) {
       const actionLeft = JSON.parse(JSON.stringify(action));
       actionLeft.value.leftPos = action.value.leftPos + deviceLeft.size.width;
-      sendMessage(
-        JSON.stringify(actionLeft),
-        deviceLeft.endPoint.endpointName,
-        deviceLeft.endPoint.endpointId,
-      );
+      sendMessage(JSON.stringify(actionLeft), deviceLeft.endPoint.endpointId);
     }
     // Transpose and send to right
     if (deviceRight.endPoint !== null) {
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
-      sendMessage(
-        JSON.stringify(actionRight),
-        deviceRight.endPoint.endpointName,
-        deviceRight.endPoint.endpointId,
-      );
+      sendMessage(JSON.stringify(actionRight), deviceRight.endPoint.endpointId);
     }
     // Transpose and send to up
     if (deviceTop.endPoint !== null) {
       const actionUp = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
       actionUp.value.topPos = action.value.topPos + deviceTop.size.height - 80;
-      sendMessage(
-        JSON.stringify(actionUp),
-        deviceTop.endPoint.endpointName,
-        deviceTop.endPoint.endpointId,
-      );
+      sendMessage(JSON.stringify(actionUp), deviceTop.endPoint.endpointId);
     }
     // Transpose and send down
     if (deviceBottom.endPoint !== null) {
       const actionDown = JSON.parse(JSON.stringify(action));
       // 80 : valeur arbitraire pour compenser la hauteur du bandeau
       actionDown.value.topPos = action.value.topPos - height + 80;
-      sendMessage(
-        JSON.stringify(actionDown),
-        deviceBottom.endPoint.endpointName,
-        deviceBottom.endPoint.endpointId,
-      );
+      sendMessage(JSON.stringify(actionDown), deviceBottom.endPoint.endpointId);
     }
   };
 
