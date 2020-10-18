@@ -50,6 +50,8 @@ export const SwipeConfiguration: FunctionComponent<Props> =  ({
 }) => {
   const endpoint = route.params.endPoint; // Endpoint to connect to
   const sendMessage = route.params.sendMessage;
+
+  //@TODO: Elise je sais pas trop comment définir ça
   const config = {
     velocityThreshold: 0.5,
     directionalOffsetThreshold: 80,
