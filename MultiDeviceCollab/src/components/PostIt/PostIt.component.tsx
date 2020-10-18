@@ -1,19 +1,16 @@
-import React, {FunctionComponent, useState, useEffect} from 'react';
+import React, {FunctionComponent, useState} from 'react';
 import {
   View,
   TextInput,
   TouchableOpacity,
   ViewStyle,
   StyleSheet,
-  PanResponder,
   Dimensions,
-  Animated,
   TextStyle,
-  StatusBar,
 } from 'react-native';
 import {theme} from '../../../theme';
 import {createResponder} from 'react-native-gesture-responder';
-import {connect, ConnectedProps, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 interface Props {
   textInit: string;
@@ -44,34 +41,57 @@ const styles = StyleSheet.create<Styles>({
 
 const {width, height} = Dimensions.get('window');
 
-export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos, squareSize, color, sendMessageToAll, transposeAndSendAction}) => {
+export const PostIt: FunctionComponent<Props> = ({
+  textInit,
+  id,
+  topPos,
+  leftPos,
+  squareSize,
+  color,
+  sendMessageToAll,
+  transposeAndSendAction,
+}) => {
   const [textValue, onChangeText] = useState(textInit);
   const [gesture, setGesture] = useState({});
   const dispatch = useDispatch();
 
   const movePostIt = (newTopPos, newLeftPos) => {
-    const action = {type: 'MOVE_POSTIT', value: {id: id, topPos: newTopPos, leftPos: newLeftPos}};
+    const action = {
+      type: 'MOVE_POSTIT',
+      value: {id: id, topPos: newTopPos, leftPos: newLeftPos},
+    };
     dispatch(action);
-    if (newLeftPos+squareSize/2+20>width || newLeftPos-squareSize/2-20<0 || newTopPos-squareSize/2-20<0 || newTopPos+squareSize/2+20>height-80){
-      if (Math.abs(newTopPos-topPos)>7 || Math.abs(newLeftPos-leftPos)>7){
+    if (
+      newLeftPos + squareSize / 2 + 20 > width ||
+      newLeftPos - squareSize / 2 - 20 < 0 ||
+      newTopPos - squareSize / 2 - 20 < 0 ||
+      newTopPos + squareSize / 2 + 20 > height - 80
+    ) {
+      if (
+        Math.abs(newTopPos - topPos) > 7 ||
+        Math.abs(newLeftPos - leftPos) > 7
+      ) {
         transposeAndSendAction(action);
       }
     }
   };
 
   const resizePostIt = (newSquareSize) => {
-    const action = {type: 'RESIZE_POSTIT', value: {id: id, newSquareSize: newSquareSize}};
+    const action = {
+      type: 'RESIZE_POSTIT',
+      value: {id: id, newSquareSize: newSquareSize},
+    };
     dispatch(action);
-    if (Math.abs(squareSize-newSquareSize)>7){
+    if (Math.abs(squareSize - newSquareSize) > 7) {
       sendMessageToAll(JSON.stringify(action));
     }
-  }
+  };
 
   const changeText = (newText) => {
     const action = {type: 'CHANGE_TEXT', value: {id: id, newText: newText}};
     console.log(action);
     sendMessageToAll(JSON.stringify(action));
-  }
+  };
 
   const gestureResponder = createResponder({
     onStartShouldSetResponder: (evt, gestureState) => true,
@@ -84,9 +104,14 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
     onResponderGrant: (evt, gestureState) => {},
     onResponderMove: (evt, gestureState) => {
       if (gestureState.pinch && gestureState.previousPinch) {
-        resizePostIt(squareSize * gestureState.pinch / gestureState.previousPinch);
+        resizePostIt(
+          (squareSize * gestureState.pinch) / gestureState.previousPinch,
+        );
       }
-      movePostIt(topPos + gestureState.moveY - gestureState.previousMoveY, leftPos + gestureState.moveX - gestureState.previousMoveX);
+      movePostIt(
+        topPos + gestureState.moveY - gestureState.previousMoveY,
+        leftPos + gestureState.moveX - gestureState.previousMoveX,
+      );
 
       setGesture({...gestureState});
     },
@@ -114,10 +139,13 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
         ]}>
         <TextInput
           style={styles.text}
-          onChangeText={(text) => {onChangeText(text); changeText(text);}}
+          onChangeText={(text) => {
+            onChangeText(text);
+            changeText(text);
+          }}
           multiline={true}>
-          {' '}
-          {textInit}{' '}
+          {textInit}
+          {/* HELP ELISE: ici je vois pas pourquoi c'est textInit et pas textValue? */}
         </TextInput>
       </TouchableOpacity>
     </View>
