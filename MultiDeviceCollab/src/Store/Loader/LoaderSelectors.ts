@@ -1,16 +1,9 @@
 const loadingStatusSelector = (state, key: string) => state.loader[key];
 
 export const isLoadingSelector = (key: string) => (state): boolean => {
+  /***
+  Function that returns the loading status of the loading status key defined in parameter
+  ***/
   const loadingStatus = loadingStatusSelector(state, key);
   return loadingStatus ? loadingStatus.isLoading : false;
-};
-
-export const hasErroredSelector = (key: string) => (state): boolean => {
-  const loadingStatus = loadingStatusSelector(state, key);
-  return loadingStatus ? !!loadingStatus.error : false;
-};
-
-export const errorSelector = (key: string) => (state): string | undefined => {
-  const loadingStatus = loadingStatusSelector(state, key);
-  return loadingStatus ? loadingStatus.error : undefined;
 };
