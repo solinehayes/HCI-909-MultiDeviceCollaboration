@@ -145,8 +145,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       userName,
       setUserName,
       newAction,
-      stopAdvertising,
-      stopDiscovering,
     } = useGoogleNearby({setIsConnectionModalDisplayed, copyPostits});
 
     useEffect(() => {
@@ -219,10 +217,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           setIsModalVisible={setIsConnectionModalDisplayed}
           nearbyDevices={nearbyEndpoints}
           connectToDevice={connectToNearbyEndpoint}
-          onClose={() => {
-            stopAdvertising();
-            stopDiscovering();
-          }}
         />
         <ColorsModal
           isModalVisible={isColorsModalDisplayed}
