@@ -24,6 +24,7 @@ interface Props {
   style?: StyleProp<ViewStyle>;
   nearbyDevices: EndPoint[];
   connectToDevice: (endpoint: EndPoint) => void;
+  onClose: () => void;
 }
 interface Styles {
   modal: ViewStyle;
@@ -98,6 +99,7 @@ export const ConnectionModal: FunctionComponent<Props> = ({
   setIsModalVisible,
   nearbyDevices,
   connectToDevice,
+  onClose,
 }) => {
   const dispatch = useDispatch();
   const isLoading = useSelector(
@@ -116,6 +118,7 @@ export const ConnectionModal: FunctionComponent<Props> = ({
           <TouchableOpacity
             onPress={() => {
               setIsModalVisible(false);
+              onClose();
             }}>
             <Icon name="close" color={theme.colors.blue} size={30} />
           </TouchableOpacity>

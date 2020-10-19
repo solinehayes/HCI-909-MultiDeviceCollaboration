@@ -73,6 +73,12 @@ export const useGoogleNearby = ({
       Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
     );
   };
+  const stopAdvertizing = () => {
+    NearbyConnection.stopAdvertizing();
+  };
+  const stopDiscovering = () => {
+    NearbyConnection.stopDiscovering();
+  };
 
   const sendMessage = (message: string, endpointName: string, endpointId) => {
     NearbyConnection.sendBytes(
@@ -243,5 +249,7 @@ export const useGoogleNearby = ({
     userName,
     setUserName,
     newAction,
+    stopAdvertizing,
+    stopDiscovering,
   };
 };
