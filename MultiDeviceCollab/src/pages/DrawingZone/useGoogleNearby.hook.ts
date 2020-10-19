@@ -232,16 +232,25 @@ export const useGoogleNearby = ({
   );
   NearbyConnection.onEndpointConnectionFailed(() => {
     dispatch(finishLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
-    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+    DeviceEventEmitter.emit(EventEmitKey.ERROR, 'Could not connect to device');
   });
   NearbyConnection.onSendPayloadFailed(() => {
-    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+    DeviceEventEmitter.emit(
+      EventEmitKey.ERROR,
+      'Could not send message to device',
+    );
   });
   NearbyConnection.onAdvertisingStartFailed(() => {
-    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+    DeviceEventEmitter.emit(
+      EventEmitKey.ERROR,
+      'Could not advertise to other devices',
+    );
   });
   NearbyConnection.onDiscoveryStartFailed(() => {
-    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+    DeviceEventEmitter.emit(
+      EventEmitKey.ERROR,
+      'Could not search for ther devices',
+    );
   });
 
   return {
