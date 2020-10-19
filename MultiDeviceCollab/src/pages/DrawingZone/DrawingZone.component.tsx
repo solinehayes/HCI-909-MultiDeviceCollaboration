@@ -145,7 +145,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
       userName,
       setUserName,
       newAction,
-      stopAdvertizing,
+      stopAdvertising,
       stopDiscovering,
     } = useGoogleNearby({setIsConnectionModalDisplayed, copyPostits});
 
@@ -220,7 +220,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           nearbyDevices={nearbyEndpoints}
           connectToDevice={connectToNearbyEndpoint}
           onClose={() => {
-            stopAdvertizing();
+            stopAdvertising();
             stopDiscovering();
           }}
         />
