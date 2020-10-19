@@ -50,6 +50,9 @@ export const useGoogleNearby = ({
   const deviceTop = useSelector(topDeviceSelector);
   const deviceBottom = useSelector(bottomDeviceSelector);
 
+  const [isAdvertising, setIsAdvertising] = useState<boolean>(false);
+  const [isDiscovering, setIsDiscovering] = useState<boolean>(false);
+
   useEffect(() => {
     if (
       (deviceLeft.endPoint !== null && deviceLeft.size !== undefined) ||
@@ -62,24 +65,22 @@ export const useGoogleNearby = ({
   }, [deviceLeft, deviceRight, deviceTop, deviceBottom, copyPostits]);
 
   const startDiscovering = () => {
-    NearbyConnection.startDiscovering(
-      userviceId, // A unique identifier for the service
-    );
+    if (!isDiscovering) {
+      NearbyConnection.startDiscovering(
+        userviceId, // A unique identifier for the service
+      );
+    }
   };
   const startAdvertising = () => {
-    NearbyConnection.startAdvertising(
-      userName, // This nodes endpoint name
-      userviceId, // A unique identifier for the service
-      Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
-    );
+    if (!isAdvertising) {
+      console.log('we advertize');
+      NearbyConnection.startAdvertising(
+        userName, // This nodes endpoint name
+        userviceId, // A unique identifier for the service
+        Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
+      );
+    }
   };
-  const stopAdvertising = () => {
-    NearbyConnection.stopAdvertising(userviceId);
-  };
-  const stopDiscovering = () => {
-    NearbyConnection.stopDiscovering(userviceId);
-  };
-
   const sendMessage = (message: string, endpointName: string, endpointId) => {
     NearbyConnection.sendBytes(
       userviceId, // A unique identifier for the service
@@ -204,7 +205,12 @@ export const useGoogleNearby = ({
   NearbyConnection.onAdvertisingStarting(() => {
     console.log('onStartAdvertising');
   });
-
+  NearbyConnection.onAdvertisingStarted(() => {
+    setIsAdvertising(true);
+  });
+  NearbyConnection.onDiscoveryStarted(() => {
+    setIsDiscovering(true);
+  });
   NearbyConnection.onReceivePayload(
     ({
       serviceId, // A unique identifier for the service
@@ -249,7 +255,5 @@ export const useGoogleNearby = ({
     userName,
     setUserName,
     newAction,
-    stopAdvertising,
-    stopDiscovering,
   };
 };
