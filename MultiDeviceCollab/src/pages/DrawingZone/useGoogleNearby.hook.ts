@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {DeviceEventEmitter, Dimensions} from 'react-native';
 import NearbyConnection, {
   Strategy,
@@ -32,6 +32,7 @@ export const useGoogleNearby = ({
   copyPostits,
 }: {
   setIsConnectionModalDisplayed: (visibility: boolean) => void;
+  copyPostits;
 }) => {
   const dispatch = useDispatch();
   const userviceId = '12';
@@ -50,14 +51,15 @@ export const useGoogleNearby = ({
   const deviceBottom = useSelector(bottomDeviceSelector);
 
   useEffect(() => {
-    if ((deviceLeft.endPoint!==null&&deviceLeft.size!==undefined)||
-        (deviceRight.endPoint!==null&&deviceRight.size!==undefined)||
-        (deviceTop.endPoint!==null&&deviceTop.size!==undefined)||
-        (deviceBottom.endPoint!==null&&deviceBottom.size!==undefined)
-      ) {
+    if (
+      (deviceLeft.endPoint !== null && deviceLeft.size !== undefined) ||
+      (deviceRight.endPoint !== null && deviceRight.size !== undefined) ||
+      (deviceTop.endPoint !== null && deviceTop.size !== undefined) ||
+      (deviceBottom.endPoint !== null && deviceBottom.size !== undefined)
+    ) {
       copyPostits();
     }
-  }, [deviceLeft, deviceRight, deviceTop, deviceBottom]);
+  }, [deviceLeft, deviceRight, deviceTop, deviceBottom, copyPostits]);
 
   const startDiscovering = () => {
     NearbyConnection.startDiscovering(
