@@ -20,8 +20,8 @@ type DrawingComponentNavigationProp = StackNavigationProp<
 
 const mapStateToProps = (state) => {
   return {
-    postits: state.postit.postits,
-    index: state.postit.index,
+    postits: state.postit.postits, // List of post-its to draw
+    index: state.postit.index, // First available post-it id
     copied: state.postit.copied,
   };
 };
@@ -62,6 +62,9 @@ const styles = StyleSheet.create<Styles>({
 
 export const DrawingZone: FunctionComponent<Props> = connector(
   (props: Props) => {
+    /***
+    Main page
+    ***/
     const dispatch = useDispatch(); // Used to dispatch action to the app's store
     const [
       isConnectionModalDisplayed,
@@ -104,9 +107,9 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           squareSize: 100,
           color: color,
         },
-      };
-      dispatch(action);
-      transposeAndSendAction(action);
+      }; // Create the corresponding action
+      dispatch(action); // Dispatch this action
+      transposeAndSendAction(action); // Send the action to the other devices
     };
 
     const copyPostits = () => {

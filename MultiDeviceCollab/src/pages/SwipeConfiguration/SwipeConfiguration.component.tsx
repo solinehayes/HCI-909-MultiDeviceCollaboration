@@ -51,11 +51,10 @@ export const SwipeConfiguration: FunctionComponent<Props> =  ({
   const endpoint = route.params.endPoint; // Endpoint to connect to
   const sendMessage = route.params.sendMessage;
 
-  //@TODO: Elise je sais pas trop comment définir ça
   const config = {
     velocityThreshold: 0.5,
     directionalOffsetThreshold: 80,
-  };
+  }; // Swipe gesture detection sensibility
   const dispatch = useDispatch(); // Used to dispatch actions to the app's store
 
   const onSwipe = (gestureName) => {

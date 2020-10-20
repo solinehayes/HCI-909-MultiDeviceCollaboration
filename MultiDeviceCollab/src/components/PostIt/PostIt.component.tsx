@@ -51,16 +51,22 @@ export const PostIt: FunctionComponent<Props> = ({
   sendMessageToAll,
   transposeAndSendAction,
 }) => {
-  const [textValue, onChangeText] = useState(textInit);
-  const [gesture, setGesture] = useState({});
-  const dispatch = useDispatch();
+  /***
+    Component that represents a post-it
+    ***/
+  const [textValue, setTextValue] = useState(textInit); // State for the post-it text
+  const [gesture, setGesture] = useState({}); // State for the detected gesture
+  const dispatch = useDispatch(); // Used to dispatch action to the app's store
 
   const movePostIt = (newTopPos, newLeftPos) => {
+    /***
+    Function to move a post-it to the new position (newLeftPos, newTopPos)
+    ***/
     const action = {
       type: 'MOVE_POSTIT',
       value: {id: id, topPos: newTopPos, leftPos: newLeftPos},
-    };
-    dispatch(action);
+    }; // Create the corresponding action
+    dispatch(action); // Dispatch the action
     if (
       newLeftPos + squareSize / 2 + 20 > width ||
       newLeftPos - squareSize / 2 - 20 < 0 ||
@@ -71,29 +77,43 @@ export const PostIt: FunctionComponent<Props> = ({
         Math.abs(newTopPos - topPos) > 7 ||
         Math.abs(newLeftPos - leftPos) > 7
       ) {
+        // If the new position is close to the edges of the device and
+        // if there is a significant change of position,
+        // send this action to the connected devices
         transposeAndSendAction(action);
       }
     }
   };
 
   const resizePostIt = (newSquareSize) => {
+    /***
+    Function to resize a post-it, with the new size
+    ***/
     const action = {
       type: 'RESIZE_POSTIT',
       value: {id: id, newSquareSize: newSquareSize},
-    };
-    dispatch(action);
+    }; // Create the corresponding action
+    dispatch(action); // Dispatch this action
     if (Math.abs(squareSize - newSquareSize) > 7) {
+      // If there is significant size change,
+      // send this action to the connected devices
       sendMessageToAll(JSON.stringify(action));
     }
   };
 
   const changeText = (newText) => {
-    const action = {type: 'CHANGE_TEXT', value: {id: id, newText: newText}};
-    console.log(action);
-    sendMessageToAll(JSON.stringify(action));
+    /***
+    Function to change the text of the post-it
+    ***/
+    setTextValue(newText); // Change the text value
+    const action = {type: 'CHANGE_TEXT', value: {id: id, newText: newText}}; // Create the corresponding action
+    sendMessageToAll(JSON.stringify(action)); // Send this action to the connected devices
   };
 
   const gestureResponder = createResponder({
+    /***
+    Gesture detection
+    ***/
     onStartShouldSetResponder: (evt, gestureState) => true,
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
       return gestureState.dx != 0 && gestureState.dy != 0;
@@ -104,10 +124,12 @@ export const PostIt: FunctionComponent<Props> = ({
     onResponderGrant: (evt, gestureState) => {},
     onResponderMove: (evt, gestureState) => {
       if (gestureState.pinch && gestureState.previousPinch) {
+        // Pinching gesture, resize the post-it
         resizePostIt(
           (squareSize * gestureState.pinch) / gestureState.previousPinch,
         );
       }
+      // Dragging gesture, move the post-it
       movePostIt(
         topPos + gestureState.moveY - gestureState.previousMoveY,
         leftPos + gestureState.moveX - gestureState.previousMoveX,
@@ -140,12 +162,11 @@ export const PostIt: FunctionComponent<Props> = ({
         <TextInput
           style={styles.text}
           onChangeText={(text) => {
-            onChangeText(text);
             changeText(text);
           }}
           multiline={true}>
-          {textInit}
-          {/* HELP ELISE: ici je vois pas pourquoi c'est textInit et pas textValue? */}
+          {textValue}
+          {}
         </TextInput>
       </TouchableOpacity>
     </View>

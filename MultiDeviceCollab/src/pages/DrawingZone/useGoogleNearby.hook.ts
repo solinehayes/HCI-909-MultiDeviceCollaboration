@@ -98,27 +98,31 @@ export const useGoogleNearby = ({
     Function to transpose the postit to the right place on the multidevice canvas and send message
     ***/
 
-    // Transpose and send to left device
     if (deviceLeft.endPoint !== null) {
+      // If there is a left device, shift the post-it of the action to the
+      // right and send the new action to this device
       const actionLeft = JSON.parse(JSON.stringify(action));
       actionLeft.value.leftPos = action.value.leftPos + deviceLeft.size.width;
       sendMessage(JSON.stringify(actionLeft), deviceLeft.endPoint.endpointId);
     }
-    // Transpose and send to right device
     if (deviceRight.endPoint !== null) {
+      // If there is a right device, shift the post-it of the action to the
+      // left and send the new action to this device
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
       sendMessage(JSON.stringify(actionRight), deviceRight.endPoint.endpointId);
     }
-    // Transpose and send to top device
     if (deviceTop.endPoint !== null) {
+      // If there is a top device, shift the post-it of the action down
+      // and send the new action to this device
       const actionUp = JSON.parse(JSON.stringify(action));
       actionUp.value.topPos =
         action.value.topPos + deviceTop.size.height - HEADER_SIZE;
       sendMessage(JSON.stringify(actionUp), deviceTop.endPoint.endpointId);
     }
-    // Transpose and send bottom device
     if (deviceBottom.endPoint !== null) {
+      // If there is a bottom device, shift the post-it of the action up
+      // and send the new action to this device
       const actionDown = JSON.parse(JSON.stringify(action));
       actionDown.value.topPos = action.value.topPos - height + HEADER_SIZE;
       sendMessage(JSON.stringify(actionDown), deviceBottom.endPoint.endpointId);
