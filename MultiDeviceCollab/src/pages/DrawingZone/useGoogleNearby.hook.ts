@@ -208,9 +208,17 @@ export const useGoogleNearby = ({
     );
   });
   NearbyConnection.onAdvertisingStarted(() => {
+    /***
+    Function to be launch when the advertising to other devices started
+    Sets the state to true in order to launch the device advertising only once
+    ***/
     setIsAdvertising(true);
   });
   NearbyConnection.onDiscoveryStarted(() => {
+    /***
+    Function to be launch when the device discovery started
+    Sets the state to true in order to launch the device discovery only once
+    ***/
     setIsDiscovering(true);
   });
   NearbyConnection.onEndpointConnectionFailed(() => {
