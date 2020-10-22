@@ -1,7 +1,7 @@
 # HCI-909 : Multi device Collaborative Screen
 
 **Link to download the .apk and download the app (ANDROID ONLY)**: https://we.tl/t-XZeF9orqpU
-Link to github: https://github.com/solinehayes/HCI-909-MultiDeviceCollaboration
+\n Link to github: https://github.com/solinehayes/HCI-909-MultiDeviceCollaboration
 
 # Setup
 
