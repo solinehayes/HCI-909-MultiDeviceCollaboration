@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {DeviceEventEmitter, Dimensions} from 'react-native';
 import NearbyConnection, {
   Strategy,
@@ -32,6 +32,7 @@ export const useGoogleNearby = ({
   copyPostits,
 }: {
   setIsConnectionModalDisplayed: (visibility: boolean) => void;
+  copyPostits;
 }) => {
   const dispatch = useDispatch();
   const userviceId = '12';
@@ -49,29 +50,37 @@ export const useGoogleNearby = ({
   const deviceTop = useSelector(topDeviceSelector);
   const deviceBottom = useSelector(bottomDeviceSelector);
 
+  const [isAdvertising, setIsAdvertising] = useState<boolean>(false);
+  const [isDiscovering, setIsDiscovering] = useState<boolean>(false);
+
   useEffect(() => {
-    if ((deviceLeft.endPoint!==null&&deviceLeft.size!==undefined)||
-        (deviceRight.endPoint!==null&&deviceRight.size!==undefined)||
-        (deviceTop.endPoint!==null&&deviceTop.size!==undefined)||
-        (deviceBottom.endPoint!==null&&deviceBottom.size!==undefined)
-      ) {
+    if (
+      (deviceLeft.endPoint !== null && deviceLeft.size !== undefined) ||
+      (deviceRight.endPoint !== null && deviceRight.size !== undefined) ||
+      (deviceTop.endPoint !== null && deviceTop.size !== undefined) ||
+      (deviceBottom.endPoint !== null && deviceBottom.size !== undefined)
+    ) {
       copyPostits();
     }
-  }, [deviceLeft, deviceRight, deviceTop, deviceBottom]);
+  }, [deviceLeft, deviceRight, deviceTop, deviceBottom, copyPostits]);
 
   const startDiscovering = () => {
-    NearbyConnection.startDiscovering(
-      userviceId, // A unique identifier for the service
-    );
+    if (!isDiscovering) {
+      NearbyConnection.startDiscovering(
+        userviceId, // A unique identifier for the service
+      );
+    }
   };
   const startAdvertising = () => {
-    NearbyConnection.startAdvertising(
-      userName, // This nodes endpoint name
-      userviceId, // A unique identifier for the service
-      Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
-    );
+    if (!isAdvertising) {
+      console.log('we advertize');
+      NearbyConnection.startAdvertising(
+        userName, // This nodes endpoint name
+        userviceId, // A unique identifier for the service
+        Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
+      );
+    }
   };
-
   const sendMessage = (message: string, endpointName: string, endpointId) => {
     NearbyConnection.sendBytes(
       userviceId, // A unique identifier for the service
@@ -196,7 +205,12 @@ export const useGoogleNearby = ({
   NearbyConnection.onAdvertisingStarting(() => {
     console.log('onStartAdvertising');
   });
-
+  NearbyConnection.onAdvertisingStarted(() => {
+    setIsAdvertising(true);
+  });
+  NearbyConnection.onDiscoveryStarted(() => {
+    setIsDiscovering(true);
+  });
   NearbyConnection.onReceivePayload(
     ({
       serviceId, // A unique identifier for the service
@@ -218,16 +232,25 @@ export const useGoogleNearby = ({
   );
   NearbyConnection.onEndpointConnectionFailed(() => {
     dispatch(finishLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
-    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+    DeviceEventEmitter.emit(EventEmitKey.ERROR, 'Could not connect to device');
   });
   NearbyConnection.onSendPayloadFailed(() => {
-    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+    DeviceEventEmitter.emit(
+      EventEmitKey.ERROR,
+      'Could not send message to device',
+    );
   });
   NearbyConnection.onAdvertisingStartFailed(() => {
-    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+    DeviceEventEmitter.emit(
+      EventEmitKey.ERROR,
+      'Could not advertise to other devices',
+    );
   });
   NearbyConnection.onDiscoveryStartFailed(() => {
-    DeviceEventEmitter.emit(EventEmitKey.ERROR);
+    DeviceEventEmitter.emit(
+      EventEmitKey.ERROR,
+      'Could not search for ther devices',
+    );
   });
 
   return {

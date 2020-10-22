@@ -105,8 +105,8 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     };
 
     const copyPostits = () => {
-      if (!props.copied){
-        console.log("Copy")
+      if (!props.copied) {
+        console.log('Copy');
         props.postits.map((postit) => {
           const action = {
             type: 'ADD_POSTIT',
@@ -123,7 +123,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         });
         dispatch({type: 'SET_COPIED_TRUE'});
       }
-    }
+    };
 
     const removeLastPostIt = () => {
       const action = {
@@ -165,7 +165,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
         <View style={styles.topButtonContainer}>
           <ConnectedDevice
             device={{endpointName: userName, endpointId: 'me', color: ''}}
-            color={theme.colors.grey}
             onPress={() => {
               setIsUserNameModalDisplayed(true);
             }}
@@ -194,11 +193,6 @@ export const DrawingZone: FunctionComponent<Props> = connector(
             return (
               <ConnectedDevice
                 device={device}
-                color={
-                  theme.postItColors[
-                    Math.floor(Math.random() * (theme.postItColors.length - 1))
-                  ]
-                }
                 key={device.endpointId}
                 onPress={() => {
                   props.navigation.navigate(

@@ -52,6 +52,7 @@ const App: FunctionComponent = () => {
           <Stack.Screen
             name={RootNavigatorRouteNames.SwipeConfiguration}
             component={SwipeConfiguration}
+            options={{headerLeft: null}}
           />
         </Stack.Navigator>
       </NavigationContainer>

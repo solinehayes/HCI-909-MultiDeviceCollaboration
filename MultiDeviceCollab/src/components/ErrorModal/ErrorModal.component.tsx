@@ -60,7 +60,9 @@ const styles = StyleSheet.create<Styles>({
 
 export const ErrorModal: FunctionComponent = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const setModalVisible = () => {
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const setModalVisible = async (text: string) => {
+    setErrorMessage(text);
     setIsModalVisible(true);
   };
   useEffect(() => {
@@ -80,6 +82,7 @@ export const ErrorModal: FunctionComponent = () => {
         <View style={styles.body}>
           <Text style={styles.title}>Error</Text>
           <Text>An error has occured, please try again.</Text>
+          <Text>{errorMessage}</Text>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {

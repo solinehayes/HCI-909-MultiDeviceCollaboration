@@ -11,7 +11,6 @@ import {EndPoint} from '../../pages/DrawingZone/useGoogleNearby.hook';
 
 interface Props {
   device: EndPoint;
-  color: string;
   onPress: () => void;
 }
 interface Styles {
@@ -39,12 +38,14 @@ const styles = StyleSheet.create<Styles>({
 
 export const ConnectedDevice: FunctionComponent<Props> = ({
   device,
-  color,
   onPress,
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.container, {backgroundColor: color}]}
+      style={[
+        styles.container,
+        {backgroundColor: device.color || theme.colors.grey},
+      ]}
       onPress={onPress}>
       <Text>{device.endpointName.slice(0, 2).toUpperCase()}</Text>
     </TouchableOpacity>
