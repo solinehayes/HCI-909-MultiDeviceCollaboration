@@ -13,7 +13,6 @@ import {RootNavigatorRouteNames, RootStackParamList} from '../../App';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RouteProp} from '@react-navigation/native';
 
-
 interface Styles {
   container: ViewStyle;
   gestureRecognizeContainer: ViewStyle;
@@ -44,7 +43,7 @@ interface Props {
   >;
 }
 
-export const SwipeConfiguration: FunctionComponent<Props> =  ({
+export const SwipeConfiguration: FunctionComponent<Props> = ({
   route,
   navigation,
 }) => {
