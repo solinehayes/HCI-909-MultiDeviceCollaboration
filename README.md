@@ -1,5 +1,7 @@
 # HCI-909 : Multi device Collaborative Screen
 
+**Link to download the .apk and download the app (ANDROID ONLY)**: https://we.tl/t-XZeF9orqpU
+
 # Setup
 
 ### Requirements
@@ -50,4 +52,3 @@ For more information: https://reactnative.dev/docs/running-on-device
 
 _Warning_ : You might not see devices on the connection modal right after you've accepted the localisation authorization on your phone. Try reloading the app (`yarn android`) or close it and re-lauch it again from your phone
 
-**Link to download the .apk and download the app (ANDROID ONLY)**: https://we.tl/t-XZeF9orqpU
