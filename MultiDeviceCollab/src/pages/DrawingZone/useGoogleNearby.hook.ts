@@ -26,6 +26,7 @@ export interface EndPoint {
 export const EventEmitKey = {
   ERROR: 'ERROR',
 };
+const HEADER_SIZE = 80; // Arbitrary size for the phone header
 
 export const useGoogleNearby = ({
   setIsConnectionModalDisplayed,
@@ -34,21 +35,20 @@ export const useGoogleNearby = ({
   setIsConnectionModalDisplayed: (visibility: boolean) => void;
   copyPostits;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // Used to launch actions to the store
   const userviceId = '12';
   const [userName, setUserName] = useState<string>('');
-  const [newAction, setNewAction] = useState<string>('');
-  const navigation = useNavigation();
+  const [newAction, setNewAction] = useState<string>(''); // New action to be dispatched (in the drawingZone page)
+  const navigation = useNavigation(); // Used to navigate between screens
 
-  const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]);
-  const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]);
+  const [nearbyEndpoints, setNearbyEndpoints] = useState<EndPoint[]>([]); // Nearby devices list
+  const [connectedEndPoints, setConnectedEndPoints] = useState<EndPoint[]>([]); // Connected devices list
 
-  const {width, height} = Dimensions.get('window');
-  // A changer en fonction de la configuration
-  const deviceLeft = useSelector(leftDeviceSelector);
-  const deviceRight = useSelector(rightDeviceSelector);
-  const deviceTop = useSelector(topDeviceSelector);
-  const deviceBottom = useSelector(bottomDeviceSelector);
+  const {width, height} = Dimensions.get('window'); // Configuration of the device
+  const deviceLeft = useSelector(leftDeviceSelector); // left device Id, name and configuration
+  const deviceRight = useSelector(rightDeviceSelector); // right device Id, name and configuration
+  const deviceTop = useSelector(topDeviceSelector); // top device Id, name and configuration
+  const deviceBottom = useSelector(bottomDeviceSelector); // bottom device Id, name and configuration
 
   const [isAdvertising, setIsAdvertising] = useState<boolean>(false);
   const [isDiscovering, setIsDiscovering] = useState<boolean>(false);
@@ -65,188 +65,195 @@ export const useGoogleNearby = ({
   }, [deviceLeft, deviceRight, deviceTop, deviceBottom, copyPostits]);
 
   const startDiscovering = () => {
+    /***
+    Function to start searching for nearby devices
+    ***/
     if (!isDiscovering) {
-      NearbyConnection.startDiscovering(
-        userviceId, // A unique identifier for the service
-      );
+      NearbyConnection.startDiscovering(userviceId);
     }
   };
   const startAdvertising = () => {
+    /***
+    Function to be seen by other devices
+    ***/
     if (!isAdvertising) {
       console.log('we advertize');
       NearbyConnection.startAdvertising(
-        userName, // This nodes endpoint name
-        userviceId, // A unique identifier for the service
-        Strategy.P2P_POINT_TO_POINT, // The Strategy to be used when discovering or advertising to Nearby devices [See Strategy](https://developers.google.com/android/reference/com/google/android/gms/nearby/connection/Strategy)
+        userName,
+        userviceId,
+        Strategy.P2P_POINT_TO_POINT,
       );
     }
   };
-  const sendMessage = (message: string, endpointName: string, endpointId) => {
-    NearbyConnection.sendBytes(
-      userviceId, // A unique identifier for the service
-      endpointId, // ID of the endpoint wishing to stop playing audio from
-      message, // A string of bytes to send
-    );
+
+  const sendMessage = (message: string, endpointId: string) => {
+    /***
+    Function to send message to another device
+    ***/
+    NearbyConnection.sendBytes(userviceId, endpointId, message);
   };
 
   const transposeAndSendAction = (action) => {
-    // Transpose and send to left
+    /***
+    Function to transpose the postit to the right place on the multidevice canvas and send message
+    ***/
+
     if (deviceLeft.endPoint !== null) {
+      // If there is a left device, shift the post-it of the action to the
+      // right and send the new action to this device
       const actionLeft = JSON.parse(JSON.stringify(action));
       actionLeft.value.leftPos = action.value.leftPos + deviceLeft.size.width;
-      sendMessage(
-        JSON.stringify(actionLeft),
-        deviceLeft.endPoint.endpointName,
-        deviceLeft.endPoint.endpointId,
-      );
+      sendMessage(JSON.stringify(actionLeft), deviceLeft.endPoint.endpointId);
     }
-    // Transpose and send to right
     if (deviceRight.endPoint !== null) {
+      // If there is a right device, shift the post-it of the action to the
+      // left and send the new action to this device
       const actionRight = JSON.parse(JSON.stringify(action));
       actionRight.value.leftPos = action.value.leftPos - width;
-      sendMessage(
-        JSON.stringify(actionRight),
-        deviceRight.endPoint.endpointName,
-        deviceRight.endPoint.endpointId,
-      );
+      sendMessage(JSON.stringify(actionRight), deviceRight.endPoint.endpointId);
     }
-    // Transpose and send to up
     if (deviceTop.endPoint !== null) {
+      // If there is a top device, shift the post-it of the action down
+      // and send the new action to this device
       const actionUp = JSON.parse(JSON.stringify(action));
-      // 80 : valeur arbitraire pour compenser la hauteur du bandeau
-      actionUp.value.topPos = action.value.topPos + deviceTop.size.height - 80;
-      sendMessage(
-        JSON.stringify(actionUp),
-        deviceTop.endPoint.endpointName,
-        deviceTop.endPoint.endpointId,
-      );
+      actionUp.value.topPos =
+        action.value.topPos + deviceTop.size.height - HEADER_SIZE;
+      sendMessage(JSON.stringify(actionUp), deviceTop.endPoint.endpointId);
     }
-    // Transpose and send down
     if (deviceBottom.endPoint !== null) {
+      // If there is a bottom device, shift the post-it of the action up
+      // and send the new action to this device
       const actionDown = JSON.parse(JSON.stringify(action));
-      // 80 : valeur arbitraire pour compenser la hauteur du bandeau
-      actionDown.value.topPos = action.value.topPos - height + 80;
-      sendMessage(
-        JSON.stringify(actionDown),
-        deviceBottom.endPoint.endpointName,
-        deviceBottom.endPoint.endpointId,
-      );
+      actionDown.value.topPos = action.value.topPos - height + HEADER_SIZE;
+      sendMessage(JSON.stringify(actionDown), deviceBottom.endPoint.endpointId);
     }
   };
 
   const connectToNearbyEndpoint = (endpoint: EndPoint) => {
-    console.log('connect to nearby endpoint ' + endpoint.endpointId);
-    NearbyConnection.connectToEndpoint(
-      userviceId, // A unique identifier for the service
-      endpoint.endpointId, // ID of the endpoint to connect to
-    );
+    /***
+    Function to connect to one device nearby
+    ***/
+    NearbyConnection.connectToEndpoint(userviceId, endpoint.endpointId);
   };
+
+  // CALLBACKS
   NearbyConnection.onEndpointDiscovered(({endpointId, endpointName}) => {
+    /***
+    Function to be launch when a new nearby device is found
+    Adds the device to the nearby devices list in order to display it on the nearby devices modal
+    ***/
     setNearbyEndpoints(
       nearbyEndpoints.concat([{endpointId, endpointName, color: ''}]),
     );
   });
-  NearbyConnection.onConnectedToEndpoint(
-    ({
-      endpointId, // ID of the endpoint we connected to
-      endpointName, // The name of the service
-    }) => {
-      //console.log('Successfully connected to ', endpointName);
-      setConnectedEndPoints(
-        connectedEndPoints.concat([
-          {
-            endpointId,
-            endpointName,
-            color:
-              theme.postItColors[
-                Math.floor(Math.random() * (theme.postItColors.length - 1))
-              ],
-          },
-        ]),
-      );
-      // Par défaut pour le test mais à changer avec la configuration
-      dispatch(finishLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
-      setIsConnectionModalDisplayed(false);
-      navigation.navigate(RootNavigatorRouteNames.SwipeConfiguration, {
-        endPoint: {endpointId, endpointName},
-        sendMessage,
-      });
-    },
-  );
+  NearbyConnection.onConnectedToEndpoint(({endpointId, endpointName}) => {
+    /***
+    Function to be launch a connection with a device is established
+    Adds the device to the connected device list in order to display it on the drawingZone page
+    Navigates to the SwipeConfiguration page in order to configurate the connection layout
+    ***/
+    setConnectedEndPoints(
+      connectedEndPoints.concat([
+        {
+          endpointId,
+          endpointName,
+          color:
+            theme.postItColors[
+              Math.floor(Math.random() * (theme.postItColors.length - 1))
+            ],
+        },
+      ]),
+    );
+    dispatch(finishLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
+    setIsConnectionModalDisplayed(false);
+    navigation.navigate(RootNavigatorRouteNames.SWIPE_CONFIGURATION, {
+      endPoint: {endpointId, endpointName},
+      sendMessage,
+    });
+  });
   NearbyConnection.onConnectionInitiatedToEndpoint(
-    ({
-      endpointId, // ID of the endpoint wishing to connect
-      endpointName, // The name of the remote device we're connecting to.
-      serviceId, // A unique identifier for the service
-    }) => {
-      console.log('Connexion initiated by ', endpointName);
-      console.log('Accepting connexion');
-      NearbyConnection.acceptConnection(
-        serviceId, // A unique identifier for the service
-        endpointId, // ID of the endpoint wishing to accept the connection from
-      );
+    /***
+    Function to be launch when a new nearby device wants to establush a connection
+    Accepts automatically the connection
+    ***/
+    ({endpointId, serviceId}) => {
+      NearbyConnection.acceptConnection(serviceId, endpointId);
     },
   );
-  NearbyConnection.onEndpointLost(
-    ({
-      endpointId, // ID of the endpoint we lost
-    }) => {
-      for (let i = 0; i < connectedEndPoints.length; i++) {
-        if (connectedEndPoints[0].endpointId === endpointId) {
-          setConnectedEndPoints(
-            connectedEndPoints.filter(
-              (endpoint) => endpoint.endpointId !== endpointId,
-            ),
-          );
-        }
+  NearbyConnection.onEndpointLost(({endpointId}) => {
+    /***
+    Function to be launch when the connection with a device is lost
+    Removes the device from the connected devices list
+    ***/
+    for (let i = 0; i < connectedEndPoints.length; i++) {
+      if (connectedEndPoints[0].endpointId === endpointId) {
+        setConnectedEndPoints(
+          connectedEndPoints.filter(
+            (endpoint) => endpoint.endpointId !== endpointId,
+          ),
+        );
       }
-    },
-  );
-  NearbyConnection.onAdvertisingStarting(() => {
-    console.log('onStartAdvertising');
+    }
+  });
+
+  NearbyConnection.onReceivePayload(({serviceId, endpointId, payloadId}) => {
+    /***
+    Function to be launch when the device receives an action from a connected device (eg. create a new post it action)
+    Sets up the action received in the state
+    ***/
+    NearbyConnection.readBytes(serviceId, endpointId, payloadId).then(
+      ({bytes}) => {
+        setNewAction(bytes);
+      },
+    );
   });
   NearbyConnection.onAdvertisingStarted(() => {
+    /***
+    Function to be launch when the advertising to other devices started
+    Sets the state to true in order to launch the device advertising only once
+    ***/
     setIsAdvertising(true);
   });
   NearbyConnection.onDiscoveryStarted(() => {
+    /***
+    Function to be launch when the device discovery started
+    Sets the state to true in order to launch the device discovery only once
+    ***/
     setIsDiscovering(true);
   });
-  NearbyConnection.onReceivePayload(
-    ({
-      serviceId, // A unique identifier for the service
-      endpointId, // ID of the endpoint we got the payload from
-      payloadId, // Unique identifier of the payload
-    }) => {
-      NearbyConnection.readBytes(
-        serviceId, // A unique identifier for the service
-        endpointId, // ID of the endpoint wishing to stop playing audio from
-        payloadId, // Unique identifier of the payload
-      ).then(
-        ({
-          bytes, // [Payload.Type.BYTES] The bytes string that was sent
-        }) => {
-          setNewAction(bytes);
-        },
-      );
-    },
-  );
   NearbyConnection.onEndpointConnectionFailed(() => {
+    /***
+    Function to be launch when the connection to a nearby device fails
+    Lauches the error modal
+    ***/
     dispatch(finishLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
     DeviceEventEmitter.emit(EventEmitKey.ERROR, 'Could not connect to device');
   });
   NearbyConnection.onSendPayloadFailed(() => {
+    /***
+    Function to be launch when sending an action to other devices fails
+    Lauches the error modal
+    ***/
     DeviceEventEmitter.emit(
       EventEmitKey.ERROR,
       'Could not send message to device',
     );
   });
   NearbyConnection.onAdvertisingStartFailed(() => {
+    /***
+    Function to be launch when the advertising fails
+    Lauches the error modal
+    ***/
     DeviceEventEmitter.emit(
       EventEmitKey.ERROR,
       'Could not advertise to other devices',
     );
   });
   NearbyConnection.onDiscoveryStartFailed(() => {
+    /***
+    Function to be launch when the discovery fails
+    Lauches the error modal
+    ***/
     DeviceEventEmitter.emit(
       EventEmitKey.ERROR,
       'Could not search for ther devices',

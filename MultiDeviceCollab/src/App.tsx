@@ -7,7 +7,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import SplashScreen from 'react-native-splash-screen';
 import {Provider} from 'react-redux';
 import {combineReducers, createStore} from 'redux';
-import {modifyPostit} from './Store/Reducers/modifyPostitReducer';
+import {modifyPostit} from './Store/Postits/modifyPostitReducer';
 import {EndPoint} from './pages/DrawingZone/useGoogleNearby.hook';
 import {deviceReducer} from './Store/Devices/devicesReducer';
 import {composeWithDevTools} from 'redux-devtools-extension';
@@ -18,12 +18,12 @@ export type RootStackParamList = {
   DrawingZone: undefined;
   SwipeConfiguration: {
     endPoint: EndPoint;
-    sendMessage: (message: string, endpointName: string, endpointId) => void;
+    sendMessage: (message: string, endpointId: string) => void;
   };
 };
 export enum RootNavigatorRouteNames {
-  SwipeConfiguration = 'SwipeConfiguration',
-  DrawingZone = 'DrawingZone',
+  SWIPE_CONFIGURATION = 'SwipeConfiguration',
+  DRAWING_ZONE = 'DrawingZone',
 }
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -46,11 +46,11 @@ const App: FunctionComponent = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name={RootNavigatorRouteNames.DrawingZone}
+            name={RootNavigatorRouteNames.DRAWING_ZONE}
             component={DrawingZone}
           />
           <Stack.Screen
-            name={RootNavigatorRouteNames.SwipeConfiguration}
+            name={RootNavigatorRouteNames.SWIPE_CONFIGURATION}
             component={SwipeConfiguration}
             options={{headerLeft: null}}
           />

@@ -29,6 +29,9 @@ export const FloatingButton: FunctionComponent<Props> = ({
   iconName,
   onPress,
 }) => {
+  /***
+    Component that designs the buttons used on DrawingZone
+    ***/
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <Icon name={iconName} size={20} />

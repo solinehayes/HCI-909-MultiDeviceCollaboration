@@ -11,12 +11,13 @@ interface Props {
   createPostIt: (color: string) => void;
 }
 interface Styles {
-  modal: ViewStyle;
+  container: ViewStyle;
   colorPin: ViewStyle;
+  modal: ViewStyle;
 }
 
 const styles = StyleSheet.create<Styles>({
-  modal: {
+  container: {
     ...theme.shadow,
     backgroundColor: theme.colors.white,
     marginVertical: 5 * theme.gridUnit,
@@ -29,6 +30,9 @@ const styles = StyleSheet.create<Styles>({
     borderRadius: theme.dimensions.button / 2,
     margin: theme.gridUnit * 3,
   },
+  modal: {
+    justifyContent: 'flex-start',
+  },
 });
 
 export const ColorsModal: FunctionComponent<Props> = ({
@@ -36,7 +40,14 @@ export const ColorsModal: FunctionComponent<Props> = ({
   setIsModalVisible,
   createPostIt,
 }) => {
+  /***
+  The Color Modal is displayed on the create post-it button and allows us to select the color we want the new post-it to be
+  ***/
+
   const renderColors = ({item, index}: {item: string; index: any}) => {
+    /***
+    Displays one color as clickable on the modal color
+    ***/
     return (
       <TouchableOpacity
         key={index}
@@ -57,11 +68,13 @@ export const ColorsModal: FunctionComponent<Props> = ({
         setIsModalVisible(false);
       }}
       backdropColor={theme.colors.white}
-      style={{
-        justifyContent: 'flex-start',
-        marginTop: inset.top + 4 * theme.gridUnit,
-      }}>
-      <View style={styles.modal}>
+      style={[
+        {
+          marginTop: inset.top + 4 * theme.gridUnit,
+        },
+        styles.modal,
+      ]}>
+      <View style={styles.container}>
         <FlatList
           data={theme.postItColors}
           horizontal

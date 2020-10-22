@@ -1,19 +1,16 @@
-import React, {FunctionComponent, useState, useEffect} from 'react';
+import React, {FunctionComponent, useState} from 'react';
 import {
   View,
   TextInput,
   TouchableOpacity,
   ViewStyle,
   StyleSheet,
-  PanResponder,
   Dimensions,
-  Animated,
   TextStyle,
-  StatusBar,
 } from 'react-native';
 import {theme} from '../../../theme';
 import {createResponder} from 'react-native-gesture-responder';
-import {connect, ConnectedProps, useDispatch} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 interface Props {
   textInit: string;
@@ -44,36 +41,79 @@ const styles = StyleSheet.create<Styles>({
 
 const {width, height} = Dimensions.get('window');
 
-export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos, squareSize, color, sendMessageToAll, transposeAndSendAction}) => {
-  const [textValue, onChangeText] = useState(textInit);
-  const [gesture, setGesture] = useState({});
-  const dispatch = useDispatch();
+export const PostIt: FunctionComponent<Props> = ({
+  textInit,
+  id,
+  topPos,
+  leftPos,
+  squareSize,
+  color,
+  sendMessageToAll,
+  transposeAndSendAction,
+}) => {
+  /***
+    Component that represents a post-it
+    ***/
+  const [textValue, setTextValue] = useState(textInit); // State for the post-it text
+  const [gesture, setGesture] = useState({}); // State for the detected gesture
+  const dispatch = useDispatch(); // Used to dispatch action to the app's store
 
   const movePostIt = (newTopPos, newLeftPos) => {
-    const action = {type: 'MOVE_POSTIT', value: {id: id, topPos: newTopPos, leftPos: newLeftPos}};
-    dispatch(action);
-    if (newLeftPos+squareSize/2+20>width || newLeftPos-squareSize/2-20<0 || newTopPos-squareSize/2-20<0 || newTopPos+squareSize/2+20>height-80){
-      if (Math.abs(newTopPos-topPos)>7 || Math.abs(newLeftPos-leftPos)>7){
+    /***
+    Function to move a post-it to the new position (newLeftPos, newTopPos)
+    ***/
+    const action = {
+      type: 'MOVE_POSTIT',
+      value: {id: id, topPos: newTopPos, leftPos: newLeftPos},
+    }; // Create the corresponding action
+    dispatch(action); // Dispatch the action
+    if (
+      newLeftPos + squareSize / 2 + 20 > width ||
+      newLeftPos - squareSize / 2 - 20 < 0 ||
+      newTopPos - squareSize / 2 - 20 < 0 ||
+      newTopPos + squareSize / 2 + 20 > height - 80
+    ) {
+      if (
+        Math.abs(newTopPos - topPos) > 7 ||
+        Math.abs(newLeftPos - leftPos) > 7
+      ) {
+        // If the new position is close to the edges of the device and
+        // if there is a significant change of position,
+        // send this action to the connected devices
         transposeAndSendAction(action);
       }
     }
   };
 
   const resizePostIt = (newSquareSize) => {
-    const action = {type: 'RESIZE_POSTIT', value: {id: id, newSquareSize: newSquareSize}};
-    dispatch(action);
-    if (Math.abs(squareSize-newSquareSize)>7){
+    /***
+    Function to resize a post-it, with the new size
+    ***/
+    const action = {
+      type: 'RESIZE_POSTIT',
+      value: {id: id, newSquareSize: newSquareSize},
+    }; // Create the corresponding action
+    dispatch(action); // Dispatch this action
+    if (Math.abs(squareSize - newSquareSize) > 7) {
+      // If there is significant size change,
+      // send this action to the connected devices
       sendMessageToAll(JSON.stringify(action));
     }
-  }
+  };
 
   const changeText = (newText) => {
-    const action = {type: 'CHANGE_TEXT', value: {id: id, newText: newText}};
-    console.log(action);
-    sendMessageToAll(JSON.stringify(action));
-  }
+    /***
+    Function to change the text of the post-it
+    ***/
+    setTextValue(newText); // Change the text value
+    const action = {type: 'CHANGE_TEXT', value: {id: id, newText: newText}}; // Create the corresponding action
+    sendMessageToAll(JSON.stringify(action)); // Send this action to the connected devices
+  };
 
   const gestureResponder = createResponder({
+    /***
+    Gesture detection
+    ***/
     onStartShouldSetResponder: (evt, gestureState) => true,
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
       return gestureState.dx != 0 && gestureState.dy != 0;
@@ -84,9 +124,16 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
     onResponderGrant: (evt, gestureState) => {},
     onResponderMove: (evt, gestureState) => {
       if (gestureState.pinch && gestureState.previousPinch) {
-        resizePostIt(squareSize * gestureState.pinch / gestureState.previousPinch);
+        // Pinching gesture, resize the post-it
+        resizePostIt(
+          (squareSize * gestureState.pinch) / gestureState.previousPinch,
+        );
       }
-      movePostIt(topPos + gestureState.moveY - gestureState.previousMoveY, leftPos + gestureState.moveX - gestureState.previousMoveX);
+      // Dragging gesture, move the post-it
+      movePostIt(
+        topPos + gestureState.moveY - gestureState.previousMoveY,
+        leftPos + gestureState.moveX - gestureState.previousMoveX,
+      );
 
       setGesture({...gestureState});
     },
@@ -114,10 +161,12 @@ export const PostIt: FunctionComponent<Props> = ({textInit, id, topPos, leftPos,
         ]}>
         <TextInput
           style={styles.text}
-          onChangeText={(text) => {onChangeText(text); changeText(text);}}
+          onChangeText={(text) => {
+            changeText(text);
+          }}
           multiline={true}>
-          {' '}
-          {textInit}{' '}
+          {textValue}
+          {}
         </TextInput>
       </TouchableOpacity>
     </View>

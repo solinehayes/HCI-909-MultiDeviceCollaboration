@@ -34,33 +34,6 @@ interface Styles {
   separator: ViewStyle;
 }
 
-const renderDevices = ({
-  item,
-  connectToDevice,
-  isLoading,
-  dispatch,
-}: {
-  item: EndPoint;
-  connectToDevice: (endpoint: EndPoint) => void;
-  dispatch: (action) => void;
-  isLoading: boolean;
-}) => {
-  return (
-    <TouchableOpacity
-      onPress={() => {
-        connectToDevice(item);
-        dispatch(startLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
-      }}
-      style={styles.deviceItem}>
-      <Text>{item.endpointName}</Text>
-      {isLoading ? (
-        <ActivityIndicator color={theme.colors.blue} size={20} />
-      ) : (
-        <Icon name="wifi" color={theme.colors.blue} size={20} />
-      )}
-    </TouchableOpacity>
-  );
-};
 const styles = StyleSheet.create<Styles>({
   modal: {
     flex: 1,
@@ -93,12 +66,48 @@ const styles = StyleSheet.create<Styles>({
   },
 });
 
+const renderDevices = ({
+  item,
+  connectToDevice,
+  isLoading,
+  dispatch,
+}: {
+  item: EndPoint;
+  connectToDevice: (endpoint: EndPoint) => void;
+  dispatch: (action) => void;
+  isLoading: boolean;
+}) => {
+  /***
+  Function to display one device on the ConnectionModal list of nearby devices
+  ***/
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        connectToDevice(item);
+        dispatch(startLoading(LoadingStatusKey.CONNECT_TO_DEVICE));
+      }}
+      style={styles.deviceItem}>
+      <Text>{item.endpointName}</Text>
+      {isLoading ? (
+        <ActivityIndicator color={theme.colors.blue} size={20} />
+      ) : (
+        <Icon name="wifi" color={theme.colors.blue} size={20} />
+      )}
+    </TouchableOpacity>
+  );
+};
+
 export const ConnectionModal: FunctionComponent<Props> = ({
   isModalVisible,
   setIsModalVisible,
   nearbyDevices,
   connectToDevice,
 }) => {
+  /***
+  The Connection Modal is displayed on the wifi button click on the DrawingZone page
+  It allows us to see the nearby devices and connect to one device by clicking on it
+  ***/
+
   const dispatch = useDispatch();
   const isLoading = useSelector(
     isLoadingSelector(LoadingStatusKey.CONNECT_TO_DEVICE),

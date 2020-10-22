@@ -15,13 +15,13 @@ import {UserNameModal} from '../../components/UserNameModal/UserNameModal.compon
 
 type DrawingComponentNavigationProp = StackNavigationProp<
   RootStackParamList,
-  RootNavigatorRouteNames.DrawingZone
+  RootNavigatorRouteNames.DRAWING_ZONE
 >;
 
 const mapStateToProps = (state) => {
   return {
-    postits: state.postit.postits,
-    index: state.postit.index,
+    postits: state.postit.postits, // List of post-its to draw
+    index: state.postit.index, // First available post-it id
     copied: state.postit.copied,
   };
 };
@@ -62,33 +62,41 @@ const styles = StyleSheet.create<Styles>({
 
 export const DrawingZone: FunctionComponent<Props> = connector(
   (props: Props) => {
-    // List of post it to render
-    //const [postIts, setPostIts] = useState([
-    //  {id: 1, text: 'post-it 1', color: theme.postItColors[0]},
-    //]);
-    const dispatch = useDispatch();
+    /***
+    Main page
+    ***/
+    const dispatch = useDispatch(); // Used to dispatch action to the app's store
     const [
       isConnectionModalDisplayed,
       setIsConnectionModalDisplayed,
-    ] = useState<boolean>(false);
+    ] = useState<boolean>(false); // Boolean state for the connection modal visibility
     const [isColorsModalDisplayed, setIsColorsModalDisplayed] = useState<
       boolean
-    >(false);
-
+    >(false); // Boolean state for the color modal (used to device the post-it color) visibility
     const [isUserNameModalDisplayed, setIsUserNameModalDisplayed] = useState<
       boolean
-    >(false);
+    >(false); // Boolean state for the userName modal visibility
+
     const openColorChooser = () => {
+      /***
+      Function to open the color modal
+      ***/
       setIsColorsModalDisplayed(true);
     };
 
     const sendMessageToAll = (message: string) => {
+      /***
+      Function that sends the message to all connected devices
+      ***/
       connectedEndPoints.map((device: EndPoint) => {
-        sendMessage(message, device.endpointName, device.endpointId);
+        sendMessage(message, device.endpointId);
       });
     };
 
     const addPostIt = (color: string) => {
+      /***
+      Function that adds a post it to the phone's canvas and send the action to create a post it to the other connected devices
+      ***/
       const action = {
         type: 'ADD_POSTIT',
         value: {
@@ -99,9 +107,9 @@ export const DrawingZone: FunctionComponent<Props> = connector(
           squareSize: 100,
           color: color,
         },
-      };
-      dispatch(action);
-      transposeAndSendAction(action);
+      }; // Create the corresponding action
+      dispatch(action); // Dispatch this action
+      transposeAndSendAction(action); // Send the action to the other devices
     };
 
     const copyPostits = () => {
@@ -126,6 +134,9 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     };
 
     const removeLastPostIt = () => {
+      /***
+      Function that removes the last post it modified and send the action to remove the last post it to the other connected devices
+      ***/
       const action = {
         type: 'REMOVE_LAST',
         value: {},
@@ -148,18 +159,26 @@ export const DrawingZone: FunctionComponent<Props> = connector(
     } = useGoogleNearby({setIsConnectionModalDisplayed, copyPostits});
 
     useEffect(() => {
+      /***
+      useEffect function is launched everytime userName is modified
+      Opens the userName modal when the username is not defined
+      ***/
       if (!userName) {
         setIsUserNameModalDisplayed(true);
       }
     }, [userName]);
 
     useEffect(() => {
+      /***
+      useEffect function is launched everytime newAction and dispatch is modified
+      Dispatches the new action received from the other devices to the app's store
+      ***/
       if (dispatch && newAction) {
         dispatch(JSON.parse(newAction));
       }
     }, [newAction, dispatch]);
 
-    const inset = useSafeAreaInsets();
+    const inset = useSafeAreaInsets(); // Size of the phone's inaccessible areas to the top, bottom, left and right (Eg. Iphone's notch)
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.topButtonContainer}>
@@ -196,7 +215,7 @@ export const DrawingZone: FunctionComponent<Props> = connector(
                 key={device.endpointId}
                 onPress={() => {
                   props.navigation.navigate(
-                    RootNavigatorRouteNames.SwipeConfiguration,
+                    RootNavigatorRouteNames.SWIPE_CONFIGURATION,
                     {endPoint: device},
                   );
                 }}

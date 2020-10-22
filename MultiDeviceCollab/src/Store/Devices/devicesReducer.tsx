@@ -13,6 +13,7 @@ import {
 } from './deviceActions';
 
 interface Device {
+  // Type of the device configuration
   endPoint: EndPoint | null;
   size: {width: number; height: number} | undefined;
 }
@@ -34,6 +35,9 @@ export const deviceReducer = (
   state: DeviceState = initialDeviceState,
   action: DeviceActions,
 ): DeviceState => {
+  /***
+    Function modifies the device state according to the action type
+  ***/
   switch (action.type) {
     case getType(setBottomSizeActionCreator):
       return {
@@ -52,14 +56,6 @@ export const deviceReducer = (
         },
       };
     case getType(setLeftSizeActionCreator):
-      console.log('set Left Size');
-      console.log({
-        ...state,
-        leftDevice: {
-          size: action.payload,
-          endPoint: state.leftDevice.endPoint,
-        },
-      });
       return {
         ...state,
         leftDevice: {
@@ -68,14 +64,6 @@ export const deviceReducer = (
         },
       };
     case getType(setRightSizeActionCreator):
-      console.log('set right size');
-      console.log({
-        ...state,
-        rightDevice: {
-          size: action.payload,
-          endPoint: state.rightDevice.endPoint,
-        },
-      });
       return {
         ...state,
         rightDevice: {
@@ -101,14 +89,6 @@ export const deviceReducer = (
         },
       };
     case getType(setLeftEndpointActionCreator):
-      console.log('set left endpoint');
-      console.log({
-        ...state,
-        leftDevice: {
-          size: state.leftDevice.size,
-          endPoint: action.payload,
-        },
-      });
       return {
         ...state,
         leftDevice: {
@@ -117,14 +97,6 @@ export const deviceReducer = (
         },
       };
     case getType(setRightEndpointActionCreator):
-      console.log('set right endpoint');
-      console.log({
-        ...state,
-        rightDevice: {
-          size: state.rightDevice.size,
-          endPoint: action.payload,
-        },
-      });
       return {
         ...state,
         rightDevice: {
